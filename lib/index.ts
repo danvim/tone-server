@@ -1,11 +1,12 @@
 import express from "express";
 import {OptionsJson} from "body-parser";
-import Peer = PeerJs.Peer;
 import {port} from "./ServerConfigs";
 import Robot from "./Robot";
 
 const {ExpressPeerServer} = require("peer");
 const P = require("peerjs-nodejs");
+// @ts-ignore
+global.Blob = require("blob-polyfill").Blob;
 
 const robot = Robot.getInstance();
 

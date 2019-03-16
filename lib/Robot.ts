@@ -18,7 +18,9 @@ export default class Robot {
         this.peer.on('connection', function(conn) {
             console.log(`Robot connected with ${conn.peer}!`);
             console.log(conn);
-            conn.on("data", data => console.log)
+            // @ts-ignore
+            global.conn = conn;
+            conn.on("data", console.log)
         });
     }
 

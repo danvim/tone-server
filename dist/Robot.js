@@ -12,7 +12,9 @@ var Robot = /** @class */ (function () {
         this.peer.on('connection', function (conn) {
             console.log("Robot connected with " + conn.peer + "!");
             console.log(conn);
-            conn.on("data", function (data) { return console.log; });
+            // @ts-ignore
+            global.conn = conn;
+            conn.on("data", console.log);
         });
     }
     Robot.getInstance = function () {

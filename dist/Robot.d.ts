@@ -6,4 +6,5 @@ export default class Robot {
     private constructor();
     static getInstance(): Robot;
     getPeer(): Peer;
+    broadcast(data: any): void;
 }

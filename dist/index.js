@@ -9,12 +9,13 @@ global.Blob = require("blob-polyfill").Blob;
 // @ts-ignore
 global.FileReader = require("filereader");
 var ServerConfigs_1 = require("./ServerConfigs");
-var Robot_1 = __importDefault(require("./Robot"));
+var Connection_1 = require("./Connection");
+var Protocol_1 = require("tone-core/dist/Protocol");
 var ExpressPeerServer = require("peer").ExpressPeerServer;
-var P = require("peerjs-nodejs");
-var robot = Robot_1.default.getInstance();
 var app = express_1.default();
-var server = app.listen(ServerConfigs_1.port);
+var server = app.listen(ServerConfigs_1.port, function () {
+    console.log("listening on PORT", ServerConfigs_1.port);
+});
 // @ts-ignore
 global.postMessage = function () {
     var arg = [];
@@ -26,8 +27,13 @@ global.postMessage = function () {
 app.use("/peer", ExpressPeerServer(server, {
     debug: true
 }));
-app.get("/connected-players", function (req, res) {
-    return res.json(Object.keys(robot.getPeer().connections));
+app.use("/", express_1.default.static("views"));
+// app.get("/connected-players", (req, res) =>
+//   res.json(<OptionsJson>Object.keys(robot.getPeer().connections))
+// );
+// console.log(process.env.PORT);
+// // @ts-ignore
+// global.robot = robot;
+Connection_1.protocol.on(Protocol_1.PackageType.MESSAGE, function (data) {
+    console.log(data);
 });
-// @ts-ignore
-global.robot = robot;

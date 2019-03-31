@@ -3,17 +3,16 @@ import express from "express";
 global.Blob = require("blob-polyfill").Blob;
 // @ts-ignore
 global.FileReader = require("filereader");
-import { OptionsJson } from "body-parser";
 import { port } from "./ServerConfigs";
-import Robot from "./Robot";
+import { protocol } from "./Connection";
+import { PackageType } from "tone-core/dist/Protocol";
 
 const { ExpressPeerServer } = require("peer");
-const P = require("peerjs-nodejs");
-
-const robot = Robot.getInstance();
 
 const app = express();
-const server = app.listen(port);
+const server = app.listen(port, () => {
+  console.log("listening on PORT", port);
+});
 
 // @ts-ignore
 global.postMessage = (...arg) => console.log(arg);
@@ -25,9 +24,17 @@ app.use(
   })
 );
 
-app.get("/connected-players", (req, res) =>
-  res.json(<OptionsJson>Object.keys(robot.getPeer().connections))
-);
+app.use("/", express.static("views"));
 
-// @ts-ignore
-global.robot = robot;
+// app.get("/connected-players", (req, res) =>
+//   res.json(<OptionsJson>Object.keys(robot.getPeer().connections))
+// );
+
+// console.log(process.env.PORT);
+
+// // @ts-ignore
+// global.robot = robot;
+
+protocol.on(PackageType.MESSAGE, data => {
+  console.log(data);
+});

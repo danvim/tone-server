@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
+    <title>WebRTC Speed Race</title>
+  </head>
+  <body>
+    <button onclick="testRTC()">start WebRTC test</button>
+    <button onclick="check(rtcPkg)">check RTC</button>
+  </body>
+  <script>
+    var rtcPkg = [];
+    if (window.location.href == "https://webrtc-test.hkustracing.com/") {
+      peer = new Peer({
+        host: "webrtc-test.hkustracing.com",
+        port: 443,
+        path: "/peer",
+        secure: true
+      });
+    } else if (window.location.href == "http://localhost:30000/") {
+      peer = new Peer({ host: "localhost", port: 30000, path: "/peer" });
+    }
+    let conn = peer.connect("server");
+    let printTimeout;
+    let startTime;
+    conn.serialization = "none";
+    conn.on("open", () => {
+      console.log("open RTC");
+      conn.send({ message: "hi!" });
+      conn.send({ a: 2 });
+    });
+    conn.on("data", data => {
+      rtcPkg.push(data);
+      clearTimeout(printTimeout);
+      printTimeout = setTimeout(() => {
+        console.log(
+          `#packages: ${rtcPkg.length}, elapsed Time: ${Date.now() -
+            100 -
+            startTime}`
+        );
+      }, 100);
+      // }
+    });
+    function testRTC() {
+      startTime = Date.now();
+      rtcPkg = [];
+      conn.send("test");
+      printTimeout = setTimeout(() => {
+        console.log(rtcPkg.length);
+      }, 100);
+    }
+    function check(array) {
+      let ids = array.map(s => Number(s.match(/\d+/)[0]));
+      console.log(
+        "inversions: ",
+        ids.reduce(
+          ({ prev, total }, curr) => {
+            if (curr < prev) {
+              total++;
+            }
+            prev = curr;
+            return {
+              prev,
+              total
+            };
+          },
+          { prev: -1, total: 0 }
+        ).total
+      );
+    }
+  </script>
+</html>

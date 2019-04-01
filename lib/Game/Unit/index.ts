@@ -4,12 +4,12 @@ import { Game } from '..';
 import { Entity } from '../Entity';
 
 export class Unit extends Entity implements UnitInterface {
-  fightingStyle: FightingStyle;
+  public fightingStyle: FightingStyle;
   constructor(
     game: Game,
     playerId: number,
     position: Cartesian,
-    rotation: XyzEuler
+    rotation: XyzEuler,
   ) {
     super(game, playerId, position, rotation);
     this.fightingStyle = FightingStyle.PASSIVE;
@@ -17,5 +17,5 @@ export class Unit extends Entity implements UnitInterface {
 
   public frame = (prevTick: number, currTick: number) => {
     super.frame(prevTick, currTick);
-  };
+  }
 }

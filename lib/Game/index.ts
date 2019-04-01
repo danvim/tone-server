@@ -7,44 +7,46 @@ import { Entity } from './Entity';
 import { Unit } from './Unit';
 
 export class Game {
-  players: Array<Player>;
-  protocol: Protocol;
-  buildings: { [uuid: string]: Building };
-  entities: { [uuid: string]: Entity };
-  units: { [uuid: string]: Unit };
+  public players: Player[];
+  public protocol: Protocol;
+  public buildings: { [uuid: string]: Building };
+  public entities: { [uuid: string]: Entity };
+  public units: { [uuid: string]: Unit };
 
   // building: Array<Building>;
-  map: Map;
-  constructor(players: Array<Player>, protocol: Protocol) {
+  public map: Map;
+  constructor(players: Player[], protocol: Protocol) {
     this.players = players;
     this.protocol = protocol;
     this.map = MapGen();
-    console.log('try update tiles');
+    global.console.log('try update tiles');
     protocol.emit(PackageType.UPDATE_TILES, { tiles: this.map });
     this.buildings = {};
     this.entities = {};
     this.units = {};
   }
-  mapConnToPlayer = (conn: Conn) => {
+  public mapConnToPlayer(conn: Conn) {
     return this.players.reduce((prev, player) => {
-      if (conn.peer == player.conn.peer) prev = player;
+      if (conn.peer === player.conn.peer) { prev = player; }
       return prev;
     });
-  };
-  initProtocol = (protocol: Protocol) => {
+  }
+  public initProtocol(protocol: Protocol) {
     // protocol.on(PackageType.TRY_BUILD,);
-  };
-  frame = () => {
+  }
+  public frame() {
     this.moveAllEntitiesAndUnits();
-  };
-  moveAllEntitiesAndUnits = () => {
+  }
+  public moveAllEntitiesAndUnits() {
     const time = 1;
-    for (let uuid in this.entities) {
+    Object.keys(this.entities).forEach((uuid: string) => {
       const entity = this.entities[uuid];
       entity.position.add(entity.velocity.scale(time));
       const [x, z] = entity.position.asArray;
       this.protocol.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
-    }
-  };
-  test() {}
+    });
+  }
+  public test() {
+    //
+  }
 }

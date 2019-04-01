@@ -4,14 +4,14 @@ import { Game } from '..';
 import { Thing } from '../Thing';
 
 export class Entity extends Thing implements EntityInterface {
-  position: Cartesian;
-  rotation: XyzEuler;
-  velocity: Cartesian;
+  public position: Cartesian;
+  public rotation: XyzEuler;
+  public velocity: Cartesian;
   constructor(
     game: Game,
     playerId: number,
     position: Cartesian,
-    rotation: XyzEuler
+    rotation: XyzEuler,
   ) {
     super(game, playerId, 100);
     this.position = position;

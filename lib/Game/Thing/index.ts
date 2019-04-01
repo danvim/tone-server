@@ -1,12 +1,12 @@
 import { ThingInterface } from 'tone-core/dist/lib/Game';
 import { Game } from '..';
-const uuid = require('uuid/v4');
+import uuid from "uuid/v4";
 
 export class Thing implements ThingInterface {
-  game: Game;
-  uuid: string;
-  hp: number;
-  playerId: number;
+  public game: Game;
+  public uuid: string;
+  public hp: number;
+  public playerId: number;
   constructor(game: Game, playerId: number, hp?: number) {
     this.game = game;
     this.playerId = playerId;
@@ -14,5 +14,7 @@ export class Thing implements ThingInterface {
     this.uuid = uuid();
   }
 
-  public frame(prevTick: number, currTick: number) {}
+  public frame(prevTick: number, currTick: number) {
+    //
+  }
 }

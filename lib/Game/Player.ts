@@ -9,7 +9,7 @@ export class Player {
   constructor(conn: Conn) {
     this.conn = conn;
   }
-  emit(event: PackageType, object: any) {
+  public emit(event: PackageType, object: any) {
     this.conn.send(Protocol.encode(event, object));
   }
 }

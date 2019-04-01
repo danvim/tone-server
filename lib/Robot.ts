@@ -1,5 +1,6 @@
 import Peer = PeerJs.Peer;
 import {port} from "./ServerConfigs"
+import {Protocol, PackageType, TileMap, TileType} from "tone-core/dist/lib";
 
 const P = require("peerjs-nodejs");
 
@@ -7,6 +8,7 @@ export default class Robot {
 
     private peer: Peer;
     private static instance: Robot;
+    private protocol: Protocol = new Protocol();
 
     private constructor() {
         this.peer = <Peer> new P("server", {
@@ -15,12 +17,26 @@ export default class Robot {
             path: "/peer"
         });
 
-        this.peer.on('connection', function(conn) {
+        this.peer.on('connection', (conn) => {
             console.log(`Robot connected with ${conn.peer}!`);
-            console.log(conn);
             // @ts-ignore
             global.conn = conn;
-            conn.on("data", console.log)
+            conn.on("data", console.log);
+
+            const map = Protocol.encode(PackageType.UPDATE_TILES, <TileMap> {
+                '1,0': {
+                    type: TileType.EMPTY,
+                    height: 2
+                },
+                '1,1': {
+                    type: TileType.EMPTY,
+                    height: 1
+                }
+            });
+
+            console.log(map);
+
+            conn.send(map);
         });
     }
 

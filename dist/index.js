@@ -21,6 +21,11 @@ global.postMessage = function () {
     }
     return console.log(arg);
 };
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
 app.use("/peer", ExpressPeerServer(server, {
     debug: true
 }));

@@ -27,7 +27,7 @@
     "express": "^4.16.4",
     "peer": "^0.2.10",
     "peerjs-nodejs": "^1.1.3",
-    "tone-core": "git+https://github.com/danvim/tone-core.git#dev",
+    "tone-core": "git+https://github.com/danvim/tone-core.git#master",
     "tsc-watch": "^2.1.2"
   },
   "devDependencies": {

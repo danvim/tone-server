@@ -1,6 +1,11 @@
+/// <reference types="peerjs" />
+import Conn = PeerJs.DataConnection;
+import { PackageType } from 'tone-core/dist/lib';
 export declare class Player {
     id: number;
-    name: string;
+    username: string;
     humanPlayer: boolean;
-    constructor(id: number);
+    conn: Conn;
+    constructor(conn: Conn);
+    emit(event: PackageType, object: any): void;
 }

@@ -1,12 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
-global.Blob = require("blob-polyfill").Blob;
+global.Blob = require('blob-polyfill').Blob;
 // @ts-ignore
 global.File = false;
-var peerjs = require("peerjs-nodejs");
+var peerjs = require('peerjs-nodejs');
 var ServerConfigs_1 = require("../ServerConfigs");
-var Protocol_1 = require("tone-core/dist/Protocol");
+var lib_1 = require("tone-core/dist/lib");
 // console.log(Protocol);
 // @ts-ignore
 global.postMessage = function () {
@@ -16,14 +16,14 @@ global.postMessage = function () {
     }
     return console.log(arg);
 };
-var Peer = peerjs("server", {
-    host: "localhost",
+var Peer = peerjs('server', {
+    host: 'localhost',
     port: ServerConfigs_1.port,
-    path: "/peer"
+    path: '/peer',
 });
-var _protocol = new Protocol_1.Protocol();
-Peer.on("connection", function (conn) {
-    conn.serialization = "none";
+var _protocol = new lib_1.Protocol();
+Peer.on('connection', function (conn) {
+    conn.serialization = 'none';
     _protocol.add(conn);
 });
 exports.protocol = _protocol;

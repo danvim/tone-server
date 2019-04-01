@@ -2,7 +2,7 @@
 import { Player } from './Player';
 import { Protocol } from 'tone-core/dist/lib';
 import Conn = PeerJs.DataConnection;
-import { Game } from './Game';
+import { Game } from '.';
 export declare class Lobby {
     players: Array<Player>;
     started: boolean;

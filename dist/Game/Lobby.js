@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Player_1 = require("./Player");
 var lib_1 = require("tone-core/dist/lib");
-var Game_1 = require("./Game");
+var _1 = require(".");
 var Lobby = /** @class */ (function () {
     // protocol: Protocol;
     function Lobby(protocol) {
@@ -10,7 +10,7 @@ var Lobby = /** @class */ (function () {
         this.started = false;
         this.initProtocol = function (protocol) {
             protocol.on(lib_1.PackageType.TRY_JOIN_LOBBY, function (obj, conn) {
-                return _this.join(obj.username, conn);
+                _this.join(Object(obj).username, conn);
             });
             protocol.on(lib_1.PackageType.TRY_START_GAME, _this.tryStart);
             _this.protocol = protocol;
@@ -93,7 +93,7 @@ var Lobby = /** @class */ (function () {
                 }); }));
                 _this.started = true;
                 _this.protocol.emit(lib_1.PackageType.START_GAME, {});
-                _this.game = new Game_1.Game(_this.players, _this.protocol);
+                _this.game = new _1.Game(_this.players, _this.protocol);
             }
         };
         this.players = [];

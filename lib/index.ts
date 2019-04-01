@@ -6,7 +6,7 @@ global.FileReader = require('filereader');
 import { port } from './ServerConfigs';
 import { protocol } from './Connection';
 import { PackageType } from 'tone-core/dist/lib';
-import { Lobby } from './Lobby';
+import { Lobby } from './Game/Lobby';
 
 const { ExpressPeerServer } = require('peer');
 
@@ -45,7 +45,7 @@ app.use('/', express.static('views'));
 // // @ts-ignore
 // global.robot = robot;
 
-protocol.on(PackageType.MESSAGE, data => {
+protocol.on(PackageType.CHAT, data => {
   console.log(data);
 });
 

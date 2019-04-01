@@ -11,7 +11,7 @@ global.FileReader = require('filereader');
 var ServerConfigs_1 = require("./ServerConfigs");
 var Connection_1 = require("./Connection");
 var lib_1 = require("tone-core/dist/lib");
-var Lobby_1 = require("./Lobby");
+var Lobby_1 = require("./Game/Lobby");
 var ExpressPeerServer = require('peer').ExpressPeerServer;
 var app = express_1.default();
 var server = app.listen(ServerConfigs_1.port, function () {
@@ -40,7 +40,7 @@ app.use('/', express_1.default.static('views'));
 // console.log(process.env.PORT);
 // // @ts-ignore
 // global.robot = robot;
-Connection_1.protocol.on(lib_1.PackageType.MESSAGE, function (data) {
+Connection_1.protocol.on(lib_1.PackageType.CHAT, function (data) {
     console.log(data);
 });
 var lobby = new Lobby_1.Lobby(Connection_1.protocol);

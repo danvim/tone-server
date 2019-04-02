@@ -22,7 +22,7 @@ conn1.on('data', data => {
 });
 conn1.on('open', () => {
   protocol1.add(conn1);
-  protocol1.emit(PackageType.TRY_JOIN_LOBBY, { username: 'Daniel' });
+  protocol1.emit(PackageType.TRY_JOIN_LOBBY, { username: 'Daniel Chueng' });
   protocol1.emit(PackageType.TRY_JOIN_LOBBY, { username: 'Daniel The God' });
 });
 

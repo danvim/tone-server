@@ -16,7 +16,7 @@ var Lobby = /** @class */ (function () {
         protocol.on(lib_1.PackageType.TRY_JOIN_LOBBY, function (obj, conn) {
             _this.join(Object(obj).username, conn);
         });
-        protocol.on(lib_1.PackageType.TRY_START_GAME, this.tryStart);
+        protocol.on(lib_1.PackageType.TRY_START_GAME, this.tryStart.bind(this));
         this.protocol = protocol;
     };
     Lobby.prototype.isUsernameExist = function (username) {

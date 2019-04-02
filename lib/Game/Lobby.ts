@@ -18,7 +18,7 @@ export class Lobby {
     protocol.on(PackageType.TRY_JOIN_LOBBY, (obj, conn) => {
       this.join(Object(obj).username, conn);
     });
-    protocol.on(PackageType.TRY_START_GAME, this.tryStart);
+    protocol.on(PackageType.TRY_START_GAME, this.tryStart.bind(this));
     this.protocol = protocol;
   }
 

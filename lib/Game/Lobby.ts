@@ -64,11 +64,15 @@ export class Lobby {
       if (playerId === -1) {
         return;
       }
+      const player = this.players.find((player) => player.id === playerId);
       this.protocol.emit(PackageType.UPDATE_LOBBY, {
         username,
         playerId,
         connId: conn.peer,
       });
+      if (this.started && this.game && player) {
+        this.game.rejoin(player);
+      }
     } else if (this.isConnExist(conn)) {
       const playerId = this.playerUpdateUsername(username, conn);
       if (playerId === -1) {

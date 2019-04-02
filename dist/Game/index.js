@@ -24,6 +24,9 @@ var Game = /** @class */ (function () {
     Game.prototype.initProtocol = function (protocol) {
         // protocol.on(PackageType.TRY_BUILD,);
     };
+    Game.prototype.rejoin = function (player) {
+        player.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
+    };
     Game.prototype.frame = function () {
         this.moveAllEntitiesAndUnits();
     };

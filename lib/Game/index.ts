@@ -27,12 +27,17 @@ export class Game {
   }
   public mapConnToPlayer(conn: Conn) {
     return this.players.reduce((prev, player) => {
-      if (conn.peer === player.conn.peer) { prev = player; }
+      if (conn.peer === player.conn.peer) {
+        prev = player;
+      }
       return prev;
     });
   }
   public initProtocol(protocol: Protocol) {
     // protocol.on(PackageType.TRY_BUILD,);
+  }
+  public rejoin(player: Player) {
+    player.emit(PackageType.UPDATE_TILES, { tiles: this.map });
   }
   public frame() {
     this.moveAllEntitiesAndUnits();

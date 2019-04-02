@@ -16,7 +16,7 @@ var Lobby = /** @class */ (function () {
         protocol.on(lib_1.PackageType.TRY_JOIN_LOBBY, function (obj, conn) {
             _this.join(Object(obj).username, conn);
         });
-        protocol.on(lib_1.PackageType.TRY_START_GAME, this.tryStart);
+        protocol.on(lib_1.PackageType.TRY_START_GAME, this.tryStart.bind(this));
         this.protocol = protocol;
     };
     Lobby.prototype.isUsernameExist = function (username) {
@@ -49,15 +49,19 @@ var Lobby = /** @class */ (function () {
     Lobby.prototype.join = function (username, conn) {
         global.console.log(username + ' ' + conn.peer + ' attemp to join');
         if (this.isUsernameExist(username)) {
-            var playerId = this.playerUpdateConn(username, conn);
-            if (playerId === -1) {
+            var playerId_1 = this.playerUpdateConn(username, conn);
+            if (playerId_1 === -1) {
                 return;
             }
+            var player = this.players.find(function (player) { return player.id === playerId_1; });
             this.protocol.emit(lib_1.PackageType.UPDATE_LOBBY, {
                 username: username,
-                playerId: playerId,
+                playerId: playerId_1,
                 connId: conn.peer,
             });
+            if (this.started && this.game && player) {
+                this.game.rejoin(player);
+            }
         }
         else if (this.isConnExist(conn)) {
             var playerId = this.playerUpdateUsername(username, conn);

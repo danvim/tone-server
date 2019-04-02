@@ -18,7 +18,7 @@ export class Lobby {
     protocol.on(PackageType.TRY_JOIN_LOBBY, (obj, conn) => {
       this.join(Object(obj).username, conn);
     });
-    protocol.on(PackageType.TRY_START_GAME, this.tryStart);
+    protocol.on(PackageType.TRY_START_GAME, this.tryStart.bind(this));
     this.protocol = protocol;
   }
 
@@ -64,11 +64,15 @@ export class Lobby {
       if (playerId === -1) {
         return;
       }
+      const player = this.players.find((player) => player.id === playerId);
       this.protocol.emit(PackageType.UPDATE_LOBBY, {
         username,
         playerId,
         connId: conn.peer,
       });
+      if (this.started && this.game && player) {
+        this.game.rejoin(player);
+      }
     } else if (this.isConnExist(conn)) {
       const playerId = this.playerUpdateUsername(username, conn);
       if (playerId === -1) {

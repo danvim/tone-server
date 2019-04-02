@@ -22,6 +22,7 @@ export declare class Game {
     constructor(players: Player[], protocol: Protocol);
     mapConnToPlayer(conn: Conn): Player;
     initProtocol(protocol: Protocol): void;
+    rejoin(player: Player): void;
     frame(): void;
     moveAllEntitiesAndUnits(): void;
     test(): void;

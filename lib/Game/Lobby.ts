@@ -37,7 +37,7 @@ export class Lobby {
 
   public playerUpdateConn(username: string, conn: Conn) {
     let id = -1;
-    this.players.forEach((player) => {
+    this.players.forEach((player: Player) => {
       if (player.username === username) {
         player.conn = conn;
         id = player.id;
@@ -59,13 +59,13 @@ export class Lobby {
   }
 
   public join(username: string, conn: Conn) {
-    global.console.log(username + ' ' + conn.peer + ' attemp to join');
+    global.console.log(username + ' ' + conn.peer + ' attempts to join');
     if (this.isUsernameExist(username)) {
       const playerId = this.playerUpdateConn(username, conn);
       if (playerId === -1) {
         return;
       }
-      const player = this.players.find((player) => player.id === playerId);
+      const player = this.players.find((p: Player) => p.id === playerId);
       this.protocol.emit(PackageType.UPDATE_LOBBY, {
         username,
         playerId,

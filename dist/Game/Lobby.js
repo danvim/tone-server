@@ -47,13 +47,13 @@ var Lobby = /** @class */ (function () {
         return id;
     };
     Lobby.prototype.join = function (username, conn) {
-        global.console.log(username + ' ' + conn.peer + ' attemp to join');
+        global.console.log(username + ' ' + conn.peer + ' attempts to join');
         if (this.isUsernameExist(username)) {
             var playerId_1 = this.playerUpdateConn(username, conn);
             if (playerId_1 === -1) {
                 return;
             }
-            var player = this.players.find(function (player) { return player.id === playerId_1; });
+            var player = this.players.find(function (p) { return p.id === playerId_1; });
             this.protocol.emit(lib_1.PackageType.UPDATE_LOBBY, {
                 username: username,
                 playerId: playerId_1,

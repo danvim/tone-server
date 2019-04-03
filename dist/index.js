@@ -4,7 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 global.File = false;
+// tslint:disable-next-line:no-var-requires
 global.Blob = require('blob-polyfill').Blob;
+// tslint:disable-next-line:no-var-requires
 global.FileReader = require('filereader');
 global.postMessage = function () {
     var arg = [];
@@ -22,8 +24,8 @@ var Lobby_1 = require("./Game/Lobby");
 var ExpressPeerServer = require('peer').ExpressPeerServer;
 // Express Server
 var app = express_1.default();
-var server = app.listen(ServerConfigs_1.port, function () {
-    global.console.log('listening on PORT', ServerConfigs_1.port);
+var server = app.listen(ServerConfigs_1.peerPort, function () {
+    global.console.log('listening on PORT', ServerConfigs_1.peerPort);
 });
 app.use(function (req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');

@@ -10,12 +10,14 @@ declare global {
 }
 
 global.File = false;
+// tslint:disable-next-line:no-var-requires
 global.Blob = require('blob-polyfill').Blob;
+// tslint:disable-next-line:no-var-requires
 global.FileReader = require('filereader');
 global.postMessage = (...arg) => global.console.log(arg);
 
 import express from 'express';
-import { port } from './ServerConfigs';
+import { peerPort } from './ServerConfigs';
 import { protocol } from './Connection';
 import { PackageType } from 'tone-core/dist/lib';
 import { Lobby } from './Game/Lobby';
@@ -25,8 +27,8 @@ const { ExpressPeerServer } = require('peer');
 
 // Express Server
 const app = express();
-const server = app.listen(port, () => {
-  global.console.log('listening on PORT', port);
+const server = app.listen(peerPort, () => {
+  global.console.log('listening on PORT', peerPort);
 });
 
 app.use((req, res, next) => {

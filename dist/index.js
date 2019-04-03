@@ -17,11 +17,12 @@ global.postMessage = function () {
 };
 var express_1 = __importDefault(require("express"));
 var ServerConfigs_1 = require("./ServerConfigs");
-var Connection_1 = require("./Connection");
 var lib_1 = require("tone-core/dist/lib");
+var Robot_1 = __importDefault(require("./Robot"));
 var Lobby_1 = require("./Game/Lobby");
 // tslint:disable-next-line:no-var-requires
 var ExpressPeerServer = require('peer').ExpressPeerServer;
+var robot = Robot_1.default.getInstance();
 // Express Server
 var app = express_1.default();
 var server = app.listen(ServerConfigs_1.peerPort, function () {
@@ -35,7 +36,6 @@ app.use(function (req, res, next) {
 app.use('/peer', ExpressPeerServer(server, { debug: true }));
 app.use('/', express_1.default.static('views'));
 // Game Logic
-Connection_1.protocol.on(lib_1.PackageType.CHAT, function (data) {
-    global.console.log(data);
-});
-var lobby = new Lobby_1.Lobby(Connection_1.protocol);
+var protocol = robot.getProtocol();
+protocol.on(lib_1.PackageType.CHAT, global.console.log);
+var lobby = new Lobby_1.Lobby();

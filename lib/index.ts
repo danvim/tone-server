@@ -18,12 +18,13 @@ global.postMessage = (...arg) => global.console.log(arg);
 
 import express from 'express';
 import { peerPort } from './ServerConfigs';
-import { protocol } from './Connection';
 import { PackageType } from 'tone-core/dist/lib';
+import Robot from './Robot';
 import { Lobby } from './Game/Lobby';
 // tslint:disable-next-line:no-var-requires
 const { ExpressPeerServer } = require('peer');
 
+const robot = Robot.getInstance();
 
 // Express Server
 const app = express();
@@ -46,8 +47,8 @@ app.use('/', express.static('views'));
 
 
 // Game Logic
-protocol.on(PackageType.CHAT, (data: any) => {
-  global.console.log(data);
-});
+const protocol = robot.getProtocol();
 
-const lobby = new Lobby(protocol);
+protocol.on(PackageType.CHAT, global.console.log);
+
+const lobby = new Lobby();

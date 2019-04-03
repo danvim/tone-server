@@ -1,26 +1,24 @@
 import { Player } from './Player';
 import { Protocol, PackageType } from 'tone-core/dist/lib';
-import Conn = PeerJs.DataConnection;
 import { Game } from '.';
 import DataConnection = PeerJs.DataConnection;
+import Robot from '../Robot';
+
 export class Lobby {
-  public players: Player[];
+  public players: Player[] = [];
   public started: boolean = false;
-  public protocol: Protocol;
+  public protocol: Protocol = Robot.getInstance().getProtocol();
   public game: Game | undefined;
-  // protocol: Protocol;
-  constructor(protocol: Protocol) {
-    this.players = [];
-    this.protocol = protocol;
-    this.initProtocol(protocol);
+
+  constructor() {
+    this.initProtocol();
   }
 
-  public initProtocol(protocol: Protocol) {
-    protocol.on(PackageType.TRY_JOIN_LOBBY, (obj: any, conn: DataConnection) => {
+  public initProtocol() {
+    this.protocol.on(PackageType.TRY_JOIN_LOBBY, (obj: any, conn: DataConnection) => {
       this.join(Object(obj).username, conn);
     });
-    protocol.on(PackageType.TRY_START_GAME, this.tryStart.bind(this));
-    this.protocol = protocol;
+    this.protocol.on(PackageType.TRY_START_GAME, this.tryStart.bind(this));
   }
 
   public isUsernameExist(username: string) {
@@ -29,13 +27,13 @@ export class Lobby {
     );
   }
 
-  public isConnExist(conn: Conn) {
+  public isConnExist(conn: DataConnection) {
     return (
       this.players.filter((player: Player) => player.conn.peer === conn.peer).length > 0
     );
   }
 
-  public playerUpdateConn(username: string, conn: Conn) {
+  public playerUpdateConn(username: string, conn: DataConnection) {
     let id = -1;
     this.players.forEach((player: Player) => {
       if (player.username === username) {
@@ -46,7 +44,7 @@ export class Lobby {
     return id;
   }
 
-  public playerUpdateUsername(username: string, conn: Conn) {
+  public playerUpdateUsername(username: string, conn: DataConnection) {
     const connId = conn.peer;
     let id = -1;
     this.players.forEach((player) => {
@@ -58,7 +56,7 @@ export class Lobby {
     return id;
   }
 
-  public join(username: string, conn: Conn) {
+  public join(username: string, conn: DataConnection) {
     global.console.log(username + ' ' + conn.peer + ' attempts to join');
     if (this.isUsernameExist(username)) {
       const playerId = this.playerUpdateConn(username, conn);
@@ -114,7 +112,7 @@ export class Lobby {
   public tryStart() {
     if (!this.started) {
       global.console.log(
-        'gamestart',
+        'game start',
         this.players.map((player) => ({
           username: player.username,
           id: player.id,

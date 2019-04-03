@@ -1,8 +1,6 @@
-import { TileInfo, TileType } from 'tone-core/dist/lib';
+import {TileMap, TileType} from 'tone-core/dist/lib';
 
-export type Map = { [k in string]: TileInfo };
-
-const map: Map = {
+const map: TileMap = {
   '1,2': {
     type: TileType.EMPTY,
     height: 1,

@@ -1,7 +1,7 @@
-import { MapGen, Map } from './MapGen';
+import { MapGen } from './MapGen';
 import { Player } from './Player';
 import Conn = PeerJs.DataConnection;
-import { Protocol, PackageType } from 'tone-core/dist/lib';
+import {Protocol, PackageType, TileMap} from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
 import { Unit } from './Unit';
@@ -14,7 +14,7 @@ export class Game {
   public units: { [uuid: string]: Unit };
 
   // building: Array<Building>;
-  public map: Map;
+  public map: TileMap;
   constructor(players: Player[], protocol: Protocol) {
     this.players = players;
     this.protocol = protocol;

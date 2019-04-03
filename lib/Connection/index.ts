@@ -15,5 +15,7 @@ export const protocol = new Protocol();
 
 peer.on('connection', (conn: DataConnection) => {
   conn.serialization = 'none';
-  protocol.add(conn);
+  conn.on('open', () => {
+    protocol.add(conn);
+  });
 });

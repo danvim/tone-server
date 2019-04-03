@@ -11,6 +11,8 @@ var peer = p(ServerConfigs_1.serverPeerName, {
 });
 exports.protocol = new lib_1.Protocol();
 peer.on('connection', function (conn) {
-    conn.serialization = 'none';
-    exports.protocol.add(conn);
+    conn.on('open', function () {
+        conn.serialization = 'none';
+        exports.protocol.add(conn);
+    });
 });

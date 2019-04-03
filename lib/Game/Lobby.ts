@@ -2,6 +2,7 @@ import { Player } from './Player';
 import { Protocol, PackageType } from 'tone-core/dist/lib';
 import Conn = PeerJs.DataConnection;
 import { Game } from '.';
+import DataConnection = PeerJs.DataConnection;
 export class Lobby {
   public players: Player[];
   public started: boolean = false;
@@ -15,7 +16,7 @@ export class Lobby {
   }
 
   public initProtocol(protocol: Protocol) {
-    protocol.on(PackageType.TRY_JOIN_LOBBY, (obj, conn) => {
+    protocol.on(PackageType.TRY_JOIN_LOBBY, (obj: any, conn: DataConnection) => {
       this.join(Object(obj).username, conn);
     });
     protocol.on(PackageType.TRY_START_GAME, this.tryStart.bind(this));
@@ -24,13 +25,13 @@ export class Lobby {
 
   public isUsernameExist(username: string) {
     return (
-      this.players.filter((player) => player.username === username).length > 0
+      this.players.filter((player: Player) => player.username === username).length > 0
     );
   }
 
   public isConnExist(conn: Conn) {
     return (
-      this.players.filter((player) => player.conn.peer === conn.peer).length > 0
+      this.players.filter((player: Player) => player.conn.peer === conn.peer).length > 0
     );
   }
 

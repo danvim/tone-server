@@ -34,9 +34,15 @@ export class Entity extends Thing implements EntityInterface {
   }
 
   public frame(prevTick: number, currTick: number) {
-    this.position = this.position.add(this.velocity.scale(currTick - prevTick));
     if (this.type === EntityType.WORKER && this.workerStrategy) {
       this.workerStrategy.frame(prevTick, currTick);
+    } else {
+      // default action: just move by the velocity
+      this.travelByVelocity(prevTick, currTick);
     }
+  }
+
+  public travelByVelocity(prevTick: number, currTick: number) {
+    this.position = this.position.add(this.velocity.scale(currTick - prevTick));
   }
 }

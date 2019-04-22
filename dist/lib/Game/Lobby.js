@@ -1,26 +1,29 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Player_1 = require("./Player");
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
+var Robot_1 = __importDefault(require("../Robot"));
 var Lobby = /** @class */ (function () {
-    // protocol: Protocol;
-    function Lobby(protocol) {
-        this.started = false;
+    function Lobby() {
         this.players = [];
-        this.protocol = protocol;
-        this.initProtocol(protocol);
+        this.started = false;
+        this.protocol = Robot_1.default.getInstance().getProtocol();
+        this.initProtocol();
     }
-    Lobby.prototype.initProtocol = function (protocol) {
+    Lobby.prototype.initProtocol = function () {
         var _this = this;
-        protocol.on(lib_1.PackageType.TRY_JOIN_LOBBY, function (obj, conn) {
+        this.protocol.on(lib_1.PackageType.TRY_JOIN_LOBBY, function (obj, conn) {
             _this.join(Object(obj).username, conn);
         });
-        protocol.on(lib_1.PackageType.TRY_START_GAME, this.tryStart.bind(this));
-        this.protocol = protocol;
+        this.protocol.on(lib_1.PackageType.TRY_START_GAME, this.tryStart.bind(this));
     };
     Lobby.prototype.isUsernameExist = function (username) {
-        return (this.players.filter(function (player) { return player.username === username; }).length > 0);
+        return (this.players.filter(function (player) { return player.username === username; })
+            .length > 0);
     };
     Lobby.prototype.isConnExist = function (conn) {
         return (this.players.filter(function (player) { return player.conn && player.conn.peer === conn.peer; }).length > 0);
@@ -47,13 +50,13 @@ var Lobby = /** @class */ (function () {
         return id;
     };
     Lobby.prototype.join = function (username, conn) {
-        global.console.log(username + ' ' + conn.peer + ' attemp to join');
+        global.console.log(username + ' ' + conn.peer + ' attempts to join');
         if (this.isUsernameExist(username)) {
             var playerId_1 = this.playerUpdateConn(username, conn);
             if (playerId_1 === -1) {
                 return;
             }
-            var player = this.players.find(function (player) { return player.id === playerId_1; });
+            var player = this.players.find(function (p) { return p.id === playerId_1; });
             this.protocol.emit(lib_1.PackageType.UPDATE_LOBBY, {
                 username: username,
                 playerId: playerId_1,
@@ -99,7 +102,7 @@ var Lobby = /** @class */ (function () {
     };
     Lobby.prototype.tryStart = function () {
         if (!this.started) {
-            global.console.log('gamestart', this.players.map(function (player) { return ({
+            global.console.log('game start', this.players.map(function (player) { return ({
                 username: player.username,
                 id: player.id,
             }); }));

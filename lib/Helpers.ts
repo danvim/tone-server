@@ -1,4 +1,4 @@
-export function now(unit: String): number {
+export function now(unit: string): number {
   const hrTime = process.hrtime();
 
   switch (unit) {

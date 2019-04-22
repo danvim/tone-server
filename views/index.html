@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <script src="https://cdn.jsdelivr.net/npm/peerjs@0.3.20/dist/peer.min.js"></script>
     <title>WebRTC Speed Race</title>
@@ -9,21 +9,20 @@
     <button onclick="check(rtcPkg)">check RTC</button>
   </body>
   <script>
-    var rtcPkg = [];
-    if (window.location.href == "https://webrtc-test.hkustracing.com/") {
+    let rtcPkg = [];
+    if (window.location.href === "https://webrtc-test.hkustracing.com/") {
       peer = new Peer({
         host: "webrtc-test.hkustracing.com",
         port: 443,
         path: "/peer",
         secure: true
       });
-    } else if (window.location.href == "http://localhost:30000/") {
+    } else if (window.location.href === "http://localhost:30000/") {
       peer = new Peer({ host: "localhost", port: 30000, path: "/peer" });
     }
-    let conn = peer.connect("server");
+    let conn = peer.connect("server", {serialization: "none"});
     let printTimeout;
     let startTime;
-    conn.serialization = "none";
     conn.on("open", () => {
       console.log("open RTC");
       conn.send({ message: "hi!" });
@@ -44,7 +43,6 @@
     function testRTC() {
       startTime = Date.now();
       rtcPkg = [];
-      conn.send("test");
       printTimeout = setTimeout(() => {
         console.log(rtcPkg.length);
       }, 100);

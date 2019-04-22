@@ -1,1 +1,1 @@
-export declare function now(unit: String): number;
+export declare function now(unit: string): number;

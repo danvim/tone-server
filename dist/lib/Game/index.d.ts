@@ -1,9 +1,8 @@
 /// <reference types="peerjs" />
 /// <reference types="node" />
-import { Map } from './MapGen';
 import { Player } from './Player';
 import Conn = PeerJs.DataConnection;
-import { Protocol, PackageType } from 'tone-core/dist/lib';
+import { Protocol, PackageType, TileMap } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
 import { Unit } from './Unit';
@@ -19,7 +18,7 @@ export declare class Game {
     units: {
         [uuid: string]: Unit;
     };
-    map: Map;
+    map: TileMap;
     frameTimer: NodeJS.Timeout;
     prevTicks: number;
     constructor(players: Player[], protocol?: Protocol);

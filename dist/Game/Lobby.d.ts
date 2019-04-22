@@ -1,20 +1,20 @@
 /// <reference types="peerjs" />
 import { Player } from './Player';
 import { Protocol } from 'tone-core/dist/lib';
-import Conn = PeerJs.DataConnection;
 import { Game } from '.';
+import DataConnection = PeerJs.DataConnection;
 export declare class Lobby {
     players: Player[];
     started: boolean;
     protocol: Protocol;
     game: Game | undefined;
-    constructor(protocol: Protocol);
-    initProtocol(protocol: Protocol): void;
+    constructor();
+    initProtocol(): void;
     isUsernameExist(username: string): boolean;
-    isConnExist(conn: Conn): boolean;
-    playerUpdateConn(username: string, conn: Conn): number;
-    playerUpdateUsername(username: string, conn: Conn): number;
-    join(username: string, conn: Conn): void;
+    isConnExist(conn: DataConnection): boolean;
+    playerUpdateConn(username: string, conn: DataConnection): number;
+    playerUpdateUsername(username: string, conn: DataConnection): number;
+    join(username: string, conn: DataConnection): void;
     genPlayerId(): number;
     tryStart(): void;
 }

@@ -36,10 +36,16 @@ var Entity = /** @class */ (function (_super) {
         }
     };
     Entity.prototype.frame = function (prevTick, currTick) {
-        this.position = this.position.add(this.velocity.scale(currTick - prevTick));
         if (this.type === Game_1.EntityType.WORKER && this.workerStrategy) {
             this.workerStrategy.frame(prevTick, currTick);
         }
+        else {
+            // default action: just move by the velocity
+            this.travelByVelocity(prevTick, currTick);
+        }
+    };
+    Entity.prototype.travelByVelocity = function (prevTick, currTick) {
+        this.position = this.position.add(this.velocity.scale(currTick - prevTick));
     };
     return Entity;
 }(Thing_1.Thing));

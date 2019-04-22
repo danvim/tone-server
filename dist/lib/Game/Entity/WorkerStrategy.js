@@ -34,6 +34,7 @@ var WorkerStrategy = /** @class */ (function () {
                 this.entity.position = this.job.targetBuilding.tilePosition.toCartesian(lib_1.TILE_SIZE);
             }
             else {
+                this.entity.travelByVelocity(prevTicks, currTicks);
             }
         }
         else {
@@ -46,6 +47,8 @@ var WorkerStrategy = /** @class */ (function () {
             case WorkerState.IDLE:
                 this.job = { targetBuilding: this.findGeneratorToGrab() };
                 this.state = WorkerState.GRABBING;
+                break;
+            // TODO: handle other states
         }
     };
     WorkerStrategy.prototype.findGeneratorToGrab = function () {
@@ -58,7 +61,7 @@ var WorkerStrategy = /** @class */ (function () {
         ];
         var generators = Object.keys(this.game.buildings).filter(function (uuid) {
             var building = _this.game.buildings[uuid];
-            return (building.playerId == _this.entity.playerId &&
+            return (building.playerId === _this.entity.playerId &&
                 generatorTypes.indexOf(building.buildingType) !== -1);
         });
         return this.game.buildings[generators.sort(function (a, b) {

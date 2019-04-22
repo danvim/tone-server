@@ -1,6 +1,6 @@
 import { ThingInterface } from 'tone-core/dist/lib/Game';
 import { Game } from '..';
-const uuid = require("uuid/v4");
+import uuid from 'uuid/v4';
 
 export class Thing implements ThingInterface {
   public game: Game;

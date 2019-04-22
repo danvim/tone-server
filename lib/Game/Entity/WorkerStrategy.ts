@@ -49,6 +49,7 @@ export class WorkerStrategy {
           TILE_SIZE,
         );
       } else {
+        this.entity.travelByVelocity(prevTicks, currTicks);
       }
     } else {
       // the worker have nothing to do, then find some job
@@ -61,6 +62,8 @@ export class WorkerStrategy {
       case WorkerState.IDLE:
         this.job = { targetBuilding: this.findGeneratorToGrab() };
         this.state = WorkerState.GRABBING;
+        break;
+      // TODO: handle other states
     }
   }
 
@@ -75,7 +78,7 @@ export class WorkerStrategy {
       (uuid: string) => {
         const building = this.game.buildings[uuid];
         return (
-          building.playerId == this.entity.playerId &&
+          building.playerId === this.entity.playerId &&
           generatorTypes.indexOf(building.buildingType) !== -1
         );
       },

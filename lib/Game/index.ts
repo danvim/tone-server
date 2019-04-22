@@ -1,4 +1,4 @@
-import { MapGen, Map } from './MapGen';
+import { MapGen } from './MapGen';
 import { Player } from './Player';
 import Conn = PeerJs.DataConnection;
 import {
@@ -7,6 +7,7 @@ import {
   TileType,
   BuildingType,
   Axial,
+  TileMap,
 } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
@@ -23,7 +24,7 @@ export class Game {
   public buildings: { [uuid: string]: Building };
   public entities: { [uuid: string]: Entity };
   public units: { [uuid: string]: Unit };
-  public map: Map;
+  public map: TileMap;
   public frameTimer: NodeJS.Timeout;
 
   // states
@@ -116,13 +117,13 @@ export class Game {
   }
 
   public frame(prevTicks: number, currTicks: number) {
-    Object.keys(this.buildings).forEach((uuid: string) => {
-      const building = this.buildings[uuid];
+    Object.keys(this.buildings).forEach((key: string) => {
+      const building = this.buildings[key];
       building.frame(prevTicks, currTicks);
     });
 
-    Object.keys(this.entities).forEach((uuid: string) => {
-      const entity = this.entities[uuid];
+    Object.keys(this.entities).forEach((key: string) => {
+      const entity = this.entities[key];
       entity.frame(prevTicks, currTicks);
       const [x, z] = entity.position.asArray;
       this.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });

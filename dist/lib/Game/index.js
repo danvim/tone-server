@@ -5,6 +5,7 @@ var lib_1 = require("tone-core/dist/lib");
 var Building_1 = require("./Building");
 var timers_1 = require("timers");
 var Helpers_1 = require("../Helpers");
+var uuid = require("uuid");
 // import { protocol } from '../Connection';
 var Game = /** @class */ (function () {
     // game start
@@ -80,12 +81,12 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.frame = function (prevTicks, currTicks) {
         var _this = this;
-        Object.keys(this.buildings).forEach(function (uuid) {
-            var building = _this.buildings[uuid];
+        Object.keys(this.buildings).forEach(function (key) {
+            var building = _this.buildings[key];
             building.frame(prevTicks, currTicks);
         });
-        Object.keys(this.entities).forEach(function (uuid) {
-            var entity = _this.entities[uuid];
+        Object.keys(this.entities).forEach(function (key) {
+            var entity = _this.entities[key];
             entity.frame(prevTicks, currTicks);
             var _a = entity.position.asArray, x = _a[0], z = _a[1];
             _this.emit(lib_1.PackageType.MOVE_ENTITY, { uuid: uuid, x: x, y: 5, z: z });

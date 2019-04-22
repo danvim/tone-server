@@ -1,27 +1,36 @@
-import express from 'express';
-// @ts-ignore
+declare global {
+  namespace NodeJS {
+    interface Global {
+      File: any;
+      Blob: any;
+      FileReader: any;
+      postMessage: ((k: any[]) => any);
+    }
+  }
+}
+
 global.File = false;
-// @ts-ignore
 // tslint:disable-next-line:no-var-requires
 global.Blob = require('blob-polyfill').Blob;
-// @ts-ignore
 // tslint:disable-next-line:no-var-requires
 global.FileReader = require('filereader');
-import { port } from './ServerConfigs';
-import { protocol } from './Connection';
-import { PackageType } from 'tone-core/dist/lib';
-import { Lobby } from './Game/Lobby';
+global.postMessage = (...arg) => global.console.log(arg);
 
+import express from 'express';
+import { peerPort } from './ServerConfigs';
+import { PackageType } from 'tone-core/dist/lib';
+import Robot from './Robot';
+import { Lobby } from './Game/Lobby';
 // tslint:disable-next-line:no-var-requires
 const { ExpressPeerServer } = require('peer');
 
-const app = express();
-const server = app.listen(port, () => {
-  global.console.log('listening on PORT', port);
-});
+const robot = Robot.getInstance();
 
-// @ts-ignore
-global.postMessage = (...arg) => global.console.log(arg);
+// Express Server
+const app = express();
+const server = app.listen(peerPort, () => {
+  global.console.log('listening on PORT', peerPort);
+});
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
@@ -32,26 +41,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(
-  '/peer',
-  ExpressPeerServer(server, {
-    debug: true,
-  }),
-);
+app.use('/peer', ExpressPeerServer(server, {debug: true}));
 
 app.use('/', express.static('views'));
 
-// app.get("/connected-players", (req, res) =>
-//   res.json(<OptionsJson>Object.keys(robot.getPeer().connections))
-// );
 
-// console.log(process.env.PORT);
+// Game Logic
+const protocol = robot.getProtocol();
 
-// // @ts-ignore
-// global.robot = robot;
+protocol.on(PackageType.CHAT, global.console.log);
 
-protocol.on(PackageType.CHAT, (data) => {
-  global.console.log(data);
-});
-
-const lobby = new Lobby(protocol);
+const lobby = new Lobby();

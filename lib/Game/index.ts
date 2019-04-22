@@ -1,56 +1,136 @@
 import { MapGen, Map } from './MapGen';
 import { Player } from './Player';
 import Conn = PeerJs.DataConnection;
-import { Protocol, PackageType } from 'tone-core/dist/lib';
+import {
+  Protocol,
+  PackageType,
+  TileType,
+  BuildingType,
+  Axial,
+} from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
 import { Unit } from './Unit';
+import { setInterval } from 'timers';
+
+import { now } from '../Helpers';
+import uuid = require('uuid');
+// import { protocol } from '../Connection';
 
 export class Game {
   public players: Player[];
-  public protocol: Protocol;
+  public protocol?: Protocol;
   public buildings: { [uuid: string]: Building };
   public entities: { [uuid: string]: Entity };
   public units: { [uuid: string]: Unit };
-
-  // building: Array<Building>;
   public map: Map;
-  constructor(players: Player[], protocol: Protocol) {
+  public frameTimer: NodeJS.Timeout;
+
+  // states
+  public prevTicks = 0;
+
+  // game start
+  constructor(players: Player[], protocol?: Protocol) {
     this.players = players;
     this.protocol = protocol;
     this.map = MapGen();
-    global.console.log('try update tiles');
-    protocol.emit(PackageType.UPDATE_TILES, { tiles: this.map });
+    // global.console.log('try update tiles');
+    this.emit(PackageType.UPDATE_TILES, { tiles: this.map });
     this.buildings = {};
     this.entities = {};
     this.units = {};
+
+    this.reassignPlayerId();
+    this.initClusterTiles();
+
+    this.frameTimer = setInterval(
+      () => this.frame(this.prevTicks, now('ms')),
+      30,
+    );
   }
+
+  // connection functions
+
+  public emit(packageType: PackageType, object: object) {
+    if (this.protocol) {
+      this.protocol.emit(packageType, object);
+    }
+  }
+
   public mapConnToPlayer(conn: Conn) {
     return this.players.reduce((prev, player) => {
-      if (conn.peer === player.conn.peer) {
+      if (player.conn && conn.peer === player.conn.peer) {
         prev = player;
       }
       return prev;
     });
   }
+
   public initProtocol(protocol: Protocol) {
     // protocol.on(PackageType.TRY_BUILD,);
   }
+
   public rejoin(player: Player) {
     player.emit(PackageType.UPDATE_TILES, { tiles: this.map });
   }
-  public frame() {
-    this.moveAllEntitiesAndUnits();
+
+  // game logic functions
+
+  public terminate() {
+    clearInterval(this.frameTimer);
   }
-  public moveAllEntitiesAndUnits() {
-    const time = 1;
-    Object.keys(this.entities).forEach((uuid: string) => {
-      const entity = this.entities[uuid];
-      entity.position.add(entity.velocity.scale(time));
-      const [x, z] = entity.position.asArray;
-      this.protocol.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
+
+  /**
+   * Make the id of players start from 0 without holes
+   */
+  public reassignPlayerId() {
+    this.players.forEach((player: Player, k: number) => {
+      player.id = k;
+      this.emit(PackageType.UPDATE_LOBBY, {
+        playerId: k,
+        username: player.username,
+        connId: player.conn && player.conn.peer,
+      });
     });
   }
+
+  /**
+   * assign clusters to players
+   */
+  public initClusterTiles() {
+    let initedClusterCount = 0;
+    Object.keys(this.map).forEach((axialString: string) => {
+      const tileInfo = this.map[axialString];
+      if (tileInfo.type === TileType.INFORMATION_CLUSTER) {
+        const playerId = initedClusterCount++;
+        const [q, r] = axialString.split(',').map(Number);
+        const cluster = new Building(
+          this,
+          playerId,
+          BuildingType.SPAWN_POINT,
+          new Axial(q, r),
+        );
+        this.buildings[cluster.uuid] = cluster;
+      }
+    });
+  }
+
+  public frame(prevTicks: number, currTicks: number) {
+    Object.keys(this.buildings).forEach((uuid: string) => {
+      const building = this.buildings[uuid];
+      building.frame(prevTicks, currTicks);
+    });
+
+    Object.keys(this.entities).forEach((uuid: string) => {
+      const entity = this.entities[uuid];
+      entity.frame(prevTicks, currTicks);
+      const [x, z] = entity.position.asArray;
+      this.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
+    });
+
+    this.prevTicks = currTicks;
+  }
+
   public test() {
     //
   }

@@ -19,6 +19,10 @@ const map: Map = {
     type: TileType.EMPTY,
     height: 3,
   },
+  '-1,0': {
+    type: TileType.INFORMATION_CLUSTER,
+    height: 0,
+  },
   '-1,2': {
     type: TileType.EMPTY,
     height: 3,

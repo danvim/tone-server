@@ -30,7 +30,9 @@ export class Lobby {
 
   public isConnExist(conn: Conn) {
     return (
-      this.players.filter((player) => player.conn.peer === conn.peer).length > 0
+      this.players.filter(
+        (player) => player.conn && player.conn.peer === conn.peer,
+      ).length > 0
     );
   }
 
@@ -49,7 +51,7 @@ export class Lobby {
     const connId = conn.peer;
     let id = -1;
     this.players.forEach((player) => {
-      if (player.conn.peer === connId) {
+      if (player.conn && player.conn.peer === connId) {
         player.username = username;
         id = player.id;
       }

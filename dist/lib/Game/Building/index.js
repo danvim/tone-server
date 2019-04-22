@@ -13,18 +13,15 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var lib_1 = require("tone-core/dist/lib");
-var Entity_1 = require("../Entity");
-var Unit = /** @class */ (function (_super) {
-    __extends(Unit, _super);
-    function Unit(game, playerId, type, position, rotation) {
-        var _this = _super.call(this, game, playerId, type, position, rotation) || this;
-        _this.frame = function (prevTick, currTick) {
-            _super.prototype.frame.call(_this, prevTick, currTick);
-        };
-        _this.fightingStyle = lib_1.FightingStyle.PASSIVE;
+var Thing_1 = require("../Thing");
+var Building = /** @class */ (function (_super) {
+    __extends(Building, _super);
+    function Building(game, playerId, buildingType, tilePosition) {
+        var _this = _super.call(this, game, playerId, 100) || this;
+        _this.buildingType = buildingType;
+        _this.tilePosition = tilePosition;
         return _this;
     }
-    return Unit;
-}(Entity_1.Entity));
-exports.Unit = Unit;
+    return Building;
+}(Thing_1.Thing));
+exports.Building = Building;

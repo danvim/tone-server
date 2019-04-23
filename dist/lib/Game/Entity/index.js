@@ -28,11 +28,59 @@ var Entity = /** @class */ (function (_super) {
         _this.speed = 30 / 500;
         return _this;
     }
-    Entity.prototype.frame = function (prevTick, currTick) {
-        this.travelByVelocity(prevTick, currTick);
+    Object.defineProperty(Entity.prototype, "cartesianPos", {
+        get: function () {
+            return this.position;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Entity.prototype.frame = function (prevTicks, currTicks) {
+        // this.travelByVelocity(prevTick, currTick);
+        this.moveToTarget(prevTicks, currTicks);
     };
     Entity.prototype.travelByVelocity = function (prevTick, currTick) {
         this.position = this.position.add(this.velocity.scale(currTick - prevTick));
+    };
+    Entity.prototype.moveToTarget = function (prevTicks, currTicks, target) {
+        if (target) {
+            this.target = target;
+        }
+        if (this.target) {
+            var distanceToTarget = this.position.euclideanDistance(this.target.cartesianPos);
+            if (distanceToTarget < 2) {
+                // perform arrive action
+                this.arrive();
+                this.velocity = new lib_1.Cartesian(0, 0);
+            }
+            else {
+                // update the velocity
+                this.velocity = this.target.cartesianPos.add(this.position.scale(-1));
+                this.velocity = this.velocity.scale(1 / this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0)));
+                this.velocity = this.velocity.scale(this.speed);
+                if (distanceToTarget <
+                    this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0))) {
+                    // avoid overshooting to target position
+                    this.position = this.target.cartesianPos;
+                }
+                else {
+                    this.travelByVelocity(prevTicks, currTicks);
+                }
+            }
+        }
+        else {
+            this.travelByVelocity(prevTicks, currTicks);
+        }
+    };
+    Entity.prototype.setTarget = function (target) {
+        this.target = target;
+    };
+    /**
+     * execute when this is at the target thing
+     * to be overrided by children class
+     */
+    Entity.prototype.arrive = function () {
+        //
     };
     return Entity;
 }(Thing_1.Thing));

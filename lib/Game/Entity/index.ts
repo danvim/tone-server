@@ -9,6 +9,7 @@ export class Entity extends Thing implements EntityInterface {
   public rotation: XyzEuler;
   public velocity: Cartesian;
   public speed: number;
+  public target?: Thing;
   // public unitStrategy?: UnitStrategy;
   constructor(
     game: Game,
@@ -26,11 +27,64 @@ export class Entity extends Thing implements EntityInterface {
     this.speed = 30 / 500;
   }
 
-  public frame(prevTick: number, currTick: number) {
-    this.travelByVelocity(prevTick, currTick);
+  public get cartesianPos(): Cartesian {
+    return this.position;
+  }
+
+  public frame(prevTicks: number, currTicks: number) {
+    // this.travelByVelocity(prevTick, currTick);
+    this.moveToTarget(prevTicks, currTicks);
   }
 
   public travelByVelocity(prevTick: number, currTick: number) {
     this.position = this.position.add(this.velocity.scale(currTick - prevTick));
+  }
+
+  public moveToTarget(prevTicks: number, currTicks: number, target?: Thing) {
+    if (target) {
+      this.target = target;
+    }
+    if (this.target) {
+      const distanceToTarget = this.position.euclideanDistance(
+        this.target.cartesianPos,
+      );
+
+      if (distanceToTarget < 2) {
+        // perform arrive action
+        this.arrive();
+        this.velocity = new Cartesian(0, 0);
+      } else {
+        // update the velocity
+        this.velocity = this.target.cartesianPos.add(this.position.scale(-1));
+        this.velocity = this.velocity.scale(
+          1 / this.velocity.euclideanDistance(new Cartesian(0, 0)),
+        );
+        this.velocity = this.velocity.scale(this.speed);
+
+        if (
+          distanceToTarget <
+          this.velocity.euclideanDistance(new Cartesian(0, 0))
+        ) {
+          // avoid overshooting to target position
+          this.position = this.target.cartesianPos;
+        } else {
+          this.travelByVelocity(prevTicks, currTicks);
+        }
+      }
+    } else {
+      this.travelByVelocity(prevTicks, currTicks);
+    }
+  }
+
+  public setTarget(target: Thing) {
+    this.target = target;
+  }
+
+  /**
+   * execute when this is at the target thing
+   * to be overrided by children class
+   */
+  public arrive() {
+    //
   }
 }

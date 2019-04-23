@@ -1,5 +1,5 @@
 import { BuildingInterface, BuildingType } from 'tone-core/dist/lib/Game';
-import { Axial } from 'tone-core/dist/lib';
+import { Axial, Cartesian } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
 import { ResourceType } from '../../Helpers';
@@ -9,6 +9,7 @@ export declare class Building extends Thing implements BuildingInterface {
     structProgress: number;
     structNeeded: number;
     constructor(game: Game, playerId: number, buildingType: BuildingType, tilePosition: Axial);
+    readonly cartesianPos: Cartesian;
     isFunctional(): boolean;
     frame(prevTicks: number, currTicks: number): void;
     /**

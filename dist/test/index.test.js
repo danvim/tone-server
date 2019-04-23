@@ -52,7 +52,7 @@ describe('game initialize', function () {
             }
             else {
                 var worker = units[0];
-                expect(worker.job && worker.job.targetBuilding.uuid).toBe(game.bases[0].uuid);
+                expect(worker.target && worker.target.uuid).toBe(game.bases[0].uuid);
             }
         });
     });

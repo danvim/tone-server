@@ -23,9 +23,6 @@ var Unit = /** @class */ (function (_super) {
         _this.fightingStyle = lib_1.FightingStyle.PASSIVE;
         return _this;
     }
-    Unit.prototype.frame = function (prevTick, currTick) {
-        this.travelByVelocity(prevTick, currTick);
-    };
     return Unit;
 }(Entity_1.Entity));
 exports.Unit = Unit;

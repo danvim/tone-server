@@ -1,7 +1,6 @@
 import { UnitInterface } from 'tone-core/dist/lib/Game/Unit';
 import {
   Cartesian,
-  FightingStyle,
   XyzEuler,
   EntityType,
   TILE_SIZE,
@@ -12,10 +11,7 @@ import { Unit } from '.';
 import { Entity } from '../Entity';
 import { Building } from '../Building';
 import { ResourceType } from '../../Helpers';
-
-interface WorkerJob {
-  targetBuilding: Building;
-}
+import { Thing } from '../Thing';
 
 enum WorkerState {
   IDLE,
@@ -24,7 +20,6 @@ enum WorkerState {
 }
 
 export class Worker extends Unit {
-  public job: WorkerJob | null;
   public state: WorkerState;
   constructor(
     game: Game,
@@ -33,35 +28,15 @@ export class Worker extends Unit {
     rotation: XyzEuler,
   ) {
     super(game, playerId, EntityType.WORKER, position, rotation);
-    this.job = null;
     this.state = WorkerState.IDLE;
     this.findJob();
   }
 
   public frame(prevTicks: number, currTicks: number) {
-    if (this.job !== null && this.state !== WorkerState.IDLE) {
-      // have job
-      const distanceToTarget = this.position.euclideanDistance(
-        this.job.targetBuilding.tilePosition.toCartesian(TILE_SIZE),
-      );
-
-      if (distanceToTarget < 2) {
-        // perform action to the target
-        this.action();
-        this.findJob();
-      } else if (
-        distanceToTarget < this.velocity.euclideanDistance(new Cartesian(0, 0))
-      ) {
-        // avoid overshooting to target position
-        this.position = this.job.targetBuilding.tilePosition.toCartesian(
-          TILE_SIZE,
-        );
-      } else {
-        this.travelByVelocity(prevTicks, currTicks);
-      }
-    } else {
-      // the worker have nothing to do, then find some job
+    if (this.state === WorkerState.IDLE) {
       this.findJob();
+    } else {
+      super.frame(prevTicks, currTicks);
     }
   }
 
@@ -72,14 +47,14 @@ export class Worker extends Unit {
         if (targetBuilding === false) {
           break;
         }
-        this.job = { targetBuilding };
+        this.setTarget(targetBuilding);
         this.state = WorkerState.GRABBING;
         break;
       }
       // TODO: handle other states
       case WorkerState.DELIVERING: {
         const targetBuilding = this.findBuildingToDeliver();
-        this.job = { targetBuilding };
+        this.setTarget(targetBuilding);
         this.state = WorkerState.DELIVERING;
       }
     }
@@ -144,17 +119,16 @@ export class Worker extends Unit {
     return this.game.buildings[buildingKeys[0]];
   }
 
-  public action() {
-    if (this.job) {
-      if (this.state === WorkerState.DELIVERING) {
-        this.state = WorkerState.IDLE;
-        this.job.targetBuilding.onResouceDelivered(ResourceType.STRUCT, 1);
+  public arrive() {
+    const targetBuilding = this.target as Building;
+    if (this.state === WorkerState.DELIVERING) {
+      this.state = WorkerState.IDLE;
+      targetBuilding.onResouceDelivered(ResourceType.STRUCT, 1);
+      this.findJob();
+    } else if (this.state === WorkerState.GRABBING) {
+      if (targetBuilding.tryGiveResource(ResourceType.STRUCT, 1)) {
+        this.state = WorkerState.DELIVERING;
         this.findJob();
-      } else if (this.state === WorkerState.GRABBING) {
-        if (this.job.targetBuilding.tryGiveResource(ResourceType.STRUCT, 1)) {
-          this.state = WorkerState.DELIVERING;
-          this.findJob();
-        }
       }
     }
   }

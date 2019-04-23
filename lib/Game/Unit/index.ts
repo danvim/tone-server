@@ -21,8 +21,4 @@ export class Unit extends Entity implements UnitInterface {
     this.game.units[this.uuid] = this;
     this.fightingStyle = FightingStyle.PASSIVE;
   }
-
-  public frame(prevTick: number, currTick: number) {
-    this.travelByVelocity(prevTick, currTick);
-  }
 }

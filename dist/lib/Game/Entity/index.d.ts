@@ -8,7 +8,16 @@ export declare class Entity extends Thing implements EntityInterface {
     rotation: XyzEuler;
     velocity: Cartesian;
     speed: number;
+    target?: Thing;
     constructor(game: Game, playerId: number, type: EntityType, position: Cartesian, rotation: XyzEuler);
-    frame(prevTick: number, currTick: number): void;
+    readonly cartesianPos: Cartesian;
+    frame(prevTicks: number, currTicks: number): void;
     travelByVelocity(prevTick: number, currTick: number): void;
+    moveToTarget(prevTicks: number, currTicks: number, target?: Thing): void;
+    setTarget(target: Thing): void;
+    /**
+     * execute when this is at the target thing
+     * to be overrided by children class
+     */
+    arrive(): void;
 }

@@ -29,6 +29,13 @@ var Building = /** @class */ (function (_super) {
         _this.structNeeded = Game_1.BuildingProperty[buildingType].struct;
         return _this;
     }
+    Object.defineProperty(Building.prototype, "cartesianPos", {
+        get: function () {
+            return this.tilePosition.toCartesian(Game_1.TILE_SIZE);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Building.prototype.isFunctional = function () {
         return this.structProgress >= this.structNeeded;
     };

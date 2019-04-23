@@ -26,31 +26,16 @@ var Worker = /** @class */ (function (_super) {
     __extends(Worker, _super);
     function Worker(game, playerId, position, rotation) {
         var _this = _super.call(this, game, playerId, lib_1.EntityType.WORKER, position, rotation) || this;
-        _this.job = null;
         _this.state = WorkerState.IDLE;
         _this.findJob();
         return _this;
     }
     Worker.prototype.frame = function (prevTicks, currTicks) {
-        if (this.job !== null && this.state !== WorkerState.IDLE) {
-            // have job
-            var distanceToTarget = this.position.euclideanDistance(this.job.targetBuilding.tilePosition.toCartesian(lib_1.TILE_SIZE));
-            if (distanceToTarget < 2) {
-                // perform action to the target
-                this.action();
-                this.findJob();
-            }
-            else if (distanceToTarget < this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0))) {
-                // avoid overshooting to target position
-                this.position = this.job.targetBuilding.tilePosition.toCartesian(lib_1.TILE_SIZE);
-            }
-            else {
-                this.travelByVelocity(prevTicks, currTicks);
-            }
+        if (this.state === WorkerState.IDLE) {
+            this.findJob();
         }
         else {
-            // the worker have nothing to do, then find some job
-            this.findJob();
+            _super.prototype.frame.call(this, prevTicks, currTicks);
         }
     };
     Worker.prototype.findJob = function () {
@@ -60,14 +45,14 @@ var Worker = /** @class */ (function (_super) {
                 if (targetBuilding === false) {
                     break;
                 }
-                this.job = { targetBuilding: targetBuilding };
+                this.setTarget(targetBuilding);
                 this.state = WorkerState.GRABBING;
                 break;
             }
             // TODO: handle other states
             case WorkerState.DELIVERING: {
                 var targetBuilding = this.findBuildingToDeliver();
-                this.job = { targetBuilding: targetBuilding };
+                this.setTarget(targetBuilding);
                 this.state = WorkerState.DELIVERING;
             }
         }
@@ -118,18 +103,17 @@ var Worker = /** @class */ (function (_super) {
         }
         return this.game.buildings[buildingKeys[0]];
     };
-    Worker.prototype.action = function () {
-        if (this.job) {
-            if (this.state === WorkerState.DELIVERING) {
-                this.state = WorkerState.IDLE;
-                this.job.targetBuilding.onResouceDelivered(Helpers_1.ResourceType.STRUCT, 1);
+    Worker.prototype.arrive = function () {
+        var targetBuilding = this.target;
+        if (this.state === WorkerState.DELIVERING) {
+            this.state = WorkerState.IDLE;
+            targetBuilding.onResouceDelivered(Helpers_1.ResourceType.STRUCT, 1);
+            this.findJob();
+        }
+        else if (this.state === WorkerState.GRABBING) {
+            if (targetBuilding.tryGiveResource(Helpers_1.ResourceType.STRUCT, 1)) {
+                this.state = WorkerState.DELIVERING;
                 this.findJob();
-            }
-            else if (this.state === WorkerState.GRABBING) {
-                if (this.job.targetBuilding.tryGiveResource(Helpers_1.ResourceType.STRUCT, 1)) {
-                    this.state = WorkerState.DELIVERING;
-                    this.findJob();
-                }
             }
         }
     };

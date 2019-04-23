@@ -2,16 +2,12 @@ import { Cartesian, XyzEuler } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Unit } from '.';
 import { Building } from '../Building';
-interface WorkerJob {
-    targetBuilding: Building;
-}
 declare enum WorkerState {
     IDLE = 0,
     GRABBING = 1,
     DELIVERING = 2
 }
 export declare class Worker extends Unit {
-    job: WorkerJob | null;
     state: WorkerState;
     constructor(game: Game, playerId: number, position: Cartesian, rotation: XyzEuler);
     frame(prevTicks: number, currTicks: number): void;
@@ -22,6 +18,6 @@ export declare class Worker extends Unit {
      */
     findGeneratorToGrab(): Building | false;
     findBuildingToDeliver(): Building;
-    action(): void;
+    arrive(): void;
 }
 export {};

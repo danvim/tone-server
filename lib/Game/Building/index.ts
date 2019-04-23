@@ -2,8 +2,9 @@ import {
   BuildingInterface,
   BuildingType,
   BuildingProperty,
+  TILE_SIZE,
 } from 'tone-core/dist/lib/Game';
-import { Axial } from 'tone-core/dist/lib';
+import { Axial, Cartesian } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
 import { ResourceType } from '../../Helpers';
@@ -27,6 +28,10 @@ export class Building extends Thing implements BuildingInterface {
     this.buildingType = buildingType;
     this.tilePosition = tilePosition;
     this.structNeeded = BuildingProperty[buildingType].struct;
+  }
+
+  public get cartesianPos(): Cartesian {
+    return this.tilePosition.toCartesian(TILE_SIZE);
   }
 
   public isFunctional() {

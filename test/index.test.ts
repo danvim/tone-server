@@ -58,9 +58,7 @@ describe('game initialize', () => {
         expect(units.length).toBe(1);
       } else {
         const worker = units[0] as Worker;
-        expect(worker.job && worker.job.targetBuilding.uuid).toBe(
-          game.bases[0].uuid,
-        );
+        expect(worker.target && worker.target.uuid).toBe(game.bases[0].uuid);
       }
     });
   });

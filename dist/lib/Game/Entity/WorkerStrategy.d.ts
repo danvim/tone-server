@@ -17,6 +17,12 @@ export declare class WorkerStrategy {
     constructor(game: Game, entity: Entity);
     frame(prevTicks: number, currTicks: number): void;
     findJob(): void;
-    findGeneratorToGrab(): Building;
+    /**
+     * Find a generator or the base to collect resouces
+     * currently just base on shortest distance to the worker
+     */
+    findGeneratorToGrab(): Building | false;
+    findBuildingToDeliver(): Building;
+    action(): void;
 }
 export {};

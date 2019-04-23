@@ -9,6 +9,7 @@ export declare class Entity extends Thing implements EntityInterface {
     rotation: XyzEuler;
     velocity: Cartesian;
     workerStrategy?: WorkerStrategy;
+    speed: number;
     constructor(game: Game, playerId: number, type: EntityType, position: Cartesian, rotation: XyzEuler);
     setType(type: EntityType): void;
     frame(prevTick: number, currTick: number): void;

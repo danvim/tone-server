@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Game_1 = require("../lib/Game");
 var Player_1 = require("../lib/Game/Player");
-var Building_1 = require("../lib/Game/Building");
 var lib_1 = require("tone-core/dist/lib");
 var player1 = new Player_1.Player();
 var player2 = new Player_1.Player();
@@ -33,37 +32,17 @@ describe('game initialize', function () {
             expect(spawnpoint0.playerId).toBe(0);
         });
     });
-    var initLength = Object.keys(game.entities).length;
     it('initially no entities', function () {
-        expect(initLength).toBe(0);
+        console.log('0', game.entities);
+        expect(Object.keys(game.entities).length).toBe(0);
     });
-    var structGen = new Building_1.Building(game, 0, lib_1.BuildingType.STRUCT_GENERATOR, new lib_1.Axial(1, 2));
     describe('after 2000ms', function () {
         game.frame(0, 2000);
-        var entities = Object.values(game.entities).filter(function (entity) {
-            return entity.playerId === 0;
-        });
         it('one entity with player id 0', function () {
-            expect(entities.length).toBe(1);
-        });
-        it('the newly spawned worker would want to grab from the base', function () {
-            if (entities.length !== 1) {
-                expect(entities.length).toBe(1);
-            }
-            else {
-                var entity = entities[0];
-                if (!entity.workerStrategy) {
-                    expect(entity.workerStrategy).toBeTruthy();
-                }
-                else {
-                    if (!entity.workerStrategy.job) {
-                        expect(entity.workerStrategy.job).toBeTruthy();
-                    }
-                    else {
-                        expect(entity.workerStrategy.job.targetBuilding.uuid).toBe(game.baseBuildings[0].uuid);
-                    }
-                }
-            }
+            console.log('2000', game.entities);
+            expect(Object.values(game.entities).filter(function (entity) {
+                return entity.playerId === 0;
+            }).length).toBe(1);
         });
     });
 });

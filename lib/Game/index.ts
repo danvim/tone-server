@@ -24,6 +24,7 @@ export class Game {
   public buildings: { [uuid: string]: Building };
   public entities: { [uuid: string]: Entity };
   public units: { [uuid: string]: Unit };
+  public baseBuildings: { [playerId: number]: Building };
   public map: TileMap;
   public frameTimer: NodeJS.Timeout;
 
@@ -40,9 +41,11 @@ export class Game {
     this.buildings = {};
     this.entities = {};
     this.units = {};
+    this.baseBuildings = {};
 
     this.reassignPlayerId();
     this.initClusterTiles();
+    this.initBase();
 
     this.frameTimer = setInterval(
       () => this.frame(this.prevTicks, now('ms')),
@@ -111,9 +114,53 @@ export class Game {
           BuildingType.SPAWN_POINT,
           new Axial(q, r),
         );
-        this.buildings[cluster.uuid] = cluster;
       }
     });
+  }
+
+  public initBase() {
+    const base0 = new Building(this, 0, BuildingType.BASE, new Axial(0, 0));
+    this.baseBuildings[0] = base0;
+  }
+
+  public myBuildings(playerId: number): { [uuid: string]: Building } {
+    const buildings: { [uuid: string]: Building } = {};
+    for (const key in this.buildings) {
+      if (this.buildings[key].playerId === playerId) {
+        buildings[key] = this.buildings[key];
+      }
+    }
+    return buildings;
+  }
+
+  public opponentBuildings(playerId: number): { [uuid: string]: Building } {
+    const buildings: { [uuid: string]: Building } = {};
+    for (const key in this.buildings) {
+      if (this.buildings[key].playerId !== playerId) {
+        buildings[key] = this.buildings[key];
+      }
+    }
+    return buildings;
+  }
+
+  public myEntities(playerId: number): { [uuid: string]: Entity } {
+    const entities: { [uuid: string]: Entity } = {};
+    for (const key in this.entities) {
+      if (this.entities[key].playerId === playerId) {
+        entities[key] = this.entities[key];
+      }
+    }
+    return entities;
+  }
+
+  public opponentEntities(playerId: number): { [uuid: string]: Entity } {
+    const entities: { [uuid: string]: Entity } = {};
+    for (const key in this.entities) {
+      if (this.entities[key].playerId !== playerId) {
+        entities[key] = this.entities[key];
+      }
+    }
+    return entities;
   }
 
   public frame(prevTicks: number, currTicks: number) {

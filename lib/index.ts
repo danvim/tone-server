@@ -4,7 +4,7 @@ declare global {
       File: any;
       Blob: any;
       FileReader: any;
-      postMessage: ((k: any[]) => any);
+      postMessage: (k: any[]) => any;
     }
   }
 }
@@ -41,10 +41,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/peer', ExpressPeerServer(server, {debug: true}));
+app.use('/peer', ExpressPeerServer(server, { debug: true }));
 
 app.use('/', express.static('views'));
-
 
 // Game Logic
 const protocol = robot.getProtocol();

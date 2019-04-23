@@ -4,7 +4,7 @@ declare global {
             File: any;
             Blob: any;
             FileReader: any;
-            postMessage: ((k: any[]) => any);
+            postMessage: (k: any[]) => any;
         }
     }
 }

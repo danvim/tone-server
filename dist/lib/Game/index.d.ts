@@ -18,6 +18,9 @@ export declare class Game {
     units: {
         [uuid: string]: Unit;
     };
+    baseBuildings: {
+        [playerId: number]: Building;
+    };
     map: TileMap;
     frameTimer: NodeJS.Timeout;
     prevTicks: number;
@@ -35,6 +38,19 @@ export declare class Game {
      * assign clusters to players
      */
     initClusterTiles(): void;
+    initBase(): void;
+    myBuildings(playerId: number): {
+        [uuid: string]: Building;
+    };
+    opponentBuildings(playerId: number): {
+        [uuid: string]: Building;
+    };
+    myEntities(playerId: number): {
+        [uuid: string]: Entity;
+    };
+    opponentEntities(playerId: number): {
+        [uuid: string]: Entity;
+    };
     frame(prevTicks: number, currTicks: number): void;
     test(): void;
 }

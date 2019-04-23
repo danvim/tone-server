@@ -21,8 +21,10 @@ var Game = /** @class */ (function () {
         this.buildings = {};
         this.entities = {};
         this.units = {};
+        this.baseBuildings = {};
         this.reassignPlayerId();
         this.initClusterTiles();
+        this.initBase();
         this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 30);
     }
     // connection functions
@@ -75,9 +77,48 @@ var Game = /** @class */ (function () {
                 var playerId = initedClusterCount++;
                 var _a = axialString.split(',').map(Number), q = _a[0], r = _a[1];
                 var cluster = new Building_1.Building(_this, playerId, lib_1.BuildingType.SPAWN_POINT, new lib_1.Axial(q, r));
-                _this.buildings[cluster.uuid] = cluster;
             }
         });
+    };
+    Game.prototype.initBase = function () {
+        var base0 = new Building_1.Building(this, 0, lib_1.BuildingType.BASE, new lib_1.Axial(0, 0));
+        this.baseBuildings[0] = base0;
+    };
+    Game.prototype.myBuildings = function (playerId) {
+        var buildings = {};
+        for (var key in this.buildings) {
+            if (this.buildings[key].playerId === playerId) {
+                buildings[key] = this.buildings[key];
+            }
+        }
+        return buildings;
+    };
+    Game.prototype.opponentBuildings = function (playerId) {
+        var buildings = {};
+        for (var key in this.buildings) {
+            if (this.buildings[key].playerId !== playerId) {
+                buildings[key] = this.buildings[key];
+            }
+        }
+        return buildings;
+    };
+    Game.prototype.myEntities = function (playerId) {
+        var entities = {};
+        for (var key in this.entities) {
+            if (this.entities[key].playerId === playerId) {
+                entities[key] = this.entities[key];
+            }
+        }
+        return entities;
+    };
+    Game.prototype.opponentEntities = function (playerId) {
+        var entities = {};
+        for (var key in this.entities) {
+            if (this.entities[key].playerId !== playerId) {
+                entities[key] = this.entities[key];
+            }
+        }
+        return entities;
     };
     Game.prototype.frame = function (prevTicks, currTicks) {
         var _this = this;

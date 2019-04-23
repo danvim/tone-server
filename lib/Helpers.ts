@@ -18,3 +18,9 @@ export function now(unit: string): number {
       return now('nano');
   }
 }
+
+export enum ResourceType {
+  STRUCT,
+  TRAINING_DATA,
+  PRIME_DATA,
+}

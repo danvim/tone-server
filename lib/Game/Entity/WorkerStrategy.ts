@@ -2,6 +2,8 @@ import { Entity } from '.';
 import { Game } from '..';
 import { Cartesian, TILE_SIZE, BuildingType } from 'tone-core/dist/lib';
 import { Building } from '../Building';
+import { worker } from 'cluster';
+import { ResourceType } from '../../Helpers';
 
 interface WorkerJob {
   targetBuilding: Building;
@@ -23,6 +25,7 @@ export class WorkerStrategy {
     this.entity = entity;
     this.job = null;
     this.state = WorkerState.IDLE;
+    this.findJob();
   }
 
   public frame(prevTicks: number, currTicks: number) {
@@ -34,11 +37,7 @@ export class WorkerStrategy {
 
       if (distanceToTarget < 2) {
         // perform action to the target
-        if (this.state === WorkerState.DELIVERING) {
-          this.state = WorkerState.IDLE;
-        } else if (this.state === WorkerState.GRABBING) {
-          this.state = WorkerState.DELIVERING;
-        }
+        this.action();
         this.findJob();
       } else if (
         distanceToTarget <
@@ -59,30 +58,49 @@ export class WorkerStrategy {
 
   public findJob() {
     switch (this.state) {
-      case WorkerState.IDLE:
-        this.job = { targetBuilding: this.findGeneratorToGrab() };
+      case WorkerState.IDLE: {
+        const targetBuilding = this.findGeneratorToGrab();
+        if (targetBuilding === false) {
+          break;
+        }
+        this.job = { targetBuilding };
         this.state = WorkerState.GRABBING;
         break;
+      }
       // TODO: handle other states
+      case WorkerState.DELIVERING: {
+        const targetBuilding = this.findBuildingToDeliver();
+        this.job = { targetBuilding };
+        this.state = WorkerState.DELIVERING;
+      }
     }
   }
 
-  public findGeneratorToGrab() {
+  /**
+   * Find a generator or the base to collect resouces
+   * currently just base on shortest distance to the worker
+   */
+  public findGeneratorToGrab(): Building | false {
     const generatorTypes = [
       BuildingType.PRIME_DATA_GENERATOR,
       BuildingType.STRUCT_GENERATOR,
       BuildingType.TRAINING_DATA_GENERATOR,
       BuildingType.SHIELD_GENERATOR,
+      BuildingType.BASE,
     ];
     const generators = Object.keys(this.game.buildings).filter(
       (uuid: string) => {
         const building = this.game.buildings[uuid];
         return (
           building.playerId === this.entity.playerId &&
-          generatorTypes.indexOf(building.buildingType) !== -1
+          generatorTypes.indexOf(building.buildingType) !== -1 &&
+          building.isFunctional()
         );
       },
     );
+    if (generators.length === 0) {
+      return false;
+    }
     return this.game.buildings[
       generators.sort((a: string, b: string) => {
         return (
@@ -95,5 +113,40 @@ export class WorkerStrategy {
         );
       })[0]
     ];
+  }
+
+  public findBuildingToDeliver() {
+    const buildingKeys = Object.keys(this.game.buildings).filter(
+      (uuid: string) => {
+        const building = this.game.buildings[uuid];
+        return (
+          building.playerId === this.entity.playerId &&
+          building.structProgress < building.structNeeded
+        );
+      },
+    );
+    if (buildingKeys.length === 0) {
+      return Object.values(this.game.buildings).filter(
+        (building: Building) =>
+          building.buildingType === BuildingType.BASE &&
+          building.playerId === this.entity.playerId,
+      )[0];
+    }
+    return this.game.buildings[buildingKeys[0]];
+  }
+
+  public action() {
+    if (this.job) {
+      if (this.state === WorkerState.DELIVERING) {
+        this.state = WorkerState.IDLE;
+        this.job.targetBuilding.onResouceDelivered(ResourceType.STRUCT, 1);
+        this.findJob();
+      } else if (this.state === WorkerState.GRABBING) {
+        if (this.job.targetBuilding.tryGiveResource(ResourceType.STRUCT, 1)) {
+          this.state = WorkerState.DELIVERING;
+          this.findJob();
+        }
+      }
+    }
   }
 }

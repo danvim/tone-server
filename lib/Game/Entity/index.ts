@@ -10,6 +10,7 @@ export class Entity extends Thing implements EntityInterface {
   public rotation: XyzEuler;
   public velocity: Cartesian;
   public workerStrategy?: WorkerStrategy;
+  public speed: number;
   // public unitStrategy?: UnitStrategy;
   constructor(
     game: Game,
@@ -19,11 +20,13 @@ export class Entity extends Thing implements EntityInterface {
     rotation: XyzEuler,
   ) {
     super(game, playerId, 100);
+    this.game.entities[this.uuid] = this;
     this.type = type;
     this.setType(type);
     this.position = position;
     this.rotation = rotation;
     this.velocity = new Cartesian(0, 0);
+    this.speed = 30 / 500;
   }
 
   public setType(type: EntityType) {

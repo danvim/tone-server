@@ -22,11 +22,13 @@ var Entity = /** @class */ (function (_super) {
     // public unitStrategy?: UnitStrategy;
     function Entity(game, playerId, type, position, rotation) {
         var _this = _super.call(this, game, playerId, 100) || this;
+        _this.game.entities[_this.uuid] = _this;
         _this.type = type;
         _this.setType(type);
         _this.position = position;
         _this.rotation = rotation;
         _this.velocity = new lib_1.Cartesian(0, 0);
+        _this.speed = 30 / 500;
         return _this;
     }
     Entity.prototype.setType = function (type) {

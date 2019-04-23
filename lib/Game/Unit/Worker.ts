@@ -1,8 +1,16 @@
-import { Entity } from '.';
+import { UnitInterface } from 'tone-core/dist/lib/Game/Unit';
+import {
+  Cartesian,
+  FightingStyle,
+  XyzEuler,
+  EntityType,
+  TILE_SIZE,
+  BuildingType,
+} from 'tone-core/dist/lib';
 import { Game } from '..';
-import { Cartesian, TILE_SIZE, BuildingType } from 'tone-core/dist/lib';
+import { Unit } from '.';
+import { Entity } from '../Entity';
 import { Building } from '../Building';
-import { worker } from 'cluster';
 import { ResourceType } from '../../Helpers';
 
 interface WorkerJob {
@@ -15,14 +23,16 @@ enum WorkerState {
   DELIVERING,
 }
 
-export class WorkerStrategy {
-  public game: Game;
-  public entity: Entity;
+export class Worker extends Unit {
   public job: WorkerJob | null;
   public state: WorkerState;
-  constructor(game: Game, entity: Entity) {
-    this.game = game;
-    this.entity = entity;
+  constructor(
+    game: Game,
+    playerId: number,
+    position: Cartesian,
+    rotation: XyzEuler,
+  ) {
+    super(game, playerId, EntityType.WORKER, position, rotation);
     this.job = null;
     this.state = WorkerState.IDLE;
     this.findJob();
@@ -31,7 +41,7 @@ export class WorkerStrategy {
   public frame(prevTicks: number, currTicks: number) {
     if (this.job !== null && this.state !== WorkerState.IDLE) {
       // have job
-      const distanceToTarget = this.entity.position.euclideanDistance(
+      const distanceToTarget = this.position.euclideanDistance(
         this.job.targetBuilding.tilePosition.toCartesian(TILE_SIZE),
       );
 
@@ -40,15 +50,14 @@ export class WorkerStrategy {
         this.action();
         this.findJob();
       } else if (
-        distanceToTarget <
-        this.entity.velocity.euclideanDistance(new Cartesian(0, 0))
+        distanceToTarget < this.velocity.euclideanDistance(new Cartesian(0, 0))
       ) {
         // avoid overshooting to target position
-        this.entity.position = this.job.targetBuilding.tilePosition.toCartesian(
+        this.position = this.job.targetBuilding.tilePosition.toCartesian(
           TILE_SIZE,
         );
       } else {
-        this.entity.travelByVelocity(prevTicks, currTicks);
+        this.travelByVelocity(prevTicks, currTicks);
       }
     } else {
       // the worker have nothing to do, then find some job
@@ -92,7 +101,7 @@ export class WorkerStrategy {
       (uuid: string) => {
         const building = this.game.buildings[uuid];
         return (
-          building.playerId === this.entity.playerId &&
+          building.playerId === this.playerId &&
           generatorTypes.indexOf(building.buildingType) !== -1 &&
           building.isFunctional()
         );
@@ -106,10 +115,10 @@ export class WorkerStrategy {
         return (
           this.game.buildings[a].tilePosition
             .toCartesian(TILE_SIZE)
-            .euclideanDistance(this.entity.position) -
+            .euclideanDistance(this.position) -
           this.game.buildings[b].tilePosition
             .toCartesian(TILE_SIZE)
-            .euclideanDistance(this.entity.position)
+            .euclideanDistance(this.position)
         );
       })[0]
     ];
@@ -120,7 +129,7 @@ export class WorkerStrategy {
       (uuid: string) => {
         const building = this.game.buildings[uuid];
         return (
-          building.playerId === this.entity.playerId &&
+          building.playerId === this.playerId &&
           building.structProgress < building.structNeeded
         );
       },
@@ -129,7 +138,7 @@ export class WorkerStrategy {
       return Object.values(this.game.buildings).filter(
         (building: Building) =>
           building.buildingType === BuildingType.BASE &&
-          building.playerId === this.entity.playerId,
+          building.playerId === this.playerId,
       )[0];
     }
     return this.game.buildings[buildingKeys[0]];

@@ -1,8 +1,10 @@
 import { Game } from '../lib/Game';
 import { Player } from '../lib/Game/Player';
 import { Building } from '../lib/Game/Building';
-import { BuildingType, Axial } from 'tone-core/dist/lib';
+import { BuildingType, Axial, EntityType } from 'tone-core/dist/lib';
 import { Entity } from '../lib/Game/Entity';
+import { Worker } from '../lib/Game/Unit/Worker';
+import { Unit } from '../lib/Game/Unit';
 
 const player1 = new Player();
 const player2 = new Player();
@@ -33,8 +35,8 @@ describe('game initialize', () => {
       expect(spawnpoint0.playerId).toBe(0);
     });
   });
-  const initLength = Object.keys(game.entities).length;
-  it('initially no entities', () => {
+  const initLength = Object.keys(game.units).length;
+  it('initially no units', () => {
     expect(initLength).toBe(0);
   });
   const structGen = new Building(
@@ -45,28 +47,20 @@ describe('game initialize', () => {
   );
   describe('after 2000ms', () => {
     game.frame(0, 2000);
-    const entities = Object.values(game.entities).filter((entity: Entity) => {
+    const units = Object.values(game.units).filter((entity: Unit) => {
       return entity.playerId === 0;
     });
     it('one entity with player id 0', () => {
-      expect(entities.length).toBe(1);
+      expect(units.length).toBe(1);
     });
     it('the newly spawned worker would want to grab from the base', () => {
-      if (entities.length !== 1) {
-        expect(entities.length).toBe(1);
+      if (units.length !== 1) {
+        expect(units.length).toBe(1);
       } else {
-        const entity = entities[0];
-        if (!entity.workerStrategy) {
-          expect(entity.workerStrategy).toBeTruthy();
-        } else {
-          if (!entity.workerStrategy.job) {
-            expect(entity.workerStrategy.job).toBeTruthy();
-          } else {
-            expect(entity.workerStrategy.job.targetBuilding.uuid).toBe(
-              game.baseBuildings[0].uuid,
-            );
-          }
-        }
+        const worker = units[0] as Worker;
+        expect(worker.job && worker.job.targetBuilding.uuid).toBe(
+          game.bases[0].uuid,
+        );
       }
     });
   });

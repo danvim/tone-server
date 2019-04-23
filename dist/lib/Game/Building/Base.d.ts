@@ -1,0 +1,17 @@
+import { BuildingInterface } from 'tone-core/dist/lib/Game';
+import { Axial } from 'tone-core/dist/lib';
+import { Game } from '..';
+import { Building } from '.';
+import { PeriodStrategy } from './PeroidStrategy';
+import { ResourceType } from '../../Helpers';
+export declare class Base extends Building implements BuildingInterface {
+    periodStrategy: PeriodStrategy;
+    structStorage: number;
+    trainingDataStorage: number;
+    primeDataStorage: number;
+    constructor(game: Game, playerId: number, tilePosition: Axial);
+    frame(prevTicks: number, currTicks: number): void;
+    generateStruct: () => void;
+    onResouceDelivered(type: ResourceType, amount: number): number;
+    tryGiveResource(type: ResourceType, amount: number): number;
+}

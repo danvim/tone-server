@@ -18,10 +18,11 @@ export class Unit extends Entity implements UnitInterface {
     rotation: XyzEuler,
   ) {
     super(game, playerId, type, position, rotation);
+    this.game.units[this.uuid] = this;
     this.fightingStyle = FightingStyle.PASSIVE;
   }
 
-  public frame = (prevTick: number, currTick: number) => {
-    super.frame(prevTick, currTick);
+  public frame(prevTick: number, currTick: number) {
+    this.travelByVelocity(prevTick, currTick);
   }
 }

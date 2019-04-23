@@ -33,36 +33,26 @@ describe('game initialize', function () {
             expect(spawnpoint0.playerId).toBe(0);
         });
     });
-    var initLength = Object.keys(game.entities).length;
-    it('initially no entities', function () {
+    var initLength = Object.keys(game.units).length;
+    it('initially no units', function () {
         expect(initLength).toBe(0);
     });
     var structGen = new Building_1.Building(game, 0, lib_1.BuildingType.STRUCT_GENERATOR, new lib_1.Axial(1, 2));
     describe('after 2000ms', function () {
         game.frame(0, 2000);
-        var entities = Object.values(game.entities).filter(function (entity) {
+        var units = Object.values(game.units).filter(function (entity) {
             return entity.playerId === 0;
         });
         it('one entity with player id 0', function () {
-            expect(entities.length).toBe(1);
+            expect(units.length).toBe(1);
         });
         it('the newly spawned worker would want to grab from the base', function () {
-            if (entities.length !== 1) {
-                expect(entities.length).toBe(1);
+            if (units.length !== 1) {
+                expect(units.length).toBe(1);
             }
             else {
-                var entity = entities[0];
-                if (!entity.workerStrategy) {
-                    expect(entity.workerStrategy).toBeTruthy();
-                }
-                else {
-                    if (!entity.workerStrategy.job) {
-                        expect(entity.workerStrategy.job).toBeTruthy();
-                    }
-                    else {
-                        expect(entity.workerStrategy.job.targetBuilding.uuid).toBe(game.baseBuildings[0].uuid);
-                    }
-                }
+                var worker = units[0];
+                expect(worker.job && worker.job.targetBuilding.uuid).toBe(game.bases[0].uuid);
             }
         });
     });

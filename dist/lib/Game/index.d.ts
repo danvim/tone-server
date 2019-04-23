@@ -6,6 +6,7 @@ import { Protocol, PackageType, TileMap } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
 import { Unit } from './Unit';
+import { Base } from './Building/Base';
 export declare class Game {
     players: Player[];
     protocol?: Protocol;
@@ -18,8 +19,8 @@ export declare class Game {
     units: {
         [uuid: string]: Unit;
     };
-    baseBuildings: {
-        [playerId: number]: Building;
+    bases: {
+        [playerId: number]: Base;
     };
     map: TileMap;
     frameTimer: NodeJS.Timeout;
@@ -50,6 +51,12 @@ export declare class Game {
     };
     opponentEntities(playerId: number): {
         [uuid: string]: Entity;
+    };
+    myUnits(playerId: number): {
+        [uuid: string]: Unit;
+    };
+    opponentUnits(playerId: number): {
+        [uuid: string]: Unit;
     };
     frame(prevTicks: number, currTicks: number): void;
     test(): void;

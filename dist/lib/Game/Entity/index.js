@@ -13,10 +13,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Game_1 = require("tone-core/dist/lib/Game");
 var lib_1 = require("tone-core/dist/lib");
 var Thing_1 = require("../Thing");
-var WorkerStrategy_1 = require("./WorkerStrategy");
 var Entity = /** @class */ (function (_super) {
     __extends(Entity, _super);
     // public unitStrategy?: UnitStrategy;
@@ -24,27 +22,14 @@ var Entity = /** @class */ (function (_super) {
         var _this = _super.call(this, game, playerId, 100) || this;
         _this.game.entities[_this.uuid] = _this;
         _this.type = type;
-        _this.setType(type);
         _this.position = position;
         _this.rotation = rotation;
         _this.velocity = new lib_1.Cartesian(0, 0);
         _this.speed = 30 / 500;
         return _this;
     }
-    Entity.prototype.setType = function (type) {
-        this.type = type;
-        if (type === Game_1.EntityType.WORKER) {
-            this.workerStrategy = new WorkerStrategy_1.WorkerStrategy(this.game, this);
-        }
-    };
     Entity.prototype.frame = function (prevTick, currTick) {
-        if (this.type === Game_1.EntityType.WORKER && this.workerStrategy) {
-            this.workerStrategy.frame(prevTick, currTick);
-        }
-        else {
-            // default action: just move by the velocity
-            this.travelByVelocity(prevTick, currTick);
-        }
+        this.travelByVelocity(prevTick, currTick);
     };
     Entity.prototype.travelByVelocity = function (prevTick, currTick) {
         this.position = this.position.add(this.velocity.scale(currTick - prevTick));

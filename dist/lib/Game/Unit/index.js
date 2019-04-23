@@ -19,12 +19,13 @@ var Unit = /** @class */ (function (_super) {
     __extends(Unit, _super);
     function Unit(game, playerId, type, position, rotation) {
         var _this = _super.call(this, game, playerId, type, position, rotation) || this;
-        _this.frame = function (prevTick, currTick) {
-            _super.prototype.frame.call(_this, prevTick, currTick);
-        };
+        _this.game.units[_this.uuid] = _this;
         _this.fightingStyle = lib_1.FightingStyle.PASSIVE;
         return _this;
     }
+    Unit.prototype.frame = function (prevTick, currTick) {
+        this.travelByVelocity(prevTick, currTick);
+    };
     return Unit;
 }(Entity_1.Entity));
 exports.Unit = Unit;

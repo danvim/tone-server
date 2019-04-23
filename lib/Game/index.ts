@@ -16,6 +16,8 @@ import { setInterval } from 'timers';
 
 import { now } from '../Helpers';
 import uuid = require('uuid');
+import { SpawnPoint } from './Building/SpawnPoint';
+import { Base } from './Building/Base';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -24,7 +26,7 @@ export class Game {
   public buildings: { [uuid: string]: Building };
   public entities: { [uuid: string]: Entity };
   public units: { [uuid: string]: Unit };
-  public baseBuildings: { [playerId: number]: Building };
+  public bases: { [playerId: number]: Base };
   public map: TileMap;
   public frameTimer: NodeJS.Timeout;
 
@@ -41,7 +43,7 @@ export class Game {
     this.buildings = {};
     this.entities = {};
     this.units = {};
-    this.baseBuildings = {};
+    this.bases = {};
 
     this.reassignPlayerId();
     this.initClusterTiles();
@@ -108,19 +110,14 @@ export class Game {
       if (tileInfo.type === TileType.INFORMATION_CLUSTER) {
         const playerId = initedClusterCount++;
         const [q, r] = axialString.split(',').map(Number);
-        const cluster = new Building(
-          this,
-          playerId,
-          BuildingType.SPAWN_POINT,
-          new Axial(q, r),
-        );
+        const cluster = new SpawnPoint(this, playerId, new Axial(q, r));
       }
     });
   }
 
   public initBase() {
-    const base0 = new Building(this, 0, BuildingType.BASE, new Axial(0, 0));
-    this.baseBuildings[0] = base0;
+    const base0 = new Base(this, 0, new Axial(0, 0));
+    this.bases[0] = base0;
   }
 
   public myBuildings(playerId: number): { [uuid: string]: Building } {
@@ -163,6 +160,26 @@ export class Game {
     return entities;
   }
 
+  public myUnits(playerId: number): { [uuid: string]: Unit } {
+    const units: { [uuid: string]: Unit } = {};
+    for (const key in this.units) {
+      if (this.units[key].playerId === playerId) {
+        units[key] = this.units[key];
+      }
+    }
+    return units;
+  }
+
+  public opponentUnits(playerId: number): { [uuid: string]: Unit } {
+    const units: { [uuid: string]: Unit } = {};
+    for (const key in this.units) {
+      if (this.units[key].playerId !== playerId) {
+        units[key] = this.units[key];
+      }
+    }
+    return units;
+  }
+
   public frame(prevTicks: number, currTicks: number) {
     Object.keys(this.buildings).forEach((key: string) => {
       const building = this.buildings[key];
@@ -173,6 +190,13 @@ export class Game {
       const entity = this.entities[key];
       entity.frame(prevTicks, currTicks);
       const [x, z] = entity.position.asArray;
+      this.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
+    });
+
+    Object.keys(this.units).forEach((key: string) => {
+      const unit = this.units[key];
+      unit.frame(prevTicks, currTicks);
+      const [x, z] = unit.position.asArray;
       this.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
     });
 

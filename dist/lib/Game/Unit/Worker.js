@@ -21,22 +21,25 @@ var WorkerState;
     WorkerState[WorkerState["IDLE"] = 0] = "IDLE";
     WorkerState[WorkerState["GRABBING"] = 1] = "GRABBING";
     WorkerState[WorkerState["DELIVERING"] = 2] = "DELIVERING";
-})(WorkerState || (WorkerState = {}));
+})(WorkerState = exports.WorkerState || (exports.WorkerState = {}));
 var Worker = /** @class */ (function (_super) {
     __extends(Worker, _super);
     function Worker(game, playerId, position, rotation) {
         var _this = _super.call(this, game, playerId, lib_1.EntityType.WORKER, position, rotation) || this;
         _this.state = WorkerState.IDLE;
-        _this.findJob();
         return _this;
     }
     Worker.prototype.frame = function (prevTicks, currTicks) {
         if (this.state === WorkerState.IDLE) {
+            console.log(this.position);
             this.findJob();
+            console.log('worker find job', this.position);
         }
         else {
+            console.log('worker frame');
             _super.prototype.frame.call(this, prevTicks, currTicks);
         }
+        console.log(this.position);
     };
     Worker.prototype.findJob = function () {
         switch (this.state) {

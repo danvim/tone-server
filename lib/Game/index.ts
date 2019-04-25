@@ -28,7 +28,7 @@ export class Game {
   public units: { [uuid: string]: Unit };
   public bases: { [playerId: number]: Base };
   public map: TileMap;
-  public frameTimer: NodeJS.Timeout;
+  public frameTimer?: NodeJS.Timeout;
 
   // states
   public prevTicks = 0;
@@ -49,10 +49,10 @@ export class Game {
     this.initClusterTiles();
     this.initBase();
 
-    this.frameTimer = setInterval(
-      () => this.frame(this.prevTicks, now('ms')),
-      30,
-    );
+    // this.frameTimer = setInterval(
+    //   () => this.frame(this.prevTicks, now('ms')),
+    //   30,
+    // );
   }
 
   // connection functions
@@ -83,7 +83,9 @@ export class Game {
   // game logic functions
 
   public terminate() {
-    clearInterval(this.frameTimer);
+    if (this.frameTimer) {
+      clearInterval(this.frameTimer);
+    }
   }
 
   /**
@@ -181,6 +183,9 @@ export class Game {
   }
 
   public frame(prevTicks: number, currTicks: number) {
+    // if (currTicks <= prevTicks) {
+    //   return; // ignore invalid ticks
+    // }
     Object.keys(this.buildings).forEach((key: string) => {
       const building = this.buildings[key];
       building.frame(prevTicks, currTicks);
@@ -190,13 +195,6 @@ export class Game {
       const entity = this.entities[key];
       entity.frame(prevTicks, currTicks);
       const [x, z] = entity.position.asArray;
-      this.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
-    });
-
-    Object.keys(this.units).forEach((key: string) => {
-      const unit = this.units[key];
-      unit.frame(prevTicks, currTicks);
-      const [x, z] = unit.position.asArray;
       this.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
     });
 

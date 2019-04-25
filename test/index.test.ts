@@ -1,8 +1,7 @@
 import { Game } from '../lib/Game';
 import { Player } from '../lib/Game/Player';
 import { Building } from '../lib/Game/Building';
-import { BuildingType, Axial, EntityType } from 'tone-core/dist/lib';
-import { Entity } from '../lib/Game/Entity';
+import { BuildingType, Axial } from 'tone-core/dist/lib';
 import { Worker } from '../lib/Game/Unit/Worker';
 import { Unit } from '../lib/Game/Unit';
 

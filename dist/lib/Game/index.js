@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var MapGen_1 = require("./MapGen");
 var lib_1 = require("tone-core/dist/lib");
-var timers_1 = require("timers");
-var Helpers_1 = require("../Helpers");
 var uuid = require("uuid");
 var SpawnPoint_1 = require("./Building/SpawnPoint");
 var Base_1 = require("./Building/Base");
@@ -11,7 +9,6 @@ var Base_1 = require("./Building/Base");
 var Game = /** @class */ (function () {
     // game start
     function Game(players, protocol) {
-        var _this = this;
         // states
         this.prevTicks = 0;
         this.players = players;
@@ -26,7 +23,10 @@ var Game = /** @class */ (function () {
         this.reassignPlayerId();
         this.initClusterTiles();
         this.initBase();
-        this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 30);
+        // this.frameTimer = setInterval(
+        //   () => this.frame(this.prevTicks, now('ms')),
+        //   30,
+        // );
     }
     // connection functions
     Game.prototype.emit = function (packageType, object) {
@@ -50,7 +50,9 @@ var Game = /** @class */ (function () {
     };
     // game logic functions
     Game.prototype.terminate = function () {
-        clearInterval(this.frameTimer);
+        if (this.frameTimer) {
+            clearInterval(this.frameTimer);
+        }
     };
     /**
      * Make the id of players start from 0 without holes
@@ -141,6 +143,9 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.frame = function (prevTicks, currTicks) {
         var _this = this;
+        // if (currTicks <= prevTicks) {
+        //   return; // ignore invalid ticks
+        // }
         Object.keys(this.buildings).forEach(function (key) {
             var building = _this.buildings[key];
             building.frame(prevTicks, currTicks);
@@ -149,12 +154,6 @@ var Game = /** @class */ (function () {
             var entity = _this.entities[key];
             entity.frame(prevTicks, currTicks);
             var _a = entity.position.asArray, x = _a[0], z = _a[1];
-            _this.emit(lib_1.PackageType.MOVE_ENTITY, { uuid: uuid, x: x, y: 5, z: z });
-        });
-        Object.keys(this.units).forEach(function (key) {
-            var unit = _this.units[key];
-            unit.frame(prevTicks, currTicks);
-            var _a = unit.position.asArray, x = _a[0], z = _a[1];
             _this.emit(lib_1.PackageType.MOVE_ENTITY, { uuid: uuid, x: x, y: 5, z: z });
         });
         this.prevTicks = currTicks;

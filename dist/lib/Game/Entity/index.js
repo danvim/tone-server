@@ -43,6 +43,7 @@ var Entity = /** @class */ (function (_super) {
         this.position = this.position.add(this.velocity.scale(currTick - prevTick));
     };
     Entity.prototype.moveToTarget = function (prevTicks, currTicks, target) {
+        console.log('move to target');
         if (target) {
             this.target = target;
         }
@@ -54,10 +55,7 @@ var Entity = /** @class */ (function (_super) {
                 this.velocity = new lib_1.Cartesian(0, 0);
             }
             else {
-                // update the velocity
-                this.velocity = this.target.cartesianPos.add(this.position.scale(-1));
-                this.velocity = this.velocity.scale(1 / this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0)));
-                this.velocity = this.velocity.scale(this.speed);
+                this.updateVelocity();
                 if (distanceToTarget <
                     this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0))) {
                     // avoid overshooting to target position
@@ -74,6 +72,18 @@ var Entity = /** @class */ (function (_super) {
     };
     Entity.prototype.setTarget = function (target) {
         this.target = target;
+        this.updateVelocity();
+    };
+    Entity.prototype.updateVelocity = function () {
+        if (this.target) {
+            this.velocity = this.target.cartesianPos.add(this.position.scale(-1));
+            this.velocity = this.velocity.scale(1 / this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0)));
+            // console.trace('Here I am!');
+            this.velocity = this.velocity.scale(this.speed);
+        }
+        else {
+            this.velocity = new lib_1.Cartesian(0, 0);
+        }
     };
     /**
      * execute when this is at the target thing

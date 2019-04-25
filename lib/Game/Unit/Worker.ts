@@ -13,7 +13,7 @@ import { Building } from '../Building';
 import { ResourceType } from '../../Helpers';
 import { Thing } from '../Thing';
 
-enum WorkerState {
+export enum WorkerState {
   IDLE,
   GRABBING,
   DELIVERING,
@@ -29,7 +29,6 @@ export class Worker extends Unit {
   ) {
     super(game, playerId, EntityType.WORKER, position, rotation);
     this.state = WorkerState.IDLE;
-    this.findJob();
   }
 
   public frame(prevTicks: number, currTicks: number) {

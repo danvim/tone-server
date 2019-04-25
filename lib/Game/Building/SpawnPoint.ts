@@ -24,7 +24,7 @@ export class SpawnPoint extends Building implements BuildingInterface {
     const worker = new Worker(
       this.game,
       this.playerId,
-      this.tilePosition.toCartesian(TILE_SIZE),
+      this.cartesianPos,
       new XyzEuler(1, 0, 0),
     );
   }

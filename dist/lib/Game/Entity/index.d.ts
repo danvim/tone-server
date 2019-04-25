@@ -15,6 +15,7 @@ export declare class Entity extends Thing implements EntityInterface {
     travelByVelocity(prevTick: number, currTick: number): void;
     moveToTarget(prevTicks: number, currTicks: number, target?: Thing): void;
     setTarget(target: Thing): void;
+    updateVelocity(): void;
     /**
      * execute when this is at the target thing
      * to be overrided by children class

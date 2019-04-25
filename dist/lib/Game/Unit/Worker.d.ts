@@ -2,7 +2,7 @@ import { Cartesian, XyzEuler } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Unit } from '.';
 import { Building } from '../Building';
-declare enum WorkerState {
+export declare enum WorkerState {
     IDLE = 0,
     GRABBING = 1,
     DELIVERING = 2
@@ -20,4 +20,3 @@ export declare class Worker extends Unit {
     findBuildingToDeliver(): Building;
     arrive(): void;
 }
-export {};

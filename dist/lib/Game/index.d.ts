@@ -23,7 +23,7 @@ export declare class Game {
         [playerId: number]: Base;
     };
     map: TileMap;
-    frameTimer: NodeJS.Timeout;
+    frameTimer?: NodeJS.Timeout;
     prevTicks: number;
     constructor(players: Player[], protocol?: Protocol);
     emit(packageType: PackageType, object: object): void;

@@ -67,11 +67,35 @@ describe('grab struct from base and deliver to construction site', () => {
       expect(newDist).toBe(0);
     });
     it('worker state is DELIVERING', () => {
-      game.frame(t, t + 30);
       expect(worker.state).toBe(WorkerState.DELIVERING);
     });
     it('worker target is the struct gen', () => {
       expect(worker.target && worker.target.uuid).toBe(strucGen.uuid);
+    });
+  });
+  describe('put struct', () => {
+    it('worker gone to struct gen', () => {
+      if (worker.target) {
+        let t2 =
+          t +
+          worker.position.euclideanDistance(worker.target.cartesianPos) /
+            worker.speed;
+        t2 = Math.ceil(t2);
+        game.frame(t, t2);
+        expect(worker.position).toStrictEqual(strucGen.cartesianPos);
+      } else {
+        expect(worker.target).toBeTruthy();
+      }
+    });
+    it('struct gen gain progress', () => {
+      expect(strucGen.structProgress).toBe(1);
+    });
+    it('worker want to get struct from base', () => {
+      if (worker.target) {
+        expect(worker.target.uuid).toBe(base.uuid);
+      } else {
+        expect(worker.target).toBeTruthy();
+      }
     });
   });
 });

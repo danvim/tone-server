@@ -23,6 +23,7 @@ import Robot from './Robot';
 import { Lobby } from './Game/Lobby';
 // tslint:disable-next-line:no-var-requires
 const { ExpressPeerServer } = require('peer');
+import Conn = PeerJs.DataConnection;
 
 const robot = Robot.getInstance();
 
@@ -48,6 +49,8 @@ app.use('/', express.static('views'));
 // Game Logic
 const protocol = robot.getProtocol();
 
-protocol.on(PackageType.CHAT, global.console.log);
+protocol.on(PackageType.CHAT, (object: object, conn: Conn) =>
+  global.console.log('chat', conn.peer, object),
+);
 
 const lobby = new Lobby();

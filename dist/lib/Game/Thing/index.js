@@ -19,6 +19,13 @@ var Thing = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Thing.prototype, "player", {
+        get: function () {
+            return this.game.players[this.playerId];
+        },
+        enumerable: true,
+        configurable: true
+    });
     Thing.prototype.frame = function (prevTick, currTick) {
         //
     };

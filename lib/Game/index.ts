@@ -8,6 +8,7 @@ import {
   BuildingType,
   Axial,
   TileMap,
+  TryBuildMessage,
 } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
@@ -18,6 +19,8 @@ import { now } from '../Helpers';
 import uuid = require('uuid');
 import { SpawnPoint } from './Building/SpawnPoint';
 import { Base } from './Building/Base';
+import { buildingFactory } from './Building/BuildingFactory';
+import { Message } from 'protobufjs';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -35,7 +38,7 @@ export class Game {
 
   // game start
   constructor(players: Player[], protocol?: Protocol) {
-    this.players = players;
+    this.players = [];
     this.protocol = protocol;
     this.map = MapGen();
     // global.console.log('try update tiles');
@@ -45,14 +48,14 @@ export class Game {
     this.units = {};
     this.bases = {};
 
-    this.reassignPlayerId();
+    this.reassignPlayerId(players);
     this.initClusterTiles();
     this.initBase();
 
-    // this.frameTimer = setInterval(
-    //   () => this.frame(this.prevTicks, now('ms')),
-    //   30,
-    // );
+    this.frameTimer = setInterval(
+      () => this.frame(this.prevTicks, now('ms')),
+      100,
+    );
   }
 
   // connection functions
@@ -64,16 +67,13 @@ export class Game {
   }
 
   public mapConnToPlayer(conn: Conn) {
-    return this.players.reduce((prev, player) => {
-      if (player.conn && conn.peer === player.conn.peer) {
-        prev = player;
-      }
-      return prev;
-    });
+    return this.players.find(
+      (player: Player) => !!player.conn && conn.peer === player.conn.peer,
+    );
   }
 
   public initProtocol(protocol: Protocol) {
-    // protocol.on(PackageType.TRY_BUILD,);
+    protocol.on(PackageType.TRY_BUILD, this.build);
   }
 
   public rejoin(player: Player) {
@@ -91,14 +91,9 @@ export class Game {
   /**
    * Make the id of players start from 0 without holes
    */
-  public reassignPlayerId() {
-    this.players.forEach((player: Player, k: number) => {
-      player.id = k;
-      this.emit(PackageType.UPDATE_LOBBY, {
-        playerId: k,
-        username: player.username,
-        connId: player.conn && player.conn.peer,
-      });
+  public reassignPlayerId(players: Player[]) {
+    players.forEach((player: Player, k: number) => {
+      this.players[player.id] = player;
     });
   }
 
@@ -180,6 +175,23 @@ export class Game {
       }
     }
     return units;
+  }
+
+  public build = (object: Message<TryBuildMessage>, conn: Conn) => {
+    const player = this.mapConnToPlayer(conn);
+    if (player) {
+      const { buildingType, axialCoords } = Object(object);
+      let axialCoord;
+      if (axialCoords.length > 1) {
+        axialCoord = axialCoords.reduce(
+          (carry: Axial, axial: Axial) => carry.add(axial),
+          axialCoords[0].clone(),
+        );
+      } else if (axialCoords.length > 0) {
+        axialCoord = axialCoords[0];
+      }
+      buildingFactory(this, player.id, buildingType, axialCoord);
+    }
   }
 
   public frame(prevTicks: number, currTicks: number) {

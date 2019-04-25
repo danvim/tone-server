@@ -4,7 +4,7 @@
   "description": "This repo handles the game logic and API requests.",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node --inspect dist/index.js",
+    "start": "node --inspect dist/lib/index.js",
     "dev": "tsc-watch --onSuccess \"npm run done-build\"",
     "done-build": "cross-env npm run lint && npm run start",
     "build": "tsc",

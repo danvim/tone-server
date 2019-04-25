@@ -7,19 +7,19 @@ import { Unit } from '../lib/Game/Unit';
 
 const player1 = new Player();
 const player2 = new Player();
-player1.id = 1;
-player2.id = 2;
+player1.id = 0;
+player2.id = 1;
 player1.username = 'Player1';
 player2.username = 'Player2';
-const game: Game = new Game([player1, player2]);
+const game: Game = new Game([player2, player1]);
 game.terminate();
 describe('game initialize', () => {
   it('constructed', () => {
     expect(game).toBeTruthy();
   });
   it('reassigned playerIds', () => {
-    expect(player1.id).toBe(0);
-    expect(player2.id).toBe(1);
+    expect(game.players[0].id).toBe(0);
+    expect(game.players[1].id).toBe(1);
   });
   describe('assigned initial clusters(spawn point)', () => {
     const spawnPointKeys = Object.keys(game.buildings).filter((key: string) => {

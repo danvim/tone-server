@@ -1,12 +1,11 @@
 import Peer = PeerJs.Peer;
 import DataConnection = PeerJs.DataConnection;
-import {peerPort, peerName, peerHost, peerPath} from './ServerConfigs';
+import { peerPort, peerName, peerHost, peerPath } from './ServerConfigs';
 import { Protocol } from 'tone-core/dist/lib';
 // tslint:disable-next-line:no-var-requires
 const P = require('peerjs-nodejs');
 
 export default class Robot {
-
   public static getInstance() {
     if (!Robot.instance) {
       Robot.instance = new Robot();
@@ -46,4 +45,3 @@ export default class Robot {
     return this.protocol;
   }
 }
-

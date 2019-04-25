@@ -5,6 +5,8 @@ import {
   EntityType,
   TILE_SIZE,
   BuildingType,
+  PackageType,
+  AnimType,
 } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Unit } from '.';
@@ -20,7 +22,7 @@ export enum WorkerState {
 }
 
 export class Worker extends Unit {
-  public state: WorkerState;
+  private mstate: WorkerState;
   constructor(
     game: Game,
     playerId: number,
@@ -28,7 +30,29 @@ export class Worker extends Unit {
     rotation: XyzEuler,
   ) {
     super(game, playerId, EntityType.WORKER, position, rotation);
-    this.state = WorkerState.IDLE;
+    this.mstate = WorkerState.IDLE;
+  }
+
+  public get state() {
+    return this.mstate;
+  }
+
+  public set state(newState: WorkerState) {
+    switch (newState) {
+      case WorkerState.DELIVERING:
+        this.player.emit(PackageType.SET_ANIMATION, {
+          uid: this.uuid,
+          animType: AnimType.CARRYING,
+        });
+        break;
+      case WorkerState.GRABBING:
+      case WorkerState.IDLE:
+        this.player.emit(PackageType.SET_ANIMATION, {
+          uid: this.uuid,
+          animType: AnimType.DEFAULT,
+        });
+    }
+    this.mstate = newState;
   }
 
   public frame(prevTicks: number, currTicks: number) {

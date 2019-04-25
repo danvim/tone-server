@@ -20,12 +20,19 @@ var Entity = /** @class */ (function (_super) {
     // public unitStrategy?: UnitStrategy;
     function Entity(game, playerId, type, position, rotation) {
         var _this = _super.call(this, game, playerId, 100) || this;
+        _this.arriveRange = 0;
         _this.game.entities[_this.uuid] = _this;
         _this.type = type;
         _this.position = position;
         _this.rotation = rotation;
         _this.velocity = new lib_1.Cartesian(0, 0);
         _this.speed = 30 / 500;
+        _this.game.emit(lib_1.PackageType.SPAWN_ENTITY, {
+            uid: _this.uuid,
+            position: _this.position,
+            entityType: _this.type,
+            playerId: _this.playerId,
+        });
         return _this;
     }
     Object.defineProperty(Entity.prototype, "cartesianPos", {
@@ -40,26 +47,26 @@ var Entity = /** @class */ (function (_super) {
         this.moveToTarget(prevTicks, currTicks);
     };
     Entity.prototype.travelByVelocity = function (prevTick, currTick) {
-        this.position = this.position.add(this.velocity.scale(currTick - prevTick));
+        this.position.add(this.velocity.scaled(currTick - prevTick));
     };
     Entity.prototype.moveToTarget = function (prevTicks, currTicks, target) {
-        console.log('move to target');
         if (target) {
             this.target = target;
         }
         if (this.target) {
             var distanceToTarget = this.position.euclideanDistance(this.target.cartesianPos);
-            if (distanceToTarget < 2) {
+            if (distanceToTarget < this.arriveRange) {
                 // perform arrive action
                 this.arrive();
                 this.velocity = new lib_1.Cartesian(0, 0);
             }
             else {
                 this.updateVelocity();
-                if (distanceToTarget <
-                    this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0))) {
+                if (distanceToTarget < this.velocity.norm() * (currTicks - prevTicks)) {
                     // avoid overshooting to target position
-                    this.position = this.target.cartesianPos;
+                    this.position = this.target.cartesianPos.clone();
+                    this.arrive();
+                    this.velocity = new lib_1.Cartesian(0, 0);
                 }
                 else {
                     this.travelByVelocity(prevTicks, currTicks);
@@ -75,14 +82,21 @@ var Entity = /** @class */ (function (_super) {
         this.updateVelocity();
     };
     Entity.prototype.updateVelocity = function () {
+        var _a;
         if (this.target) {
-            this.velocity = this.target.cartesianPos.add(this.position.scale(-1));
-            this.velocity = this.velocity.scale(1 / this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0)));
-            // console.trace('Here I am!');
-            this.velocity = this.velocity.scale(this.speed);
-        }
-        else {
-            this.velocity = new lib_1.Cartesian(0, 0);
+            var _b = this.position.asArray, x = _b[0], z = _b[1];
+            var position = new lib_1.Cartesian(x, z);
+            _a = this.target.cartesianPos.asArray, x = _a[0], z = _a[1];
+            this.velocity = new lib_1.Cartesian(x, z);
+            this.velocity.add(position.scale(-1));
+            var dist = this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0));
+            if (dist === 0) {
+                this.velocity = new lib_1.Cartesian(0, 0);
+            }
+            else {
+                this.velocity.scale(1 / dist);
+                this.velocity.scale(this.speed);
+            }
         }
     };
     /**

@@ -8,8 +8,9 @@ export declare enum WorkerState {
     DELIVERING = 2
 }
 export declare class Worker extends Unit {
-    state: WorkerState;
+    private mstate;
     constructor(game: Game, playerId: number, position: Cartesian, rotation: XyzEuler);
+    state: WorkerState;
     frame(prevTicks: number, currTicks: number): void;
     findJob(): void;
     /**

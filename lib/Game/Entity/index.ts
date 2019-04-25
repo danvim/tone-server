@@ -1,5 +1,5 @@
 import { EntityInterface, EntityType } from 'tone-core/dist/lib/Game';
-import { Cartesian, XyzEuler } from 'tone-core/dist/lib';
+import { Cartesian, XyzEuler, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
 
@@ -26,6 +26,12 @@ export class Entity extends Thing implements EntityInterface {
     this.rotation = rotation;
     this.velocity = new Cartesian(0, 0);
     this.speed = 30 / 500;
+    this.game.emit(PackageType.SPAWN_ENTITY, {
+      uid: this.uuid,
+      position: this.position,
+      entityType: this.type,
+      playerId: this.playerId,
+    });
   }
 
   public get cartesianPos(): Cartesian {

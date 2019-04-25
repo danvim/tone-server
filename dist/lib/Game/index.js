@@ -2,16 +2,34 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var MapGen_1 = require("./MapGen");
 var lib_1 = require("tone-core/dist/lib");
+var timers_1 = require("timers");
+var Helpers_1 = require("../Helpers");
 var uuid = require("uuid");
 var SpawnPoint_1 = require("./Building/SpawnPoint");
 var Base_1 = require("./Building/Base");
+var BuildingFactory_1 = require("./Building/BuildingFactory");
 // import { protocol } from '../Connection';
 var Game = /** @class */ (function () {
     // game start
     function Game(players, protocol) {
+        var _this = this;
         // states
         this.prevTicks = 0;
-        this.players = players;
+        this.build = function (object, conn) {
+            var player = _this.mapConnToPlayer(conn);
+            if (player) {
+                var _a = Object(object), buildingType = _a.buildingType, axialCoords = _a.axialCoords;
+                var axialCoord = void 0;
+                if (axialCoords.length > 1) {
+                    axialCoord = axialCoords.reduce(function (carry, axial) { return carry.add(axial); }, axialCoords[0].clone());
+                }
+                else if (axialCoords.length > 0) {
+                    axialCoord = axialCoords[0];
+                }
+                BuildingFactory_1.buildingFactory(_this, player.id, buildingType, axialCoord);
+            }
+        };
+        this.players = [];
         this.protocol = protocol;
         this.map = MapGen_1.MapGen();
         // global.console.log('try update tiles');
@@ -20,13 +38,10 @@ var Game = /** @class */ (function () {
         this.entities = {};
         this.units = {};
         this.bases = {};
-        this.reassignPlayerId();
+        this.reassignPlayerId(players);
         this.initClusterTiles();
         this.initBase();
-        // this.frameTimer = setInterval(
-        //   () => this.frame(this.prevTicks, now('ms')),
-        //   30,
-        // );
+        this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 100);
     }
     // connection functions
     Game.prototype.emit = function (packageType, object) {
@@ -35,15 +50,10 @@ var Game = /** @class */ (function () {
         }
     };
     Game.prototype.mapConnToPlayer = function (conn) {
-        return this.players.reduce(function (prev, player) {
-            if (player.conn && conn.peer === player.conn.peer) {
-                prev = player;
-            }
-            return prev;
-        });
+        return this.players.find(function (player) { return !!player.conn && conn.peer === player.conn.peer; });
     };
     Game.prototype.initProtocol = function (protocol) {
-        // protocol.on(PackageType.TRY_BUILD,);
+        protocol.on(lib_1.PackageType.TRY_BUILD, this.build);
     };
     Game.prototype.rejoin = function (player) {
         player.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
@@ -57,15 +67,10 @@ var Game = /** @class */ (function () {
     /**
      * Make the id of players start from 0 without holes
      */
-    Game.prototype.reassignPlayerId = function () {
+    Game.prototype.reassignPlayerId = function (players) {
         var _this = this;
-        this.players.forEach(function (player, k) {
-            player.id = k;
-            _this.emit(lib_1.PackageType.UPDATE_LOBBY, {
-                playerId: k,
-                username: player.username,
-                connId: player.conn && player.conn.peer,
-            });
+        players.forEach(function (player, k) {
+            _this.players[player.id] = player;
         });
     };
     /**

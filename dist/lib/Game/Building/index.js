@@ -14,8 +14,10 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Game_1 = require("tone-core/dist/lib/Game");
+var lib_1 = require("tone-core/dist/lib");
 var Thing_1 = require("../Thing");
 var Helpers_1 = require("../../Helpers");
+// // export {} from './';
 var Building = /** @class */ (function (_super) {
     __extends(Building, _super);
     function Building(game, playerId, buildingType, tilePosition) {
@@ -27,6 +29,13 @@ var Building = /** @class */ (function (_super) {
         _this.buildingType = buildingType;
         _this.tilePosition = tilePosition;
         _this.structNeeded = Game_1.BuildingProperty[buildingType].struct;
+        _this.game.emit(lib_1.PackageType.BUILD, {
+            playerId: playerId,
+            uid: _this.uuid,
+            buildingType: buildingType,
+            axialCoords: tilePosition,
+            progress: _this.structProgress,
+        });
         return _this;
     }
     Object.defineProperty(Building.prototype, "cartesianPos", {
@@ -52,8 +61,15 @@ var Building = /** @class */ (function (_super) {
         if (type === Helpers_1.ResourceType.STRUCT &&
             this.structProgress < this.structNeeded) {
             this.structProgress += amount;
+            this.game.emit(lib_1.PackageType.BUILD, {
+                playerId: this.playerId,
+                uid: this.uuid,
+                buildingType: this.buildingType,
+                axialCoords: this.tilePosition,
+                progress: this.structProgress,
+            });
             if (this.isFunctional()) {
-                // Done
+                this.doneConstruction();
             }
             return amount;
         }
@@ -67,6 +83,12 @@ var Building = /** @class */ (function (_super) {
      */
     Building.prototype.tryGiveResource = function (type, amount) {
         return 0;
+    };
+    /**
+     * Call when done construction
+     */
+    Building.prototype.doneConstruction = function () {
+        // To be overriden
     };
     return Building;
 }(Thing_1.Thing));

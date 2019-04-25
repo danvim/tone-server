@@ -4,7 +4,6 @@ import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { ResourceType } from '../../Helpers';
-
 export class Base extends Building implements BuildingInterface {
   public periodStrategy: PeriodStrategy;
   public structStorage = 0;

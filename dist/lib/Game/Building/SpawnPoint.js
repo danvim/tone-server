@@ -24,7 +24,6 @@ var SpawnPoint = /** @class */ (function (_super) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.SPAWN_POINT, tilePosition) || this;
         _this.spawn = function () {
             var worker = new Worker_1.Worker(_this.game, _this.playerId, _this.cartesianPos, new lib_1.XyzEuler(1, 0, 0));
-            console.log(worker.position);
         };
         _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(2000, _this.spawn);
         return _this;

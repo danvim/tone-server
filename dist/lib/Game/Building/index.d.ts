@@ -4,12 +4,12 @@ import { Game } from '..';
 import { Thing } from '../Thing';
 import { ResourceType } from '../../Helpers';
 export declare class Building extends Thing implements BuildingInterface {
+    readonly cartesianPos: Cartesian;
     buildingType: BuildingType;
     tilePosition: Axial;
     structProgress: number;
     structNeeded: number;
     constructor(game: Game, playerId: number, buildingType: BuildingType, tilePosition: Axial);
-    readonly cartesianPos: Cartesian;
     isFunctional(): boolean;
     frame(prevTicks: number, currTicks: number): void;
     /**
@@ -26,4 +26,8 @@ export declare class Building extends Thing implements BuildingInterface {
      * @return real amount given out
      */
     tryGiveResource(type: ResourceType, amount: number): number;
+    /**
+     * Call when done construction
+     */
+    doneConstruction(): void;
 }

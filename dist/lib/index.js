@@ -37,5 +37,7 @@ app.use('/peer', ExpressPeerServer(server, { debug: true }));
 app.use('/', express_1.default.static('views'));
 // Game Logic
 var protocol = robot.getProtocol();
-protocol.on(lib_1.PackageType.CHAT, global.console.log);
+protocol.on(lib_1.PackageType.CHAT, function (object, conn) {
+    return global.console.log('chat', conn.peer, object);
+});
 var lobby = new Lobby_1.Lobby();

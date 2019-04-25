@@ -4,12 +4,19 @@ import {
   BuildingProperty,
   TILE_SIZE,
 } from 'tone-core/dist/lib/Game';
-import { Axial, Cartesian } from 'tone-core/dist/lib';
+import { Axial, Cartesian, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
 import { ResourceType } from '../../Helpers';
+import { Base } from './Base';
+import { SpawnPoint } from './SpawnPoint';
+// // export {} from './';
 
 export class Building extends Thing implements BuildingInterface {
+  public get cartesianPos(): Cartesian {
+    return this.tilePosition.toCartesian(TILE_SIZE);
+  }
+
   public buildingType: BuildingType;
   public tilePosition: Axial;
 
@@ -28,10 +35,13 @@ export class Building extends Thing implements BuildingInterface {
     this.buildingType = buildingType;
     this.tilePosition = tilePosition;
     this.structNeeded = BuildingProperty[buildingType].struct;
-  }
-
-  public get cartesianPos(): Cartesian {
-    return this.tilePosition.toCartesian(TILE_SIZE);
+    this.game.emit(PackageType.BUILD, {
+      playerId,
+      uid: this.uuid,
+      buildingType,
+      axialCoords: tilePosition,
+      progress: this.structProgress,
+    });
   }
 
   public isFunctional() {
@@ -54,8 +64,16 @@ export class Building extends Thing implements BuildingInterface {
       this.structProgress < this.structNeeded
     ) {
       this.structProgress += amount;
+
+      this.game.emit(PackageType.BUILD, {
+        playerId: this.playerId,
+        uid: this.uuid,
+        buildingType: this.buildingType,
+        axialCoords: this.tilePosition,
+        progress: this.structProgress,
+      });
       if (this.isFunctional()) {
-        // Done
+        this.doneConstruction();
       }
       return amount;
     }
@@ -70,5 +88,12 @@ export class Building extends Thing implements BuildingInterface {
    */
   public tryGiveResource(type: ResourceType, amount: number) {
     return 0;
+  }
+
+  /**
+   * Call when done construction
+   */
+  public doneConstruction() {
+    // To be overriden
   }
 }

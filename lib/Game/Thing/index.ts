@@ -2,6 +2,7 @@ import { ThingInterface } from 'tone-core/dist/lib/Game';
 import { Game } from '..';
 import uuid from 'uuid/v4';
 import { Cartesian } from 'tone-core/dist/lib';
+import { Player } from '../Player';
 
 export class Thing implements ThingInterface {
   public game: Game;
@@ -17,6 +18,10 @@ export class Thing implements ThingInterface {
 
   public get cartesianPos(): Cartesian {
     return new Cartesian(0, 0);
+  }
+
+  public get player(): Player {
+    return this.game.players[this.playerId];
   }
 
   public frame(prevTick: number, currTick: number) {

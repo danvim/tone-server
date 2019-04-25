@@ -26,20 +26,40 @@ var Worker = /** @class */ (function (_super) {
     __extends(Worker, _super);
     function Worker(game, playerId, position, rotation) {
         var _this = _super.call(this, game, playerId, lib_1.EntityType.WORKER, position, rotation) || this;
-        _this.state = WorkerState.IDLE;
+        _this.mstate = WorkerState.IDLE;
         return _this;
     }
+    Object.defineProperty(Worker.prototype, "state", {
+        get: function () {
+            return this.mstate;
+        },
+        set: function (newState) {
+            switch (newState) {
+                case WorkerState.DELIVERING:
+                    this.player.emit(lib_1.PackageType.SET_ANIMATION, {
+                        uid: this.uuid,
+                        animType: lib_1.AnimType.CARRYING,
+                    });
+                    break;
+                case WorkerState.GRABBING:
+                case WorkerState.IDLE:
+                    this.player.emit(lib_1.PackageType.SET_ANIMATION, {
+                        uid: this.uuid,
+                        animType: lib_1.AnimType.DEFAULT,
+                    });
+            }
+            this.mstate = newState;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Worker.prototype.frame = function (prevTicks, currTicks) {
         if (this.state === WorkerState.IDLE) {
-            console.log(this.position);
             this.findJob();
-            console.log('worker find job', this.position);
         }
         else {
-            console.log('worker frame');
             _super.prototype.frame.call(this, prevTicks, currTicks);
         }
-        console.log(this.position);
     };
     Worker.prototype.findJob = function () {
         switch (this.state) {

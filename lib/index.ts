@@ -4,7 +4,7 @@ declare global {
       File: any;
       Blob: any;
       FileReader: any;
-      postMessage: ((k: any[]) => any);
+      postMessage: (k: any[]) => any;
     }
   }
 }
@@ -23,6 +23,7 @@ import Robot from './Robot';
 import { Lobby } from './Game/Lobby';
 // tslint:disable-next-line:no-var-requires
 const { ExpressPeerServer } = require('peer');
+import Conn = PeerJs.DataConnection;
 
 const robot = Robot.getInstance();
 
@@ -41,14 +42,15 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/peer', ExpressPeerServer(server, {debug: true}));
+app.use('/peer', ExpressPeerServer(server, { debug: true }));
 
 app.use('/', express.static('views'));
-
 
 // Game Logic
 const protocol = robot.getProtocol();
 
-protocol.on(PackageType.CHAT, global.console.log);
+protocol.on(PackageType.CHAT, (object: object, conn: Conn) =>
+  global.console.log('chat', conn.peer, object),
+);
 
 const lobby = new Lobby();

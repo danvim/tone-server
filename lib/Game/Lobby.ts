@@ -15,18 +15,28 @@ export class Lobby {
   }
 
   public initProtocol() {
-    this.protocol.on(PackageType.TRY_JOIN_LOBBY, (obj: any, conn: DataConnection) => {
-      this.join(Object(obj).username, conn);
-    });
+    this.protocol.on(
+      PackageType.TRY_JOIN_LOBBY,
+      (obj: any, conn: DataConnection) => {
+        this.join(Object(obj).username, conn);
+      },
+    );
     this.protocol.on(PackageType.TRY_START_GAME, this.tryStart.bind(this));
   }
 
   public isUsernameExist(username: string) {
-    return this.players.filter((player: Player) => player.username === username).length > 0;
+    return (
+      this.players.filter((player: Player) => player.username === username)
+        .length > 0
+    );
   }
 
   public isConnExist(conn: DataConnection) {
-    return this.players.filter((player: Player) => player.conn.peer === conn.peer).length > 0;
+    return (
+      this.players.filter(
+        (player) => player.conn && player.conn.peer === conn.peer,
+      ).length > 0
+    );
   }
 
   /**
@@ -50,7 +60,7 @@ export class Lobby {
     const connId = conn.peer;
     let id = -1;
     this.players.forEach((player) => {
-      if (player.conn.peer === connId) {
+      if (player.conn && player.conn.peer === connId) {
         player.username = username;
         id = player.id;
       }

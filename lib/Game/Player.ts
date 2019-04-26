@@ -6,12 +6,13 @@ export class Player {
   public username: string = '';
   public humanPlayer: boolean = true;
   public conn: DataConnection;
-
   constructor(conn: DataConnection) {
     this.conn = conn;
   }
 
   public emit(event: PackageType, object: any) {
-    this.conn.send(Protocol.encode(event, object));
+    if (this.conn) {
+      this.conn.send(Protocol.encode(event, object));
+    }
   }
 }

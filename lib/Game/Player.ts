@@ -5,11 +5,9 @@ export class Player {
   public id: number = -1;
   public username: string = '';
   public humanPlayer: boolean = true;
-  public conn?: DataConnection;
-  constructor(conn?: DataConnection) {
-    if (conn) {
-      this.conn = conn;
-    }
+  public conn: DataConnection;
+  constructor(conn: DataConnection) {
+    this.conn = conn;
   }
 
   public emit(event: PackageType, object: any) {

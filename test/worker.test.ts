@@ -18,11 +18,16 @@ const conn1c = new StubConn();
 const conn1s = new StubConn();
 conn1c.connect(conn1s);
 
+const conn2c = new StubConn();
+const conn2s = new StubConn();
+conn2c.connect(conn2s);
+
 const protocol1c = new Protocol();
 const protocol1s = new Protocol();
 const protocol = new Protocol();
 protocol1c.add(conn1c);
 protocol1s.add(conn1s);
+protocol1s.add(conn2s);
 protocol.add(conn1s);
 
 let animationObject = {};
@@ -35,7 +40,7 @@ protocol1c.on(PackageType.SET_ANIMATION, (object) => {
 });
 
 const player1 = new Player(conn1s);
-const player2 = new Player();
+const player2 = new Player(conn2s);
 player1.id = 0;
 player2.id = 1;
 player1.username = 'Player1';

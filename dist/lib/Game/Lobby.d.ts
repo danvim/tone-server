@@ -12,6 +12,12 @@ export declare class Lobby {
     initProtocol(): void;
     isUsernameExist(username: string): boolean;
     isConnExist(conn: DataConnection): boolean;
+    /**
+     * Checks if a given username is among the existing players. If so, updates the stored connection to the new incoming
+     * connection. If the player exists, return its player id.
+     * @param {string} username User input username
+     * @param {DataChannelEventHandler} conn Incoming data connection
+     */
     playerUpdateConn(username: string, conn: DataConnection): number;
     playerUpdateUsername(username: string, conn: DataConnection): number;
     join(username: string, conn: DataConnection): void;

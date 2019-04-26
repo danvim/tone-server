@@ -10,7 +10,7 @@ import { Base } from './Building/Base';
 import { Message } from 'protobufjs';
 export declare class Game {
     players: Player[];
-    protocol?: Protocol;
+    protocol: Protocol;
     buildings: {
         [uuid: string]: Building;
     };
@@ -26,7 +26,7 @@ export declare class Game {
     map: TileMap;
     frameTimer?: NodeJS.Timeout;
     prevTicks: number;
-    constructor(players: Player[], protocol?: Protocol);
+    constructor(players: Player[], protocol: Protocol);
     emit(packageType: PackageType, object: object): void;
     mapConnToPlayer(conn: Conn): Player | undefined;
     initProtocol(protocol: Protocol): void;

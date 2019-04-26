@@ -6,9 +6,7 @@ var Player = /** @class */ (function () {
         this.id = -1;
         this.username = '';
         this.humanPlayer = true;
-        if (conn) {
-            this.conn = conn;
-        }
+        this.conn = conn;
     }
     Player.prototype.emit = function (event, object) {
         if (this.conn) {

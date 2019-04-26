@@ -39,6 +39,12 @@ export class Lobby {
     );
   }
 
+  /**
+   * Checks if a given username is among the existing players. If so, updates the stored connection to the new incoming
+   * connection. If the player exists, return its player id.
+   * @param {string} username User input username
+   * @param {DataChannelEventHandler} conn Incoming data connection
+   */
   public playerUpdateConn(username: string, conn: DataConnection) {
     let id = -1;
     this.players.forEach((player: Player) => {
@@ -63,46 +69,56 @@ export class Lobby {
   }
 
   public join(username: string, conn: DataConnection) {
-    global.console.log(username + ' ' + conn.peer + ' attempts to join');
+    global.console.log(`${username} ${conn.peer} attempts to join`);
+    let joiningPlayer: Player | undefined;
     if (this.isUsernameExist(username)) {
+      // The username was in game/lobby before. Assuming player is rejoining with a different connection.
       const playerId = this.playerUpdateConn(username, conn);
       if (playerId === -1) {
         return;
       }
-      const player = this.players.find((p: Player) => p.id === playerId);
-      this.protocol.emit(PackageType.UPDATE_LOBBY, {
-        username,
-        playerId,
-        connId: conn.peer,
-      });
-      if (this.started && this.game && player) {
-        this.game.rejoin(player);
+      joiningPlayer = this.players.find((p: Player) => p.id === playerId);
+      if (this.started && this.game && joiningPlayer) {
+        this.game.rejoin(joiningPlayer);
       }
     } else if (this.isConnExist(conn)) {
+      // The connection was in game/lobby before. Assuming player is rejoining with a different username.
       const playerId = this.playerUpdateUsername(username, conn);
       if (playerId === -1) {
         return;
       }
+      joiningPlayer = this.players.find((p: Player) => p.id === playerId);
+    } else {
+      // Player is new to the game/lobby.
+      if (!this.started) {
+        joiningPlayer = new Player(conn);
+        joiningPlayer.username = username;
+        joiningPlayer.id = this.genPlayerId();
+        this.players.push(joiningPlayer);
+      } else {
+        // TODO Perhaps emit an error here for the client.
+        return;
+      }
+    }
+
+    if (joiningPlayer !== undefined) {
+      // Send other player info to joining player.
+      this.players.forEach((player: Player) => {
+        if (joiningPlayer && player !== joiningPlayer) {
+          joiningPlayer.emit(PackageType.UPDATE_LOBBY, {
+            username: player.username,
+            playerId: player.id,
+            connId: player.conn.peer,
+          });
+        }
+      });
+
+      // Send joining player info to all players.
       this.protocol.emit(PackageType.UPDATE_LOBBY, {
-        username,
-        playerId,
+        username: joiningPlayer.username,
+        playerId: joiningPlayer.id,
         connId: conn.peer,
       });
-    } else {
-      if (this.started) {
-        // reject
-        return;
-      } else {
-        const player = new Player(conn);
-        player.username = username;
-        player.id = this.genPlayerId();
-        this.players.push(player);
-        this.protocol.emit(PackageType.UPDATE_LOBBY, {
-          username,
-          playerId: player.id,
-          connId: conn.peer,
-        });
-      }
     }
   }
 

@@ -9,11 +9,15 @@ var test_1 = require("tone-core/dist/test");
 var conn1c = new test_1.StubConn();
 var conn1s = new test_1.StubConn();
 conn1c.connect(conn1s);
+var conn2c = new test_1.StubConn();
+var conn2s = new test_1.StubConn();
+conn2c.connect(conn2s);
 var protocol1c = new lib_1.Protocol();
 var protocol1s = new lib_1.Protocol();
 var protocol = new lib_1.Protocol();
 protocol1c.add(conn1c);
 protocol1s.add(conn1s);
+protocol1s.add(conn2s);
 protocol.add(conn1s);
 var animationObject = {};
 protocol1c.on(lib_1.PackageType.SET_ANIMATION, function (object) {
@@ -24,7 +28,7 @@ protocol1c.on(lib_1.PackageType.SET_ANIMATION, function (object) {
     };
 });
 var player1 = new Player_1.Player(conn1s);
-var player2 = new Player_1.Player();
+var player2 = new Player_1.Player(conn2s);
 player1.id = 0;
 player2.id = 1;
 player1.username = 'Player1';

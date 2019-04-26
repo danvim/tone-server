@@ -25,7 +25,7 @@ import { Message } from 'protobufjs';
 
 export class Game {
   public players: Player[];
-  public protocol?: Protocol;
+  public protocol: Protocol;
   public buildings: { [uuid: string]: Building };
   public entities: { [uuid: string]: Entity };
   public units: { [uuid: string]: Unit };
@@ -37,7 +37,7 @@ export class Game {
   public prevTicks = 0;
 
   // game start
-  constructor(players: Player[], protocol?: Protocol) {
+  constructor(players: Player[], protocol: Protocol) {
     this.players = [];
     this.protocol = protocol;
     this.map = MapGen();

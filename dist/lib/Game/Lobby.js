@@ -28,6 +28,12 @@ var Lobby = /** @class */ (function () {
     Lobby.prototype.isConnExist = function (conn) {
         return (this.players.filter(function (player) { return player.conn && player.conn.peer === conn.peer; }).length > 0);
     };
+    /**
+     * Checks if a given username is among the existing players. If so, updates the stored connection to the new incoming
+     * connection. If the player exists, return its player id.
+     * @param {string} username User input username
+     * @param {DataChannelEventHandler} conn Incoming data connection
+     */
     Lobby.prototype.playerUpdateConn = function (username, conn) {
         var id = -1;
         this.players.forEach(function (player) {
@@ -50,49 +56,57 @@ var Lobby = /** @class */ (function () {
         return id;
     };
     Lobby.prototype.join = function (username, conn) {
-        global.console.log(username + ' ' + conn.peer + ' attempts to join');
+        global.console.log(username + " " + conn.peer + " attempts to join");
+        var joiningPlayer;
         if (this.isUsernameExist(username)) {
+            // The username was in game/lobby before. Assuming player is rejoining with a different connection.
             var playerId_1 = this.playerUpdateConn(username, conn);
             if (playerId_1 === -1) {
                 return;
             }
-            var player = this.players.find(function (p) { return p.id === playerId_1; });
-            this.protocol.emit(lib_1.PackageType.UPDATE_LOBBY, {
-                username: username,
-                playerId: playerId_1,
-                connId: conn.peer,
-            });
-            if (this.started && this.game && player) {
-                this.game.rejoin(player);
+            joiningPlayer = this.players.find(function (p) { return p.id === playerId_1; });
+            if (this.started && this.game && joiningPlayer) {
+                this.game.rejoin(joiningPlayer);
             }
         }
         else if (this.isConnExist(conn)) {
-            var playerId = this.playerUpdateUsername(username, conn);
-            if (playerId === -1) {
+            // The connection was in game/lobby before. Assuming player is rejoining with a different username.
+            var playerId_2 = this.playerUpdateUsername(username, conn);
+            if (playerId_2 === -1) {
                 return;
             }
-            this.protocol.emit(lib_1.PackageType.UPDATE_LOBBY, {
-                username: username,
-                playerId: playerId,
-                connId: conn.peer,
-            });
+            joiningPlayer = this.players.find(function (p) { return p.id === playerId_2; });
         }
         else {
-            if (this.started) {
-                // reject
-                return;
+            // Player is new to the game/lobby.
+            if (!this.started) {
+                joiningPlayer = new Player_1.Player(conn);
+                joiningPlayer.username = username;
+                joiningPlayer.id = this.genPlayerId();
+                this.players.push(joiningPlayer);
             }
             else {
-                var player = new Player_1.Player(conn);
-                player.username = username;
-                player.id = this.genPlayerId();
-                this.players.push(player);
-                this.protocol.emit(lib_1.PackageType.UPDATE_LOBBY, {
-                    username: username,
-                    playerId: player.id,
-                    connId: conn.peer,
-                });
+                // TODO Perhaps emit an error here for the client.
+                return;
             }
+        }
+        if (joiningPlayer !== undefined) {
+            // Send other player info to joining player.
+            this.players.forEach(function (player) {
+                if (joiningPlayer && player !== joiningPlayer) {
+                    joiningPlayer.emit(lib_1.PackageType.UPDATE_LOBBY, {
+                        username: player.username,
+                        playerId: player.id,
+                        connId: player.conn.peer,
+                    });
+                }
+            });
+            // Send joining player info to all players.
+            this.protocol.emit(lib_1.PackageType.UPDATE_LOBBY, {
+                username: joiningPlayer.username,
+                playerId: joiningPlayer.id,
+                connId: conn.peer,
+            });
         }
     };
     // logic: first ascending sort, then increment until see a gap or reach last of list(id of player length)

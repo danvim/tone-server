@@ -106,15 +106,20 @@ export class Game {
       const tileInfo = this.map[axialString];
       if (tileInfo.type === TileType.INFORMATION_CLUSTER) {
         const playerId = initedClusterCount++;
-        const [q, r] = axialString.split(',').map(Number);
-        const cluster = new SpawnPoint(this, playerId, new Axial(q, r));
+        const cluster = new SpawnPoint(
+          this,
+          playerId,
+          Axial.fromString(axialString),
+        );
       }
     });
   }
 
   public initBase() {
-    const base0 = new Base(this, 0, new Axial(0, 0));
-    this.bases[0] = base0;
+    this.players.forEach((player: Player) => {
+      const base0 = new Base(this, player.id, new Axial(0, 0));
+      this.bases[player.id] = base0;
+    });
   }
 
   public myBuildings(playerId: number): { [uuid: string]: Building } {

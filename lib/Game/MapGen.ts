@@ -1,4 +1,4 @@
-import {TileMap, TileType} from 'tone-core/dist/lib';
+import { TileMap, TileType } from 'tone-core/dist/lib';
 
 const map: TileMap = {
   '1,2': {
@@ -32,6 +32,10 @@ const map: TileMap = {
   '1,1': {
     type: TileType.EMPTY,
     height: 1,
+  },
+  '3,0': {
+    type: TileType.INFORMATION_CLUSTER,
+    height: 0,
   },
 };
 

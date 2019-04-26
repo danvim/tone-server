@@ -5,13 +5,31 @@ var Player_1 = require("../lib/Game/Player");
 var Building_1 = require("../lib/Game/Building");
 var lib_1 = require("tone-core/dist/lib");
 var Worker_1 = require("../lib/Game/Unit/Worker");
-var player1 = new Player_1.Player();
+var test_1 = require("tone-core/dist/test");
+var conn1c = new test_1.StubConn();
+var conn1s = new test_1.StubConn();
+conn1c.connect(conn1s);
+var protocol1c = new lib_1.Protocol();
+var protocol1s = new lib_1.Protocol();
+var protocol = new lib_1.Protocol();
+protocol1c.add(conn1c);
+protocol1s.add(conn1s);
+protocol.add(conn1s);
+var animationObject = {};
+protocol1c.on(lib_1.PackageType.SET_ANIMATION, function (object) {
+    var obj = Object(object);
+    animationObject = {
+        uid: obj.uid,
+        animType: obj.animType,
+    };
+});
+var player1 = new Player_1.Player(conn1s);
 var player2 = new Player_1.Player();
 player1.id = 0;
 player2.id = 1;
 player1.username = 'Player1';
 player2.username = 'Player2';
-var game = new Game_1.Game([player1, player2]);
+var game = new Game_1.Game([player1, player2], protocol1s);
 game.terminate();
 game.frame(2000, 2000); // spawn a new work
 var worker = Object.values(game.myUnits(0))[0];
@@ -62,6 +80,12 @@ describe('grab struct from base and deliver to construction site', function () {
         it('worker target is the struct gen', function () {
             expect(worker.target && worker.target.uuid).toBe(strucGen.uuid);
         });
+        it('recieved animationObject to be carrying', function () {
+            expect(animationObject).toStrictEqual({
+                uid: worker.uuid,
+                animType: lib_1.AnimType.CARRYING,
+            });
+        });
     });
     describe('put struct', function () {
         it('worker gone to struct gen', function () {
@@ -87,6 +111,12 @@ describe('grab struct from base and deliver to construction site', function () {
             else {
                 expect(worker.target).toBeTruthy();
             }
+        });
+        it('recieved animationObject to be default', function () {
+            expect(animationObject).toStrictEqual({
+                uid: worker.uuid,
+                animType: lib_1.AnimType.DEFAULT,
+            });
         });
     });
 });

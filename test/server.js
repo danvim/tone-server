@@ -12,6 +12,8 @@ const PORT = 30000;
 
 const clientProtocol = new Protocol();
 const protocol1 = new Protocol();
+const Axial = require('tone-core/dist/lib').Axial;
+const BuildingType = require('tone-core/dist/lib').BuildingType;
 
 let peer1 = new Peer({ host: 'localhost', port: PORT, path: '/peer' });
 peer1.serialization = 'none';
@@ -61,23 +63,27 @@ conn2.on('open', () => {
     clientProtocol.emit(PackageType.CHAT, {
       content: 'hello world why it dont work',
     });
-    // startGameTests();
+    startGameTests();
   });
   clientProtocol.on(PackageType.UPDATE_TILES, (object, conn) => {
     global.console.log(object);
   });
 });
 
-// const startGameTests = () => {
-//   const start = Date.now();
-//   const mylog = (...param) => {
-//     console.log(Date.now() - start, ...param);
-//   };
-//   clientProtocol.emit(PackageType.TRY_BUILD, {
-//     axialCoords: [new Axial(1, 0)],
-//     buildingType: buildingType.STRUCT_GEN,
-//   });
-//   clientProtocol.on(PackageType.SPAWN_ENTITY, mylog);
-//   clientProtocol.on(PackageType.MOVE_ENTITY, mylog);
-//   clientProtocol.on(PackageType.BUILD, mylog);
-// };
+let startGameTests;
+
+// it('placeholder',async done=>{
+startGameTests = () => {
+  const start = Date.now();
+  const mylog = (...param) => {
+    console.log(Date.now() - start, ...param);
+  };
+  clientProtocol.emit(PackageType.TRY_BUILD, {
+    axialCoords: [new Axial(1, 0)],
+    buildingType: BuildingType.STRUCT_GEN,
+  });
+  clientProtocol.on(PackageType.SPAWN_ENTITY, mylog);
+  clientProtocol.on(PackageType.MOVE_ENTITY, mylog);
+  clientProtocol.on(PackageType.BUILD, mylog);
+};
+// })

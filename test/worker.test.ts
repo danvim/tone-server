@@ -1,16 +1,46 @@
 import { Game } from '../lib/Game';
 import { Player } from '../lib/Game/Player';
 import { Building } from '../lib/Game/Building';
-import { BuildingType, Axial, Cartesian, TILE_SIZE } from 'tone-core/dist/lib';
+import {
+  BuildingType,
+  Axial,
+  Cartesian,
+  TILE_SIZE,
+  Protocol,
+  PackageType,
+  AnimType,
+} from 'tone-core/dist/lib';
 import { Worker, WorkerState } from '../lib/Game/Unit/Worker';
+import { StubConn } from 'tone-core/dist/test';
+import { Message } from 'protobufjs';
 
-const player1 = new Player();
+const conn1c = new StubConn();
+const conn1s = new StubConn();
+conn1c.connect(conn1s);
+
+const protocol1c = new Protocol();
+const protocol1s = new Protocol();
+const protocol = new Protocol();
+protocol1c.add(conn1c);
+protocol1s.add(conn1s);
+protocol.add(conn1s);
+
+let animationObject = {};
+protocol1c.on(PackageType.SET_ANIMATION, (object) => {
+  const obj = Object(object);
+  animationObject = {
+    uid: obj.uid,
+    animType: obj.animType,
+  };
+});
+
+const player1 = new Player(conn1s);
 const player2 = new Player();
 player1.id = 0;
 player2.id = 1;
 player1.username = 'Player1';
 player2.username = 'Player2';
-const game: Game = new Game([player1, player2]);
+const game: Game = new Game([player1, player2], protocol1s);
 game.terminate();
 game.frame(2000, 2000); // spawn a new work
 const worker = Object.values(game.myUnits(0))[0] as Worker;
@@ -72,6 +102,12 @@ describe('grab struct from base and deliver to construction site', () => {
     it('worker target is the struct gen', () => {
       expect(worker.target && worker.target.uuid).toBe(strucGen.uuid);
     });
+    it('recieved animationObject to be carrying', () => {
+      expect(animationObject).toStrictEqual({
+        uid: worker.uuid,
+        animType: AnimType.CARRYING,
+      });
+    });
   });
   describe('put struct', () => {
     it('worker gone to struct gen', () => {
@@ -96,6 +132,12 @@ describe('grab struct from base and deliver to construction site', () => {
       } else {
         expect(worker.target).toBeTruthy();
       }
+    });
+    it('recieved animationObject to be default', () => {
+      expect(animationObject).toStrictEqual({
+        uid: worker.uuid,
+        animType: AnimType.DEFAULT,
+      });
     });
   });
 });

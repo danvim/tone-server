@@ -83,14 +83,16 @@ var Game = /** @class */ (function () {
             var tileInfo = _this.map[axialString];
             if (tileInfo.type === lib_1.TileType.INFORMATION_CLUSTER) {
                 var playerId = initedClusterCount++;
-                var _a = axialString.split(',').map(Number), q = _a[0], r = _a[1];
-                var cluster = new SpawnPoint_1.SpawnPoint(_this, playerId, new lib_1.Axial(q, r));
+                var cluster = new SpawnPoint_1.SpawnPoint(_this, playerId, lib_1.Axial.fromString(axialString));
             }
         });
     };
     Game.prototype.initBase = function () {
-        var base0 = new Base_1.Base(this, 0, new lib_1.Axial(0, 0));
-        this.bases[0] = base0;
+        var _this = this;
+        this.players.forEach(function (player) {
+            var base0 = new Base_1.Base(_this, player.id, new lib_1.Axial(0, 0));
+            _this.bases[player.id] = base0;
+        });
     };
     Game.prototype.myBuildings = function (playerId) {
         var buildings = {};

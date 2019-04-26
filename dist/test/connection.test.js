@@ -15,9 +15,9 @@
 // const protocol1 = new Protocol();
 // const peer1 = new Peer({ host: 'localhost', port: PORT, path: '/peer' });
 // // @ts-ignore
-// peer1.serialization = 'none';
+// peer1.serialization = 'binary';
 // const conn1 = peer1.connect('server');
-// conn1.serialization = 'none';
+// conn1.serialization = 'binary';
 // conn1.on('data', (data) => {
 //   global.console.log('conn1', data);
 // });

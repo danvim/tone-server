@@ -212,7 +212,14 @@ export class Game {
       const entity = this.entities[key];
       entity.frame(prevTicks, currTicks);
       const [x, z] = entity.position.asArray;
-      this.emit(PackageType.MOVE_ENTITY, { uuid, x, y: 5, z });
+      const [vx, vz] = entity.velocity.asArray;
+      this.emit(PackageType.MOVE_ENTITY, {
+        uid: entity.uuid,
+        location: { x, y: 5, z },
+        yaw: 0,
+        pitch: 0,
+        velocity: { x: vx, y: 0, z: vz },
+      });
     });
 
     this.prevTicks = currTicks;

@@ -35,13 +35,19 @@ player1.username = 'Player1';
 player2.username = 'Player2';
 var game = new Game_1.Game([player1, player2], protocol1s);
 game.terminate();
+var entityTest = [];
+protocol1c.on(lib_1.PackageType.MOVE_ENTITY, function (object) {
+    entityTest = [
+        Object(object),
+        game.entities[Object(object).uid].position.clone(),
+    ];
+});
 game.frame(2000, 2000); // spawn a new work
 var worker = Object.values(game.myUnits(0))[0];
 var spawnPoint = Object.values(game.myBuildings(0)).filter(function (building) { return building.buildingType === lib_1.BuildingType.SPAWN_POINT; })[0];
 var base = game.bases[0];
 var strucGen = new Building_1.Building(game, 0, lib_1.BuildingType.STRUCT_GENERATOR, new lib_1.Axial(1, 0));
 var oldDist = worker.position.euclideanDistance(base.cartesianPos);
-// const totalDist =
 describe('grab struct from base and deliver to construction site', function () {
     describe('init, 2000', function () {
         it('base location', function () {
@@ -55,6 +61,11 @@ describe('grab struct from base and deliver to construction site', function () {
         });
         it('the velocity', function () {
             expect(worker.velocity).toStrictEqual(new lib_1.Cartesian(worker.speed, 0));
+        });
+        it('update entity protocol', function () {
+            console.log(entityTest);
+            expect(entityTest[0].location.x).toBe(entityTest[1].x);
+            expect(entityTest[0].location.z).toBe(entityTest[1].y);
         });
     });
     describe('2100', function () {

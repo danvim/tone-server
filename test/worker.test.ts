@@ -47,6 +47,16 @@ player1.username = 'Player1';
 player2.username = 'Player2';
 const game: Game = new Game([player1, player2], protocol1s);
 game.terminate();
+
+let entityTest: any = [];
+
+protocol1c.on(PackageType.MOVE_ENTITY, (object) => {
+  entityTest = [
+    Object(object),
+    game.entities[Object(object).uid].position.clone(),
+  ];
+});
+
 game.frame(2000, 2000); // spawn a new work
 const worker = Object.values(game.myUnits(0))[0] as Worker;
 const spawnPoint = Object.values(game.myBuildings(0)).filter(
@@ -60,7 +70,7 @@ const strucGen = new Building(
   new Axial(1, 0),
 );
 const oldDist = worker.position.euclideanDistance(base.cartesianPos);
-// const totalDist =
+
 describe('grab struct from base and deliver to construction site', () => {
   describe('init, 2000', () => {
     it('base location', () => {
@@ -78,6 +88,11 @@ describe('grab struct from base and deliver to construction site', () => {
     });
     it('the velocity', () => {
       expect(worker.velocity).toStrictEqual(new Cartesian(worker.speed, 0));
+    });
+    it('update entity protocol', () => {
+      console.log(entityTest);
+      expect(entityTest[0].location.x).toBe(entityTest[1].x);
+      expect(entityTest[0].location.z).toBe(entityTest[1].y);
     });
   });
   describe('2100', () => {

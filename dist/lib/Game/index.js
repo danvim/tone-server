@@ -4,7 +4,6 @@ var MapGen_1 = require("./MapGen");
 var lib_1 = require("tone-core/dist/lib");
 var timers_1 = require("timers");
 var Helpers_1 = require("../Helpers");
-var uuid = require("uuid");
 var SpawnPoint_1 = require("./Building/SpawnPoint");
 var Base_1 = require("./Building/Base");
 var BuildingFactory_1 = require("./Building/BuildingFactory");
@@ -161,7 +160,14 @@ var Game = /** @class */ (function () {
             var entity = _this.entities[key];
             entity.frame(prevTicks, currTicks);
             var _a = entity.position.asArray, x = _a[0], z = _a[1];
-            _this.emit(lib_1.PackageType.MOVE_ENTITY, { uuid: uuid, x: x, y: 5, z: z });
+            var _b = entity.velocity.asArray, vx = _b[0], vz = _b[1];
+            _this.emit(lib_1.PackageType.MOVE_ENTITY, {
+                uid: entity.uuid,
+                location: { x: x, y: 5, z: z },
+                yaw: 0,
+                pitch: 0,
+                velocity: { x: vx, y: 0, z: vz },
+            });
         });
         this.prevTicks = currTicks;
     };

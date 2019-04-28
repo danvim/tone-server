@@ -10,7 +10,8 @@
     "build": "tsc",
     "test": "jest --forceExit --runInBand --verbose",
     "testServe": "nodemon test/server.js",
-    "lint": "tslint -c tslint.json -t code-frame lib/**/*.ts"
+    "lint": "tslint -c tslint.json -t code-frame lib/**/*.ts",
+    "watch": "tsc-watch --onSuccess \"npm run lint\""
   },
   "repository": {
     "type": "git",

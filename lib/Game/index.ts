@@ -21,6 +21,7 @@ import { SpawnPoint } from './Building/SpawnPoint';
 import { Base } from './Building/Base';
 import { buildingFactory } from './Building/BuildingFactory';
 import { Message } from 'protobufjs';
+import { Reclaimer } from './Building/Reclaimer';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -138,11 +139,19 @@ export class Game {
     this.playerClaimTile = {};
     this.players.forEach((player: Player, k: number) => {
       this.playerClaimTile[player.id] = {};
-      this.claimTile(player.id, this.bases[player.id].tilePosition, 3);
+      this.claimTile(
+        player.id,
+        this.bases[player.id].tilePosition,
+        this.bases[player.id].territoryRadius,
+      );
     });
     Object.values(this.buildings).forEach((building: Building) => {
       if (building.buildingType === BuildingType.RECLAIMATOR) {
-        this.claimTile(building.player.id, building.tilePosition, 3);
+        this.claimTile(
+          building.player.id,
+          building.tilePosition,
+          (building as Reclaimer).territoryRadius,
+        );
       }
     });
   }
@@ -211,6 +220,19 @@ export class Game {
     const player = this.mapConnToPlayer(conn);
     if (player) {
       const { buildingType, axialCoords } = Object(object);
+      const canBuild = axialCoords.reduce((flag: boolean, axial: Axial) => {
+        return (
+          flag &&
+          this.playerClaimTile[player.id][axial.asString] &&
+          Object.values(this.myBuildings(player.id)).findIndex(
+            (building: Building) =>
+              building.tilePosition.asString === axial.asString,
+          ) === -1
+        );
+      }, true);
+      if (!canBuild) {
+        return false;
+      }
       let axialCoord;
       if (axialCoords.length > 1) {
         axialCoord = axialCoords.reduce(
@@ -221,20 +243,25 @@ export class Game {
         axialCoord = axialCoords[0];
       }
       buildingFactory(this, player.id, buildingType, axialCoord);
+      return true;
     }
+    return false;
   }
 
   public claimTile(playerId: number, axialLocation: Axial, radius: number) {
-    for (let i = -radius; i <= radius; i++) {
-      for (let j = -radius; j <= radius; j++) {
-        if (Math.abs(i) + Math.abs(j) <= radius) {
-          let [q, r] = axialLocation.asArray;
-          q += i;
-          r += j;
-          this.playerClaimTile[playerId][new Axial(q, r).asString] = true;
-        }
-      }
-    }
+    axialLocation.range(radius).forEach((axial: Axial) => {
+      this.playerClaimTile[playerId][axial.asString] = true;
+    });
+    // for (let i = -radius; i <= radius; i++) {
+    //   for (let j = -radius; j <= radius; j++) {
+    //     if (Math.abs(i) + Math.abs(j) <= radius) {
+    //       let [q, r] = axialLocation.asArray;
+    //       q += i;
+    //       r += j;
+    //       this.playerClaimTile[playerId][new Axial(q, r).asString] = true;
+    //     }
+    //   }
+    // }
   }
 
   public isTileClaimedBy(playerId: number, axialLocation: Axial) {

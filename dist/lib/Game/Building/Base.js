@@ -24,6 +24,7 @@ var Base = /** @class */ (function (_super) {
         _this.structStorage = 0;
         _this.trainingDataStorage = 0;
         _this.primeDataStorage = 0;
+        _this.territoryRadius = 8;
         _this.generateStruct = function () {
             _this.structStorage++;
         };

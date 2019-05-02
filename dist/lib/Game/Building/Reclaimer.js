@@ -21,7 +21,8 @@ var Reclaimer = /** @class */ (function (_super) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.RECLAIMATOR, tilePosition) || this;
         _this.amount = 0;
         _this.capacity = 1;
-        _this.game.claimTile(playerId, tilePosition, 3);
+        _this.territoryRadius = 5;
+        _this.game.claimTile(playerId, tilePosition, _this.territoryRadius);
         return _this;
     }
     Reclaimer.prototype.onDie = function () {

@@ -9,6 +9,7 @@ export class Base extends Building implements BuildingInterface {
   public structStorage = 0;
   public trainingDataStorage = 0;
   public primeDataStorage = 0;
+  public territoryRadius: number = 8;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.BASE, tilePosition);
     this.periodStrategy = new PeriodStrategy(2000, this.generateStruct);

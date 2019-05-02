@@ -19,6 +19,16 @@ var Game = /** @class */ (function () {
             var player = _this.mapConnToPlayer(conn);
             if (player) {
                 var _a = Object(object), buildingType = _a.buildingType, axialCoords = _a.axialCoords;
+                var canBuild = axialCoords.reduce(function (flag, axial) {
+                    return (flag &&
+                        _this.playerClaimTile[player.id][axial.asString] &&
+                        Object.values(_this.myBuildings(player.id)).findIndex(function (building) {
+                            return building.tilePosition.asString === axial.asString;
+                        }) === -1);
+                }, true);
+                if (!canBuild) {
+                    return false;
+                }
                 var axialCoord = void 0;
                 if (axialCoords.length > 1) {
                     axialCoord = axialCoords.reduce(function (carry, axial) { return carry.add(axial); }, axialCoords[0].clone());
@@ -27,7 +37,9 @@ var Game = /** @class */ (function () {
                     axialCoord = axialCoords[0];
                 }
                 BuildingFactory_1.buildingFactory(_this, player.id, buildingType, axialCoord);
+                return true;
             }
+            return false;
         };
         this.players = [];
         this.protocol = protocol;
@@ -106,11 +118,11 @@ var Game = /** @class */ (function () {
         this.playerClaimTile = {};
         this.players.forEach(function (player, k) {
             _this.playerClaimTile[player.id] = {};
-            _this.claimTile(player.id, _this.bases[player.id].tilePosition, 3);
+            _this.claimTile(player.id, _this.bases[player.id].tilePosition, _this.bases[player.id].territoryRadius);
         });
         Object.values(this.buildings).forEach(function (building) {
             if (building.buildingType === lib_1.BuildingType.RECLAIMATOR) {
-                _this.claimTile(building.player.id, building.tilePosition, 3);
+                _this.claimTile(building.player.id, building.tilePosition, building.territoryRadius);
             }
         });
     };
@@ -169,16 +181,20 @@ var Game = /** @class */ (function () {
         return units;
     };
     Game.prototype.claimTile = function (playerId, axialLocation, radius) {
-        for (var i = -radius; i <= radius; i++) {
-            for (var j = -radius; j <= radius; j++) {
-                if (Math.abs(i) + Math.abs(j) <= radius) {
-                    var _a = axialLocation.asArray, q = _a[0], r = _a[1];
-                    q += i;
-                    r += j;
-                    this.playerClaimTile[playerId][new lib_1.Axial(q, r).asString] = true;
-                }
-            }
-        }
+        var _this = this;
+        axialLocation.range(radius).forEach(function (axial) {
+            _this.playerClaimTile[playerId][axial.asString] = true;
+        });
+        // for (let i = -radius; i <= radius; i++) {
+        //   for (let j = -radius; j <= radius; j++) {
+        //     if (Math.abs(i) + Math.abs(j) <= radius) {
+        //       let [q, r] = axialLocation.asArray;
+        //       q += i;
+        //       r += j;
+        //       this.playerClaimTile[playerId][new Axial(q, r).asString] = true;
+        //     }
+        //   }
+        // }
     };
     Game.prototype.isTileClaimedBy = function (playerId, axialLocation) {
         return this.playerClaimTile[playerId][axialLocation.asString] || false;

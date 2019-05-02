@@ -9,6 +9,7 @@ export declare class Base extends Building implements BuildingInterface {
     structStorage: number;
     trainingDataStorage: number;
     primeDataStorage: number;
+    territoryRadius: number;
     constructor(game: Game, playerId: number, tilePosition: Axial);
     frame(prevTicks: number, currTicks: number): void;
     generateStruct: () => void;

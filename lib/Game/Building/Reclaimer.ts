@@ -13,9 +13,10 @@ import { ResourceType } from '../../Helpers';
 export class Reclaimer extends Building implements BuildingInterface {
   public amount: number = 0;
   public capacity: number = 1;
+  public territoryRadius: number = 5;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.RECLAIMATOR, tilePosition);
-    this.game.claimTile(playerId, tilePosition, 3);
+    this.game.claimTile(playerId, tilePosition, this.territoryRadius);
   }
 
   public onDie() {

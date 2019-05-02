@@ -65,7 +65,7 @@ export declare class Game {
     opponentUnits(playerId: number): {
         [uuid: string]: Unit;
     };
-    build: (object: Message<TryBuildMessage>, conn: Conn) => void;
+    build: (object: Message<TryBuildMessage>, conn: Conn) => boolean;
     claimTile(playerId: number, axialLocation: Axial, radius: number): void;
     isTileClaimedBy(playerId: number, axialLocation: Axial): boolean;
     frame(prevTicks: number, currTicks: number): void;

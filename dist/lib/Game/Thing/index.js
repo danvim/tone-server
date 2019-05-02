@@ -9,7 +9,7 @@ var Thing = /** @class */ (function () {
     function Thing(game, playerId, hp) {
         this.game = game;
         this.playerId = playerId;
-        this.hp = hp || 100;
+        this.mhp = hp || 100;
         this.uuid = v4_1.default();
     }
     Object.defineProperty(Thing.prototype, "cartesianPos", {
@@ -26,8 +26,28 @@ var Thing = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Thing.prototype, "hp", {
+        get: function () {
+            return this.mhp;
+        },
+        set: function (hp) {
+            this.mhp = Math.max(0, hp);
+            this.game.emit(lib_1.PackageType.UPDATE_HEALTH, {
+                uid: this.uuid,
+                up: Math.max(0, hp),
+            });
+            if (this.mhp <= 0) {
+                this.onDie();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
     Thing.prototype.frame = function (prevTick, currTick) {
         //
+    };
+    Thing.prototype.onDie = function () {
+        delete this.game.buildings[this.uuid];
     };
     return Thing;
 }());

@@ -12,6 +12,7 @@ var Game = /** @class */ (function () {
     // game start
     function Game(players, protocol) {
         var _this = this;
+        this.playerClaimTile = {};
         // states
         this.prevTicks = 0;
         this.build = function (object, conn) {
@@ -40,6 +41,7 @@ var Game = /** @class */ (function () {
         this.reassignPlayerId(players);
         this.initClusterTiles();
         this.initBase();
+        this.evaluateTerritory();
         this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 100);
     }
     // connection functions
@@ -88,9 +90,28 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.initBase = function () {
         var _this = this;
-        this.players.forEach(function (player) {
-            var base0 = new Base_1.Base(_this, player.id, new lib_1.Axial(0, 0));
+        var locations = [
+            new lib_1.Axial(0, 0),
+            new lib_1.Axial(10, 0),
+            new lib_1.Axial(10, 10),
+            new lib_1.Axial(0, 10),
+        ];
+        this.players.forEach(function (player, k) {
+            var base0 = new Base_1.Base(_this, player.id, locations[k]);
             _this.bases[player.id] = base0;
+        });
+    };
+    Game.prototype.evaluateTerritory = function () {
+        var _this = this;
+        this.playerClaimTile = {};
+        this.players.forEach(function (player, k) {
+            _this.playerClaimTile[player.id] = {};
+            _this.claimTile(player.id, _this.bases[player.id].tilePosition, 3);
+        });
+        Object.values(this.buildings).forEach(function (building) {
+            if (building.buildingType === lib_1.BuildingType.RECLAIMATOR) {
+                _this.claimTile(building.player.id, building.tilePosition, 3);
+            }
         });
     };
     Game.prototype.myBuildings = function (playerId) {
@@ -146,6 +167,21 @@ var Game = /** @class */ (function () {
             }
         }
         return units;
+    };
+    Game.prototype.claimTile = function (playerId, axialLocation, radius) {
+        for (var i = -radius; i <= radius; i++) {
+            for (var j = -radius; j <= radius; j++) {
+                if (Math.abs(i) + Math.abs(j) <= radius) {
+                    var _a = axialLocation.asArray, q = _a[0], r = _a[1];
+                    q += i;
+                    r += j;
+                    this.playerClaimTile[playerId][new lib_1.Axial(q, r).asString] = true;
+                }
+            }
+        }
+    };
+    Game.prototype.isTileClaimedBy = function (playerId, axialLocation) {
+        return this.playerClaimTile[playerId][axialLocation.asString] || false;
     };
     Game.prototype.frame = function (prevTicks, currTicks) {
         var _this = this;

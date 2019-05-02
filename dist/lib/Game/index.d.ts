@@ -2,7 +2,7 @@
 /// <reference types="node" />
 import { Player } from './Player';
 import Conn = PeerJs.DataConnection;
-import { Protocol, PackageType, TileMap, TryBuildMessage } from 'tone-core/dist/lib';
+import { Protocol, PackageType, Axial, TileMap, TryBuildMessage } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
 import { Unit } from './Unit';
@@ -25,6 +25,11 @@ export declare class Game {
     };
     map: TileMap;
     frameTimer?: NodeJS.Timeout;
+    playerClaimTile: {
+        [playerId: number]: {
+            [axialString: string]: boolean;
+        };
+    };
     prevTicks: number;
     constructor(players: Player[], protocol: Protocol);
     emit(packageType: PackageType, object: object): void;
@@ -41,6 +46,7 @@ export declare class Game {
      */
     initClusterTiles(): void;
     initBase(): void;
+    evaluateTerritory(): void;
     myBuildings(playerId: number): {
         [uuid: string]: Building;
     };
@@ -60,6 +66,8 @@ export declare class Game {
         [uuid: string]: Unit;
     };
     build: (object: Message<TryBuildMessage>, conn: Conn) => void;
+    claimTile(playerId: number, axialLocation: Axial, radius: number): void;
+    isTileClaimedBy(playerId: number, axialLocation: Axial): boolean;
     frame(prevTicks: number, currTicks: number): void;
     test(): void;
 }

@@ -45,7 +45,7 @@ export class Building extends Thing implements BuildingInterface {
   }
 
   public isFunctional() {
-    return this.structProgress >= this.structNeeded;
+    return this.structProgress >= this.structNeeded && this.hp > 0;
   }
 
   public frame(prevTicks: number, currTicks: number) {

@@ -63,7 +63,6 @@ describe('grab struct from base and deliver to construction site', function () {
             expect(worker.velocity).toStrictEqual(new lib_1.Cartesian(worker.speed, 0));
         });
         it('update entity protocol', function () {
-            console.log(entityTest);
             expect(entityTest[0].location.x).toBe(entityTest[1].x);
             expect(entityTest[0].location.z).toBe(entityTest[1].y);
         });
@@ -102,12 +101,14 @@ describe('grab struct from base and deliver to construction site', function () {
             });
         });
     });
+    var t2;
     describe('put struct', function () {
         it('worker gone to struct gen', function () {
             if (worker.target) {
-                var t2 = t +
-                    worker.position.euclideanDistance(worker.target.cartesianPos) /
-                        worker.speed;
+                t2 =
+                    t +
+                        worker.position.euclideanDistance(worker.target.cartesianPos) /
+                            worker.speed;
                 t2 = Math.ceil(t2);
                 game.frame(t, t2);
                 expect(worker.position).toStrictEqual(strucGen.cartesianPos);
@@ -132,6 +133,32 @@ describe('grab struct from base and deliver to construction site', function () {
                 uid: worker.uuid,
                 animType: lib_1.AnimType.DEFAULT,
             });
+        });
+    });
+    describe('done building the struct gen', function () {
+        it('step till done', function () {
+            // now at struct gen, process = 1, total need = 5
+            expect(strucGen.structProgress).toBe(1);
+            game.frame(t2, 2 * t2);
+            game.frame(2 * t2, 3 * t2);
+            expect(strucGen.structProgress).toBe(2);
+            game.frame(3 * t2, 4 * t2);
+            game.frame(4 * t2, 5 * t2);
+            // expect(strucGen.structProgress).toBe(3);
+            game.frame(5 * t2, 6 * t2);
+            game.frame(6 * t2, 7 * t2);
+            // expect(strucGen.structProgress).toBe(4);
+            game.frame(7 * t2, 8 * t2);
+            game.frame(8 * t2, 9 * t2);
+            expect(strucGen.isFunctional()).toBe(true);
+        });
+        it('would grab struct from struct gen', function () {
+            if (worker.target) {
+                expect(worker.target.uuid).toBe(strucGen.uuid);
+            }
+            else {
+                expect(worker.target).toBeTruthy();
+            }
         });
     });
 });

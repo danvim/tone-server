@@ -46,7 +46,7 @@ var Building = /** @class */ (function (_super) {
         configurable: true
     });
     Building.prototype.isFunctional = function () {
-        return this.structProgress >= this.structNeeded;
+        return this.structProgress >= this.structNeeded && this.hp > 0;
     };
     Building.prototype.frame = function (prevTicks, currTicks) {
         //

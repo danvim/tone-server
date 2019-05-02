@@ -37,7 +37,7 @@ const map: TileMap = {
     type: TileType.EMPTY,
     height: 1,
   },
-  '3,0': {
+  '10,1': {
     type: TileType.INFORMATION_CLUSTER,
     height: 0,
   },

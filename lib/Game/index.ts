@@ -32,6 +32,11 @@ export class Game {
   public bases: { [playerId: number]: Base };
   public map: TileMap;
   public frameTimer?: NodeJS.Timeout;
+  public playerClaimTile: {
+    [playerId: number]: {
+      [axialString: string]: boolean;
+    };
+  } = {};
 
   // states
   public prevTicks = 0;
@@ -51,6 +56,7 @@ export class Game {
     this.reassignPlayerId(players);
     this.initClusterTiles();
     this.initBase();
+    this.evaluateTerritory();
 
     this.frameTimer = setInterval(
       () => this.frame(this.prevTicks, now('ms')),
@@ -116,9 +122,28 @@ export class Game {
   }
 
   public initBase() {
-    this.players.forEach((player: Player) => {
-      const base0 = new Base(this, player.id, new Axial(0, 0));
+    const locations = [
+      new Axial(0, 0),
+      new Axial(10, 0),
+      new Axial(10, 10),
+      new Axial(0, 10),
+    ];
+    this.players.forEach((player: Player, k: number) => {
+      const base0 = new Base(this, player.id, locations[k]);
       this.bases[player.id] = base0;
+    });
+  }
+
+  public evaluateTerritory() {
+    this.playerClaimTile = {};
+    this.players.forEach((player: Player, k: number) => {
+      this.playerClaimTile[player.id] = {};
+      this.claimTile(player.id, this.bases[player.id].tilePosition, 3);
+    });
+    Object.values(this.buildings).forEach((building: Building) => {
+      if (building.buildingType === BuildingType.RECLAIMATOR) {
+        this.claimTile(building.player.id, building.tilePosition, 3);
+      }
     });
   }
 
@@ -197,6 +222,23 @@ export class Game {
       }
       buildingFactory(this, player.id, buildingType, axialCoord);
     }
+  }
+
+  public claimTile(playerId: number, axialLocation: Axial, radius: number) {
+    for (let i = -radius; i <= radius; i++) {
+      for (let j = -radius; j <= radius; j++) {
+        if (Math.abs(i) + Math.abs(j) <= radius) {
+          let [q, r] = axialLocation.asArray;
+          q += i;
+          r += j;
+          this.playerClaimTile[playerId][new Axial(q, r).asString] = true;
+        }
+      }
+    }
+  }
+
+  public isTileClaimedBy(playerId: number, axialLocation: Axial) {
+    return this.playerClaimTile[playerId][axialLocation.asString] || false;
   }
 
   public frame(prevTicks: number, currTicks: number) {

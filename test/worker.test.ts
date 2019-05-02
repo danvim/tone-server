@@ -90,7 +90,6 @@ describe('grab struct from base and deliver to construction site', () => {
       expect(worker.velocity).toStrictEqual(new Cartesian(worker.speed, 0));
     });
     it('update entity protocol', () => {
-      console.log(entityTest);
       expect(entityTest[0].location.x).toBe(entityTest[1].x);
       expect(entityTest[0].location.z).toBe(entityTest[1].y);
     });
@@ -129,10 +128,11 @@ describe('grab struct from base and deliver to construction site', () => {
       });
     });
   });
+  let t2: number;
   describe('put struct', () => {
     it('worker gone to struct gen', () => {
       if (worker.target) {
-        let t2 =
+        t2 =
           t +
           worker.position.euclideanDistance(worker.target.cartesianPos) /
             worker.speed;
@@ -158,6 +158,36 @@ describe('grab struct from base and deliver to construction site', () => {
         uid: worker.uuid,
         animType: AnimType.DEFAULT,
       });
+    });
+  });
+  describe('done building the struct gen', () => {
+    it('step till done', () => {
+      // now at struct gen, process = 1, total need = 5
+      expect(strucGen.structProgress).toBe(1);
+      game.frame(t2, 2 * t2);
+      game.frame(2 * t2, 3 * t2);
+
+      expect(strucGen.structProgress).toBe(2);
+      game.frame(3 * t2, 4 * t2);
+      game.frame(4 * t2, 5 * t2);
+
+      // expect(strucGen.structProgress).toBe(3);
+      game.frame(5 * t2, 6 * t2);
+      game.frame(6 * t2, 7 * t2);
+
+      // expect(strucGen.structProgress).toBe(4);
+      game.frame(7 * t2, 8 * t2);
+      game.frame(8 * t2, 9 * t2);
+
+      expect(strucGen.isFunctional()).toBe(true);
+    });
+
+    it('would grab struct from struct gen', () => {
+      if (worker.target) {
+        expect(worker.target.uuid).toBe(strucGen.uuid);
+      } else {
+        expect(worker.target).toBeTruthy();
+      }
     });
   });
 });

@@ -2,6 +2,7 @@ import { Game } from '..';
 import { BuildingType, Axial } from 'tone-core/dist/lib';
 import { Base } from './Base';
 import { SpawnPoint } from './SpawnPoint';
+import { StructGenerator } from './StructGenerator';
 
 export function buildingFactory(
   game: Game,
@@ -14,5 +15,7 @@ export function buildingFactory(
       return new Base(game, playerId, tilePosition);
     case BuildingType.SPAWN_POINT:
       return new SpawnPoint(game, playerId, tilePosition);
+    case BuildingType.STRUCT_GENERATOR:
+      return new StructGenerator(game, playerId, tilePosition);
   }
 }

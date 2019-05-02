@@ -1,9 +1,17 @@
 import { TileMap, TileType } from 'tone-core/dist/lib';
 
 const map: TileMap = {
-  '1,2': {
+  '-1,0': {
+    type: TileType.INFORMATION_CLUSTER,
+    height: 0,
+  },
+  '-1,1': {
     type: TileType.EMPTY,
-    height: 1,
+    height: 3,
+  },
+  '-1,2': {
+    type: TileType.EMPTY,
+    height: 3,
   },
   '0,0': {
     type: TileType.EMPTY,
@@ -17,19 +25,15 @@ const map: TileMap = {
     type: TileType.EMPTY,
     height: 3,
   },
-  '-1,0': {
-    type: TileType.INFORMATION_CLUSTER,
-    height: 0,
-  },
-  '-1,2': {
-    type: TileType.EMPTY,
-    height: 3,
-  },
   '1,0': {
     type: TileType.VOID,
     height: 0,
   },
   '1,1': {
+    type: TileType.EMPTY,
+    height: 1,
+  },
+  '1,2': {
     type: TileType.EMPTY,
     height: 1,
   },
@@ -40,5 +44,16 @@ const map: TileMap = {
 };
 
 export function MapGen() {
+  for (let i = 0; i < 10; i++) {
+    for (let j = 0; j < 10; j++) {
+      const key = `${i},${j}`;
+      if (!map[key]) {
+        map[key] = {
+          type: TileType.EMPTY,
+          height: 1,
+        };
+      }
+    }
+  }
   return map;
 }

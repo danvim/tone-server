@@ -65,16 +65,25 @@ export class Barrack extends Building {
 
   public onDie() {
     if (this.storageJob) {
-      this.storageJob.workers.forEach((worker: Worker) => {
-        delete worker.job;
-        if (worker.state === WorkerState.DELIVERING) {
-          worker.target = this.game.bases[this.playerId];
-        } else {
-          worker.findJob();
-        }
-      });
-      delete this.game.workerJobs[this.storageJob.id];
+      this.storageJob.removeJob();
     }
+    if (this.recruitmentJob) {
+      this.recruitmentJob.removeJob();
+    }
+    this.soldiers.forEach((s: Soldier) => {
+      const w = new Worker(this.game, this.playerId, s.position, s.rotation);
+      w.hp = s.hp;
+      s.hp = 0;
+    });
+    for (let i = 0; i < this.trainingCount; i++) {
+      const w = new Worker(
+        this.game,
+        this.playerId,
+        this.cartesianPos,
+        new XyzEuler(0, 0, 0),
+      );
+    }
+    super.onDie();
   }
 
   public onResouceDelivered(

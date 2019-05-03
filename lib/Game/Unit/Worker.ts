@@ -277,7 +277,6 @@ export class Worker extends Unit {
 
   public onDie() {
     if (this.job) {
-      console.log('on die');
       this.job.progressOnTheWay--;
       this.job.removeWorker(this);
     }

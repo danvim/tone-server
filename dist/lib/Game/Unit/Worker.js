@@ -269,7 +269,6 @@ var Worker = /** @class */ (function (_super) {
     };
     Worker.prototype.onDie = function () {
         if (this.job) {
-            console.log('on die');
             this.job.progressOnTheWay--;
             this.job.removeWorker(this);
         }

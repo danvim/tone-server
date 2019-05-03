@@ -4,10 +4,12 @@ import { Player } from '../Player';
 import { Game } from '..';
 import { Worker } from './Worker';
 export declare enum JobPriority {
-    LOW = 0,
-    MEDIUM = 1,
-    HIGH = 2,
-    EXCLUSIVE = 3
+    SUSPENDED = 0,
+    PAUSED = 1,
+    LOW = 2,
+    MEDIUM = 3,
+    HIGH = 4,
+    EXCLUSIVE = 5
 }
 export declare enum JobNature {
     CONSTRUCTION = 0,
@@ -32,5 +34,6 @@ export declare class WorkerJob {
     addWorker(worker: Worker): void;
     removeWorker(rworker: Worker): void;
     strictlyPriorThan(job: WorkerJob): boolean;
+    freeAllWorkers(): void;
     removeJob(): void;
 }

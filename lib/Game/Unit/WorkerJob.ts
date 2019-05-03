@@ -4,10 +4,12 @@ import { Player } from '../Player';
 import { Game } from '..';
 import uuid from 'uuid/v4';
 import { BuildingType } from 'tone-core/dist/lib';
-import { Worker } from './Worker';
+import { Worker, WorkerState } from './Worker';
 import { Barrack } from '../Building/Barrack';
 
 export enum JobPriority {
+  SUSPENDED,
+  PAUSED,
   LOW,
   MEDIUM,
   HIGH,
@@ -117,7 +119,20 @@ export class WorkerJob {
     return this.priority > job.priority;
   }
 
+  public freeAllWorkers() {
+    this.workers.forEach((worker: Worker) => {
+      delete worker.job;
+      if (worker.state === WorkerState.DELIVERING) {
+        worker.target = this.game.bases[this.playerId];
+      } else {
+        worker.findJob();
+      }
+    });
+  }
+
   public removeJob() {
+    this.freeAllWorkers();
     delete this.game.workerJobs[this.id];
+    this.priority = JobPriority.SUSPENDED;
   }
 }

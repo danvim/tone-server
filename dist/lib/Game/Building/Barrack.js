@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Game_1 = require("tone-core/dist/lib/Game");
+var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var Worker_1 = require("../Unit/Worker");
 var Helpers_1 = require("../../Helpers");
@@ -54,17 +55,20 @@ var Barrack = /** @class */ (function (_super) {
     Barrack.prototype.onDie = function () {
         var _this = this;
         if (this.storageJob) {
-            this.storageJob.workers.forEach(function (worker) {
-                delete worker.job;
-                if (worker.state === Worker_1.WorkerState.DELIVERING) {
-                    worker.target = _this.game.bases[_this.playerId];
-                }
-                else {
-                    worker.findJob();
-                }
-            });
-            delete this.game.workerJobs[this.storageJob.id];
+            this.storageJob.removeJob();
         }
+        if (this.recruitmentJob) {
+            this.recruitmentJob.removeJob();
+        }
+        this.soldiers.forEach(function (s) {
+            var w = new Worker_1.Worker(_this.game, _this.playerId, s.position, s.rotation);
+            w.hp = s.hp;
+            s.hp = 0;
+        });
+        for (var i = 0; i < this.trainingCount; i++) {
+            var w = new Worker_1.Worker(this.game, this.playerId, this.cartesianPos, new lib_1.XyzEuler(0, 0, 0));
+        }
+        _super.prototype.onDie.call(this);
     };
     Barrack.prototype.onResouceDelivered = function (type, amount, worker) {
         if (!this.isFunctional()) {

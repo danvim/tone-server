@@ -5,12 +5,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Helpers_1 = require("../../Helpers");
 var v4_1 = __importDefault(require("uuid/v4"));
+var Worker_1 = require("./Worker");
 var JobPriority;
 (function (JobPriority) {
-    JobPriority[JobPriority["LOW"] = 0] = "LOW";
-    JobPriority[JobPriority["MEDIUM"] = 1] = "MEDIUM";
-    JobPriority[JobPriority["HIGH"] = 2] = "HIGH";
-    JobPriority[JobPriority["EXCLUSIVE"] = 3] = "EXCLUSIVE";
+    JobPriority[JobPriority["SUSPENDED"] = 0] = "SUSPENDED";
+    JobPriority[JobPriority["PAUSED"] = 1] = "PAUSED";
+    JobPriority[JobPriority["LOW"] = 2] = "LOW";
+    JobPriority[JobPriority["MEDIUM"] = 3] = "MEDIUM";
+    JobPriority[JobPriority["HIGH"] = 4] = "HIGH";
+    JobPriority[JobPriority["EXCLUSIVE"] = 5] = "EXCLUSIVE";
 })(JobPriority = exports.JobPriority || (exports.JobPriority = {}));
 var JobNature;
 (function (JobNature) {
@@ -106,8 +109,22 @@ var WorkerJob = /** @class */ (function () {
     WorkerJob.prototype.strictlyPriorThan = function (job) {
         return this.priority > job.priority;
     };
+    WorkerJob.prototype.freeAllWorkers = function () {
+        var _this = this;
+        this.workers.forEach(function (worker) {
+            delete worker.job;
+            if (worker.state === Worker_1.WorkerState.DELIVERING) {
+                worker.target = _this.game.bases[_this.playerId];
+            }
+            else {
+                worker.findJob();
+            }
+        });
+    };
     WorkerJob.prototype.removeJob = function () {
+        this.freeAllWorkers();
         delete this.game.workerJobs[this.id];
+        this.priority = JobPriority.SUSPENDED;
     };
     return WorkerJob;
 }());

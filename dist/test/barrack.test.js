@@ -132,6 +132,13 @@ describe('barrack train the unit', function () {
         expect(Object.values(game.myUnits(0)).filter(function (unit) { return unit.type === lib_1.EntityType.SOLDIER_0; }).length).toBe(1);
     });
 });
+describe('barrack die', function () {
+    it('all soldier become workers', function () {
+        var expNumber = Object.keys(game.myUnits(0)).length + barrack.trainingCount;
+        barrack.hp = 0;
+        expect(Object.keys(game.myUnits(0)).length).toBe(expNumber);
+    });
+});
 // it('dummie', () => {
 //   expect(1).toBe(1);
 // });

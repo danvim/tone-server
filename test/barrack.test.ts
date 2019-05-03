@@ -186,6 +186,15 @@ describe('barrack train the unit', () => {
   });
 });
 
+describe('barrack die', () => {
+  it('all soldier become workers', () => {
+    const expNumber =
+      Object.keys(game.myUnits(0)).length + barrack.trainingCount;
+    barrack.hp = 0;
+    expect(Object.keys(game.myUnits(0)).length).toBe(expNumber);
+  });
+});
+
 // it('dummie', () => {
 //   expect(1).toBe(1);
 // });

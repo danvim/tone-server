@@ -30,9 +30,9 @@ var Base = /** @class */ (function (_super) {
             _this.structStorage++;
         };
         _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(2000, _this.generateStruct);
-        var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.LOW, true);
-        var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, true);
-        var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, WorkerJob_1.JobPriority.LOW, true);
+        var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
+        var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
+        var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
         return _this;
     }
     Base.prototype.frame = function (prevTicks, currTicks) {

@@ -10,7 +10,7 @@ import { Thing } from '../Thing';
 import { ResourceType, SNAKE2Normal } from '../../Helpers';
 import { Base } from './Base';
 import { SpawnPoint } from './SpawnPoint';
-import { WorkerJob, JobPriority } from '../Unit/WorkerJob';
+import { WorkerJob, JobPriority, JobNature } from '../Unit/WorkerJob';
 // // export {} from './';
 
 export class Building extends Thing implements BuildingInterface {
@@ -50,7 +50,7 @@ export class Building extends Thing implements BuildingInterface {
         this,
         ResourceType.STRUCT,
         JobPriority.MEDIUM,
-        false,
+        JobNature.CONSTRUCTION,
       );
     }
     this.game.emit(PackageType.BUILD, {

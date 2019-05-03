@@ -14,7 +14,7 @@ import { Entity } from '../Entity';
 import { Building } from '../Building';
 import { ResourceType } from '../../Helpers';
 import { Thing } from '../Thing';
-import { WorkerJob, JobPriority } from './WorkerJob';
+import { WorkerJob, JobPriority, JobNature } from './WorkerJob';
 
 export enum WorkerState {
   IDLE,
@@ -156,12 +156,19 @@ export class Worker extends Unit {
     if (generators.length === 0) {
       return false;
     }
+    // console.log(generators.map((g: Building) => g.name));
     const weightingFun = (source: Building) =>
       source.cartesianPos.euclideanDistance(this.position) +
         source.cartesianPos.euclideanDistance(target.cartesianPos) || Infinity;
     const sortedGenerators = generators.sort((a: Building, b: Building) => {
-      return weightingFun(a) - weightingFun(a);
+      return weightingFun(a) - weightingFun(b);
     });
+    // console.log(
+    //   sortedGenerators.map((g: Building) => ({
+    //     name: g.name,
+    //     weight: weightingFun(g),
+    //   })),
+    // );
     return sortedGenerators[0];
   }
 
@@ -171,12 +178,20 @@ export class Worker extends Unit {
    */
   public findGeneratorToGrab(resourceType: ResourceType): boolean {
     if (this.job) {
-      const target = this.searchGeneratorToGrab(this.job.target, resourceType);
-      if (target) {
-        this.target = target;
+      if (this.job.jobNature === JobNature.RECRUITMENT) {
+        this.target = this.job.target;
         this.job.progressOnTheWay += 1;
-        this.state = WorkerState.GRABBING;
-        return true;
+      } else {
+        const target = this.searchGeneratorToGrab(
+          this.job.target,
+          resourceType,
+        );
+        if (target) {
+          this.target = target;
+          this.job.progressOnTheWay += 1;
+          this.state = WorkerState.GRABBING;
+          return true;
+        }
       }
     }
     return false;
@@ -184,11 +199,20 @@ export class Worker extends Unit {
 
   public arrive() {
     const targetBuilding = this.target as Building;
+    if (this.job) {
+      if (this.job.jobNature === JobNature.RECRUITMENT) {
+        this.deliver(targetBuilding);
+      }
+    }
     if (this.state === WorkerState.DELIVERING) {
       this.deliver(targetBuilding);
     } else if (this.state === WorkerState.GRABBING) {
-      if (targetBuilding.tryGiveResource(ResourceType.STRUCT, 1)) {
-        this.grab(1);
+      if (this.job) {
+        if (targetBuilding.tryGiveResource(this.job.resourceType, 1)) {
+          this.grab(1);
+        }
+      } else {
+        this.findJob();
       }
     }
   }
@@ -199,9 +223,14 @@ export class Worker extends Unit {
    */
   public deliver(targetBuilding: Building) {
     this.state = WorkerState.IDLE;
-    targetBuilding.onResouceDelivered(ResourceType.STRUCT, 1);
     if (this.job) {
+      targetBuilding.onResouceDelivered(this.job.resourceType, 1);
       this.job.progressOnTheWay -= 1;
+      if (this.job.jobNature === JobNature.RECRUITMENT) {
+        this.hp = 0;
+        this.job.removeWorker(this);
+        return;
+      }
       if (!this.job.needWorker) {
         this.job.removeWorker(this);
         delete this.job;

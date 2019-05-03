@@ -5,12 +5,19 @@ import { Game } from '..';
 import uuid from 'uuid/v4';
 import { BuildingType } from 'tone-core/dist/lib';
 import { Worker } from './Worker';
+import { Barrack } from '../Building/Barrack';
 
 export enum JobPriority {
   LOW,
   MEDIUM,
   HIGH,
   EXCLUSIVE,
+}
+
+export enum JobNature {
+  CONSTRUCTION,
+  STORAGE,
+  RECRUITMENT,
 }
 
 export class WorkerJob {
@@ -21,20 +28,20 @@ export class WorkerJob {
   public playerId: number;
   public priority: JobPriority;
   public resourceType: ResourceType;
-  public isStorageJob: boolean = false;
+  public jobNature: JobNature;
   constructor(
     playerId: number,
     target: Building,
     resourceType: ResourceType,
     priority: JobPriority,
-    isStorageJob: boolean,
+    jobNature: JobNature,
   ) {
     this.id = uuid();
     this.target = target;
     this.resourceType = resourceType;
     this.playerId = playerId;
     this.priority = priority;
-    this.isStorageJob = isStorageJob;
+    this.jobNature = jobNature;
     this.game.workerJobs[this.id] = this;
   }
 
@@ -48,7 +55,7 @@ export class WorkerJob {
         this.progressOnTheWay -
         this.target.structProgress
       );
-    } else if (this.isStorageJob) {
+    } else if (this.jobNature === JobNature.STORAGE) {
       return 9999;
     } else {
       delete this.game.workerJobs[this.id];
@@ -57,8 +64,15 @@ export class WorkerJob {
   }
 
   public get needWorker(): boolean {
-    if (this.isStorageJob) {
+    if (this.jobNature === JobNature.STORAGE) {
       return true;
+    }
+    if (this.jobNature === JobNature.RECRUITMENT) {
+      const barrack = this.target as Barrack;
+      return (
+        barrack.soldierQuota - barrack.soldiers.length - this.progressOnTheWay >
+        0
+      );
     }
     if (this.target.isFunctional()) {
       return false;
@@ -82,7 +96,7 @@ export class WorkerJob {
     this.workers = this.workers.filter(
       (worker: Worker) => worker.uuid !== rworker.uuid,
     );
-    if (this.isStorageJob) {
+    if (this.jobNature === JobNature.STORAGE) {
       return;
     }
     if (this.workers.length === 0) {

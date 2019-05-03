@@ -23,13 +23,18 @@ var Barrack = /** @class */ (function (_super) {
     function Barrack(game, playerId, tilePosition) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.BARRACK, tilePosition) || this;
         _this.trainingDataStorage = 0;
+        _this.soldierVariant = Game_1.EntityType.SOLDIER_0;
+        _this.soldierQuota = 0;
+        _this.soldiers = [];
+        _this.trainingCount = 0;
+        _this.trainingTime = 3000;
         return _this;
     }
     Barrack.prototype.frame = function (prevTicks, currTicks) {
         //
     };
     Barrack.prototype.doneConstruction = function () {
-        this.storageJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, true);
+        this.storageJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
     };
     Barrack.prototype.onDie = function () {
         var _this = this;
@@ -55,10 +60,22 @@ var Barrack = /** @class */ (function (_super) {
                 this.trainingDataStorage += amount;
                 return amount;
             }
+            else if (type === Helpers_1.ResourceType.WORKER) {
+                if (this.soldiers.length + this.trainingCount < this.soldierQuota) {
+                    this.trainingCount++;
+                    return 1;
+                }
+                else {
+                    return 0;
+                }
+            }
             else {
                 return 0;
             }
         }
+    };
+    Barrack.prototype.callForRecuitment = function () {
+        this.recruitmentJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.WORKER, WorkerJob_1.JobPriority.EXCLUSIVE, WorkerJob_1.JobNature.RECRUITMENT);
     };
     return Barrack;
 }(_1.Building));

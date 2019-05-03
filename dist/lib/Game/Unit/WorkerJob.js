@@ -12,17 +12,22 @@ var JobPriority;
     JobPriority[JobPriority["HIGH"] = 2] = "HIGH";
     JobPriority[JobPriority["EXCLUSIVE"] = 3] = "EXCLUSIVE";
 })(JobPriority = exports.JobPriority || (exports.JobPriority = {}));
+var JobNature;
+(function (JobNature) {
+    JobNature[JobNature["CONSTRUCTION"] = 0] = "CONSTRUCTION";
+    JobNature[JobNature["STORAGE"] = 1] = "STORAGE";
+    JobNature[JobNature["RECRUITMENT"] = 2] = "RECRUITMENT";
+})(JobNature = exports.JobNature || (exports.JobNature = {}));
 var WorkerJob = /** @class */ (function () {
-    function WorkerJob(playerId, target, resourceType, priority, isStorageJob) {
+    function WorkerJob(playerId, target, resourceType, priority, jobNature) {
         this.workers = [];
         this.progressOnTheWay = 0;
-        this.isStorageJob = false;
         this.id = v4_1.default();
         this.target = target;
         this.resourceType = resourceType;
         this.playerId = playerId;
         this.priority = priority;
-        this.isStorageJob = isStorageJob;
+        this.jobNature = jobNature;
         this.game.workerJobs[this.id] = this;
     }
     Object.defineProperty(WorkerJob.prototype, "progressNeed", {
@@ -33,7 +38,7 @@ var WorkerJob = /** @class */ (function () {
                     this.progressOnTheWay -
                     this.target.structProgress);
             }
-            else if (this.isStorageJob) {
+            else if (this.jobNature === JobNature.STORAGE) {
                 return 9999;
             }
             else {
@@ -46,8 +51,13 @@ var WorkerJob = /** @class */ (function () {
     });
     Object.defineProperty(WorkerJob.prototype, "needWorker", {
         get: function () {
-            if (this.isStorageJob) {
+            if (this.jobNature === JobNature.STORAGE) {
                 return true;
+            }
+            if (this.jobNature === JobNature.RECRUITMENT) {
+                var barrack = this.target;
+                return (barrack.soldierQuota - barrack.soldiers.length - this.progressOnTheWay >
+                    0);
             }
             if (this.target.isFunctional()) {
                 return false;
@@ -76,7 +86,7 @@ var WorkerJob = /** @class */ (function () {
     };
     WorkerJob.prototype.removeWorker = function (rworker) {
         this.workers = this.workers.filter(function (worker) { return worker.uuid !== rworker.uuid; });
-        if (this.isStorageJob) {
+        if (this.jobNature === JobNature.STORAGE) {
             return;
         }
         if (this.workers.length === 0) {

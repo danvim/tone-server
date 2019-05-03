@@ -4,7 +4,7 @@ import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { ResourceType } from '../../Helpers';
-import { WorkerJob, JobPriority } from '../Unit/WorkerJob';
+import { WorkerJob, JobPriority, JobNature } from '../Unit/WorkerJob';
 export class Base extends Building implements BuildingInterface {
   public periodStrategy: PeriodStrategy;
   public structStorage = 0;
@@ -19,21 +19,21 @@ export class Base extends Building implements BuildingInterface {
       this,
       ResourceType.STRUCT,
       JobPriority.LOW,
-      true,
+      JobNature.STORAGE,
     );
     const t = new WorkerJob(
       playerId,
       this,
       ResourceType.TRAINING_DATA,
       JobPriority.LOW,
-      true,
+      JobNature.STORAGE,
     );
     const p = new WorkerJob(
       playerId,
       this,
       ResourceType.PRIME_DATA,
       JobPriority.LOW,
-      true,
+      JobNature.STORAGE,
     );
   }
 

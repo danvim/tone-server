@@ -149,13 +149,20 @@ var Worker = /** @class */ (function (_super) {
         if (generators.length === 0) {
             return false;
         }
+        // console.log(generators.map((g: Building) => g.name));
         var weightingFun = function (source) {
             return source.cartesianPos.euclideanDistance(_this.position) +
                 source.cartesianPos.euclideanDistance(target.cartesianPos) || Infinity;
         };
         var sortedGenerators = generators.sort(function (a, b) {
-            return weightingFun(a) - weightingFun(a);
+            return weightingFun(a) - weightingFun(b);
         });
+        // console.log(
+        //   sortedGenerators.map((g: Building) => ({
+        //     name: g.name,
+        //     weight: weightingFun(g),
+        //   })),
+        // );
         return sortedGenerators[0];
     };
     /**
@@ -164,24 +171,40 @@ var Worker = /** @class */ (function (_super) {
      */
     Worker.prototype.findGeneratorToGrab = function (resourceType) {
         if (this.job) {
-            var target = this.searchGeneratorToGrab(this.job.target, resourceType);
-            if (target) {
-                this.target = target;
+            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+                this.target = this.job.target;
                 this.job.progressOnTheWay += 1;
-                this.state = WorkerState.GRABBING;
-                return true;
+            }
+            else {
+                var target = this.searchGeneratorToGrab(this.job.target, resourceType);
+                if (target) {
+                    this.target = target;
+                    this.job.progressOnTheWay += 1;
+                    this.state = WorkerState.GRABBING;
+                    return true;
+                }
             }
         }
         return false;
     };
     Worker.prototype.arrive = function () {
         var targetBuilding = this.target;
+        if (this.job) {
+            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+                this.deliver(targetBuilding);
+            }
+        }
         if (this.state === WorkerState.DELIVERING) {
             this.deliver(targetBuilding);
         }
         else if (this.state === WorkerState.GRABBING) {
-            if (targetBuilding.tryGiveResource(Helpers_1.ResourceType.STRUCT, 1)) {
-                this.grab(1);
+            if (this.job) {
+                if (targetBuilding.tryGiveResource(this.job.resourceType, 1)) {
+                    this.grab(1);
+                }
+            }
+            else {
+                this.findJob();
             }
         }
     };
@@ -191,9 +214,14 @@ var Worker = /** @class */ (function (_super) {
      */
     Worker.prototype.deliver = function (targetBuilding) {
         this.state = WorkerState.IDLE;
-        targetBuilding.onResouceDelivered(Helpers_1.ResourceType.STRUCT, 1);
         if (this.job) {
+            targetBuilding.onResouceDelivered(this.job.resourceType, 1);
             this.job.progressOnTheWay -= 1;
+            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+                this.hp = 0;
+                this.job.removeWorker(this);
+                return;
+            }
             if (!this.job.needWorker) {
                 this.job.removeWorker(this);
                 delete this.job;

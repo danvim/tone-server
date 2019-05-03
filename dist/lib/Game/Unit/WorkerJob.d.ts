@@ -9,6 +9,11 @@ export declare enum JobPriority {
     HIGH = 2,
     EXCLUSIVE = 3
 }
+export declare enum JobNature {
+    CONSTRUCTION = 0,
+    STORAGE = 1,
+    RECRUITMENT = 2
+}
 export declare class WorkerJob {
     id: string;
     workers: Worker[];
@@ -17,8 +22,8 @@ export declare class WorkerJob {
     playerId: number;
     priority: JobPriority;
     resourceType: ResourceType;
-    isStorageJob: boolean;
-    constructor(playerId: number, target: Building, resourceType: ResourceType, priority: JobPriority, isStorageJob: boolean);
+    jobNature: JobNature;
+    constructor(playerId: number, target: Building, resourceType: ResourceType, priority: JobPriority, jobNature: JobNature);
     readonly progressNeed: number;
     readonly needWorker: boolean;
     readonly game: Game;

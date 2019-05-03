@@ -23,6 +23,7 @@ export enum ResourceType {
   STRUCT,
   TRAINING_DATA,
   PRIME_DATA,
+  WORKER,
 }
 
 export function SNAKE2Normal(SNAKE_CASE: string) {

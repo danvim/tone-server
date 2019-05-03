@@ -40,11 +40,13 @@ describe('barrack accept training data', function () {
         expect(trainingDataGen.amount).toBe(1);
     });
     it('worker want to grab trainning data', function () {
-        var j = Object.values(game.workerJobs).find(function (job) { return job.target.uuid === barrack.uuid && job.isStorageJob; });
+        var j = Object.values(game.workerJobs).find(function (job) {
+            return job.target.uuid === barrack.uuid && job.jobNature === WorkerJob_1.JobNature.STORAGE;
+        });
         if (j) {
             j.priority = WorkerJob_1.JobPriority.EXCLUSIVE;
         }
-        worker = new Worker_1.Worker(game, 0, new lib_1.Axial(1, 2).toCartesian(lib_1.TILE_SIZE), new lib_1.XyzEuler(1, 0, 0));
+        worker = new Worker_1.Worker(game, 0, new lib_1.Axial(0, 2).toCartesian(lib_1.TILE_SIZE), new lib_1.XyzEuler(1, 0, 0));
         game.frame(1000, 1000);
         if (worker.job && j) {
             expect(worker.job.id).toBe(j.id);
@@ -53,6 +55,25 @@ describe('barrack accept training data', function () {
             expect(worker.job).toBeTruthy();
             expect(j).toBeTruthy();
         }
+    });
+    it('job is barrack', function () {
+        if (worker.job) {
+            console.log(worker.job.target.name, worker.job.resourceType);
+        }
+        expect(worker.job && worker.job.target.name).toBe(barrack.name);
+    });
+    it('target is training data gen', function () {
+        expect(worker.target && worker.target.name).toBe(trainingDataGen.name);
+    });
+    it('worker get training data from generator', function () {
+        game.frame(2000, 22000);
+        expect(worker.position).toStrictEqual(trainingDataGen.cartesianPos);
+    });
+    it('worker put training data to barrack', function () {
+        expect(worker.position).toStrictEqual(barrack.cartesianPos);
+    });
+    it('training data storage', function () {
+        expect(barrack.trainingDataStorage).toBe(1);
     });
 });
 // it('dummie', () => {

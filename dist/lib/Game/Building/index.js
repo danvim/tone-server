@@ -31,7 +31,7 @@ var Building = /** @class */ (function (_super) {
         _this.tilePosition = tilePosition;
         _this.structNeeded = Game_1.BuildingProperty[buildingType].struct;
         if (_this.structNeeded > 0) {
-            var j = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.MEDIUM, false);
+            var j = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.MEDIUM, WorkerJob_1.JobNature.CONSTRUCTION);
         }
         _this.game.emit(lib_1.PackageType.BUILD, {
             playerId: playerId,

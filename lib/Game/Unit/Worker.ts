@@ -72,7 +72,11 @@ export class Worker extends Unit {
         this.target = this.game.bases[this.playerId];
       }
     } else if (this.state === WorkerState.IDLE) {
-      this.findGeneratorToGrab(this.job.resourceType);
+      if (this.job.jobNature === JobNature.RECRUITMENT) {
+        super.frame(prevTicks, currTicks);
+      } else {
+        this.findGeneratorToGrab(this.job.resourceType);
+      }
     } else {
       super.frame(prevTicks, currTicks);
     }
@@ -227,6 +231,7 @@ export class Worker extends Unit {
       targetBuilding.onResouceDelivered(this.job.resourceType, 1);
       this.job.progressOnTheWay -= 1;
       if (this.job.jobNature === JobNature.RECRUITMENT) {
+        // console.log(this.name + this.job.target.name + 'RECRUITED');
         this.hp = 0;
         this.job.removeWorker(this);
         return;

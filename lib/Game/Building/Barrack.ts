@@ -17,7 +17,7 @@ export class Barrack extends Building {
   public trainingDataStorage: number = 0;
   public storageJob?: WorkerJob;
   public soldierVariant: EntityType = EntityType.SOLDIER_0;
-  public soldierQuota: number = 0;
+  public soldierQuota: number = 3;
   public soldiers: Soldier[] = [];
   public recruitmentJob?: WorkerJob;
   public trainingCount = 0;
@@ -83,5 +83,6 @@ export class Barrack extends Building {
       JobPriority.EXCLUSIVE,
       JobNature.RECRUITMENT,
     );
+    return this.recruitmentJob;
   }
 }

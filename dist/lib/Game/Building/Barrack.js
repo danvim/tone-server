@@ -24,7 +24,7 @@ var Barrack = /** @class */ (function (_super) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.BARRACK, tilePosition) || this;
         _this.trainingDataStorage = 0;
         _this.soldierVariant = Game_1.EntityType.SOLDIER_0;
-        _this.soldierQuota = 0;
+        _this.soldierQuota = 3;
         _this.soldiers = [];
         _this.trainingCount = 0;
         _this.trainingTime = 3000;
@@ -76,6 +76,7 @@ var Barrack = /** @class */ (function (_super) {
     };
     Barrack.prototype.callForRecuitment = function () {
         this.recruitmentJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.WORKER, WorkerJob_1.JobPriority.EXCLUSIVE, WorkerJob_1.JobNature.RECRUITMENT);
+        return this.recruitmentJob;
     };
     return Barrack;
 }(_1.Building));

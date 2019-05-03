@@ -28,6 +28,7 @@ export declare class WorkerJob {
     readonly needWorker: boolean;
     readonly game: Game;
     readonly player: Player;
+    readonly name: string;
     addWorker(worker: Worker): void;
     removeWorker(rworker: Worker): void;
     strictlyPriorThan(job: WorkerJob): boolean;

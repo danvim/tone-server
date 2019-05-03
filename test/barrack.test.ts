@@ -12,6 +12,7 @@ import {
   TryBuildMessage,
   BuildingProperty,
   XyzEuler,
+  EntityType,
 } from 'tone-core/dist/lib';
 import { Worker, WorkerState } from '../lib/Game/Unit/Worker';
 import { StubConn } from 'tone-core/dist/test';
@@ -21,6 +22,7 @@ import { ResourceType } from '../lib/Helpers';
 import { TrainingDataGenerator } from '../lib/Game/Building/TrainingDataGenerator';
 import { Barrack } from '../lib/Game/Building/Barrack';
 import { WorkerJob, JobPriority, JobNature } from '../lib/Game/Unit/WorkerJob';
+import { Unit } from '../lib/Game/Unit';
 
 const conn1c = new StubConn();
 const conn1s = new StubConn();
@@ -80,7 +82,7 @@ describe('barrack accept training data', () => {
         job.target.uuid === barrack.uuid && job.jobNature === JobNature.STORAGE,
     );
     if (j) {
-      j.priority = JobPriority.EXCLUSIVE;
+      j.priority = JobPriority.HIGH;
     }
     worker = new Worker(
       game,
@@ -97,9 +99,6 @@ describe('barrack accept training data', () => {
     }
   });
   it('job is barrack', () => {
-    if (worker.job) {
-      console.log(worker.job.target.name, worker.job.resourceType);
-    }
     expect(worker.job && worker.job.target.name).toBe(barrack.name);
   });
   it('target is training data gen', () => {
@@ -110,12 +109,58 @@ describe('barrack accept training data', () => {
     expect(worker.position).toStrictEqual(trainingDataGen.cartesianPos);
   });
   it('worker put training data to barrack', () => {
+    game.frame(22000, 44000);
     expect(worker.position).toStrictEqual(barrack.cartesianPos);
   });
   it('training data storage', () => {
     expect(barrack.trainingDataStorage).toBe(1);
   });
 });
+
+describe('recuitment', () => {
+  // let workers: Worker[];
+  let j: WorkerJob;
+  it('recuitment start', () => {
+    j = barrack.callForRecuitment();
+    // workers = Object.values(game.myUnits(0)).filter(
+    //   (unit: Unit) => unit.type === EntityType.WORKER,
+    // ) as Worker[];
+    // console.log(workers.map((worker: Worker) => worker.name));
+
+    // game.frame(44000, 44000);
+    game.frame(44000, 66000);
+    // workers = Object.values(game.myUnits(0)).filter(
+    //   (unit: Unit) => unit.type === EntityType.WORKER,
+    // ) as Worker[];
+    // console.log(
+    //   workers.map((worker: Worker) => ({
+    //     name: worker.name,
+    //     job: worker.job && worker.job.name,
+    //   })),
+    // );
+    // console.log(j.workers.map((w: Worker) => w.name));
+    expect(j.workers.length).toBeGreaterThan(0);
+    worker = j.workers[0];
+    global.console.log(worker.name);
+  });
+  it('recruitment job worker\'s job is get recuited', () => {
+    expect(worker.job && worker.job.id).toBe(j.id);
+  });
+  it('worker\'s target is barrack', () => {
+    expect(worker.target && worker.target.uuid).toBe(barrack.uuid);
+  });
+  it('worker arrive barrack', () => {
+    game.frame(66000, 88000);
+    expect(worker.position.asString).toBe(barrack.cartesianPos.asString);
+  });
+  it('worker die', () => {
+    expect(worker.hp).toBe(0);
+  });
+  it('barrack in training state', () => {
+    expect(barrack.trainingCount).toBeGreaterThan(0);
+  });
+});
+
 // it('dummie', () => {
 //   expect(1).toBe(1);
 // });

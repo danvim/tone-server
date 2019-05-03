@@ -56,7 +56,10 @@ var WorkerJob = /** @class */ (function () {
             }
             if (this.jobNature === JobNature.RECRUITMENT) {
                 var barrack = this.target;
-                return (barrack.soldierQuota - barrack.soldiers.length - this.progressOnTheWay >
+                return (barrack.soldierQuota -
+                    barrack.trainingCount -
+                    barrack.soldiers.length -
+                    this.progressOnTheWay >
                     0);
             }
             if (this.target.isFunctional()) {
@@ -77,6 +80,13 @@ var WorkerJob = /** @class */ (function () {
     Object.defineProperty(WorkerJob.prototype, "player", {
         get: function () {
             return this.game.players[this.playerId];
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(WorkerJob.prototype, "name", {
+        get: function () {
+            return "[" + JobPriority[this.priority] + "] " + this.target.name + " " + JobNature[this.jobNature];
         },
         enumerable: true,
         configurable: true

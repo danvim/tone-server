@@ -19,5 +19,5 @@ export declare class Barrack extends Building {
     doneConstruction(): void;
     onDie(): void;
     onResouceDelivered(type: ResourceType, amount: number): number;
-    callForRecuitment(): void;
+    callForRecuitment(): WorkerJob;
 }

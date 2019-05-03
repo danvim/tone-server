@@ -75,7 +75,12 @@ var Worker = /** @class */ (function (_super) {
             }
         }
         else if (this.state === WorkerState.IDLE) {
-            this.findGeneratorToGrab(this.job.resourceType);
+            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+                _super.prototype.frame.call(this, prevTicks, currTicks);
+            }
+            else {
+                this.findGeneratorToGrab(this.job.resourceType);
+            }
         }
         else {
             _super.prototype.frame.call(this, prevTicks, currTicks);
@@ -218,6 +223,7 @@ var Worker = /** @class */ (function (_super) {
             targetBuilding.onResouceDelivered(this.job.resourceType, 1);
             this.job.progressOnTheWay -= 1;
             if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+                // console.log(this.name + this.job.target.name + 'RECRUITED');
                 this.hp = 0;
                 this.job.removeWorker(this);
                 return;

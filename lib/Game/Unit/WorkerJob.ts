@@ -70,7 +70,10 @@ export class WorkerJob {
     if (this.jobNature === JobNature.RECRUITMENT) {
       const barrack = this.target as Barrack;
       return (
-        barrack.soldierQuota - barrack.soldiers.length - this.progressOnTheWay >
+        barrack.soldierQuota -
+          barrack.trainingCount -
+          barrack.soldiers.length -
+          this.progressOnTheWay >
         0
       );
     }
@@ -86,6 +89,12 @@ export class WorkerJob {
 
   public get player(): Player {
     return this.game.players[this.playerId];
+  }
+
+  public get name(): string {
+    return `[${JobPriority[this.priority]}] ${this.target.name} ${
+      JobNature[this.jobNature]
+    }`;
   }
 
   public addWorker(worker: Worker) {

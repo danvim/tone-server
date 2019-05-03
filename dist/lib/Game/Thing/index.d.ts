@@ -11,6 +11,7 @@ export declare class Thing implements ThingInterface {
     readonly cartesianPos: Cartesian;
     readonly player: Player;
     hp: number;
+    readonly name: string;
     frame(prevTick: number, currTick: number): void;
     onDie(): void;
 }

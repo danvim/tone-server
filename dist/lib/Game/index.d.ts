@@ -8,6 +8,7 @@ import { Entity } from './Entity';
 import { Unit } from './Unit';
 import { Base } from './Building/Base';
 import { Message } from 'protobufjs';
+import { WorkerJob } from './Unit/WorkerJob';
 export declare class Game {
     players: Player[];
     protocol: Protocol;
@@ -29,6 +30,9 @@ export declare class Game {
         [playerId: number]: {
             [axialString: string]: boolean;
         };
+    };
+    workerJobs: {
+        [workerJobId: string]: WorkerJob;
     };
     prevTicks: number;
     constructor(players: Player[], protocol: Protocol);

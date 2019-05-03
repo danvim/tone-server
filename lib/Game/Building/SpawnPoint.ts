@@ -9,7 +9,7 @@ import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { Worker } from '../Unit/Worker';
 
-export class SpawnPoint extends Building implements BuildingInterface {
+export class SpawnPoint extends Building {
   public periodStrategy: PeriodStrategy;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.SPAWN_POINT, tilePosition);

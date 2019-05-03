@@ -13,6 +13,7 @@ var Game = /** @class */ (function () {
     function Game(players, protocol) {
         var _this = this;
         this.playerClaimTile = {};
+        this.workerJobs = {};
         // states
         this.prevTicks = 0;
         this.build = function (object, conn) {
@@ -185,16 +186,6 @@ var Game = /** @class */ (function () {
         axialLocation.range(radius).forEach(function (axial) {
             _this.playerClaimTile[playerId][axial.asString] = true;
         });
-        // for (let i = -radius; i <= radius; i++) {
-        //   for (let j = -radius; j <= radius; j++) {
-        //     if (Math.abs(i) + Math.abs(j) <= radius) {
-        //       let [q, r] = axialLocation.asArray;
-        //       q += i;
-        //       r += j;
-        //       this.playerClaimTile[playerId][new Axial(q, r).asString] = true;
-        //     }
-        //   }
-        // }
     };
     Game.prototype.isTileClaimedBy = function (playerId, axialLocation) {
         return this.playerClaimTile[playerId][axialLocation.asString] || false;

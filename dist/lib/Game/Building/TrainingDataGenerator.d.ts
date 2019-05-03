@@ -3,7 +3,7 @@ import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { ResourceType } from '../../Helpers';
-export declare class StructGenerator extends Building {
+export declare class TrainingDataGenerator extends Building {
     periodStrategy?: PeriodStrategy;
     amount: number;
     capacity: number;

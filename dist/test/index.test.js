@@ -69,24 +69,26 @@ describe('game initialize', function () {
         expect(initLength).toBe(0);
     });
     describe('after 2000ms', function () {
+        var units;
         var entityCount = 0;
         protocol1c.on(lib_1.PackageType.SPAWN_ENTITY, function () {
             entityCount++;
         });
-        game.frame(0, 2000);
-        var units = Object.values(game.units).filter(function (entity) {
-            return entity.playerId === 0;
-        });
         it('one entity with player id 0', function () {
+            var structGen = new Building_1.Building(game, 0, lib_1.BuildingType.STRUCT_GENERATOR, new lib_1.Axial(1, 2));
+            game.frame(0, 2000);
+            units = Object.values(game.units).filter(function (entity) {
+                return entity.playerId === 0;
+            });
             expect(units.length).toBe(1);
         });
         it('the newly spawned worker would want to grab from the base', function () {
-            var structGen = new Building_1.Building(game, 0, lib_1.BuildingType.STRUCT_GENERATOR, new lib_1.Axial(1, 2));
             if (units.length !== 1) {
                 expect(units.length).toBe(1);
             }
             else {
                 var worker = units[0];
+                console.log(worker.job && worker.job.target.name);
                 expect(worker.target && worker.target.uuid).toBe(game.bases[0].uuid);
             }
         });
@@ -95,3 +97,6 @@ describe('game initialize', function () {
         });
     });
 });
+// it('dummie', () => {
+//   expect(1).toBe(1);
+// });

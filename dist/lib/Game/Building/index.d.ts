@@ -5,6 +5,7 @@ import { Thing } from '../Thing';
 import { ResourceType } from '../../Helpers';
 export declare class Building extends Thing implements BuildingInterface {
     readonly cartesianPos: Cartesian;
+    readonly name: string;
     buildingType: BuildingType;
     tilePosition: Axial;
     structProgress: number;

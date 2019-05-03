@@ -4,13 +4,25 @@ import { Game } from '..';
 import { Thing } from '../Thing';
 
 export class Entity extends Thing implements EntityInterface {
+  public set target(target: Thing | undefined) {
+    this.mtarget = target;
+    this.updateVelocity();
+  }
+
+  public get target(): Thing | undefined {
+    return this.mtarget;
+  }
+
+  public get cartesianPos(): Cartesian {
+    return this.position;
+  }
   public type: EntityType;
   public position: Cartesian;
   public rotation: XyzEuler;
   public velocity: Cartesian;
   public speed: number;
-  public target?: Thing;
   public arriveRange: number = 0;
+  private mtarget?: Thing;
   // public unitStrategy?: UnitStrategy;
   constructor(
     game: Game,
@@ -34,10 +46,6 @@ export class Entity extends Thing implements EntityInterface {
     });
   }
 
-  public get cartesianPos(): Cartesian {
-    return this.position;
-  }
-
   public frame(prevTicks: number, currTicks: number) {
     // this.travelByVelocity(prevTick, currTick);
     this.moveToTarget(prevTicks, currTicks);
@@ -56,7 +64,7 @@ export class Entity extends Thing implements EntityInterface {
         this.target.cartesianPos,
       );
 
-      if (distanceToTarget < this.arriveRange) {
+      if (distanceToTarget <= this.arriveRange) {
         // perform arrive action
         this.arrive();
         this.velocity = new Cartesian(0, 0);

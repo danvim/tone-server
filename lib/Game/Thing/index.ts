@@ -39,6 +39,10 @@ export class Thing implements ThingInterface {
     }
   }
 
+  public get name(): string {
+    return 'Thing ' + this.uuid.substr(0, 6);
+  }
+
   public frame(prevTick: number, currTick: number) {
     //
   }

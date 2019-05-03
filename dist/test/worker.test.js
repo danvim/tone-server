@@ -42,11 +42,11 @@ protocol1c.on(lib_1.PackageType.MOVE_ENTITY, function (object) {
         game.entities[Object(object).uid].position.clone(),
     ];
 });
+var strucGen = new Building_1.Building(game, 0, lib_1.BuildingType.STRUCT_GENERATOR, new lib_1.Axial(1, 0));
 game.frame(2000, 2000); // spawn a new work
 var worker = Object.values(game.myUnits(0))[0];
 var spawnPoint = Object.values(game.myBuildings(0)).filter(function (building) { return building.buildingType === lib_1.BuildingType.SPAWN_POINT; })[0];
 var base = game.bases[0];
-var strucGen = new Building_1.Building(game, 0, lib_1.BuildingType.STRUCT_GENERATOR, new lib_1.Axial(1, 0));
 var oldDist = worker.position.euclideanDistance(base.cartesianPos);
 describe('grab struct from base and deliver to construction site', function () {
     describe('init, 2000', function () {
@@ -55,6 +55,10 @@ describe('grab struct from base and deliver to construction site', function () {
         });
         it('worker location', function () {
             expect(worker.position).toStrictEqual(spawnPoint.tilePosition.toCartesian(lib_1.TILE_SIZE));
+        });
+        it('worker job is build struct gen', function () {
+            // console.log(worker.job && worker.job.isStorageJob);
+            expect(worker.job && worker.job.target.uuid).toStrictEqual(strucGen.uuid);
         });
         it('worker target is base', function () {
             expect(worker.target && worker.target.uuid).toBe(base.uuid);
@@ -137,6 +141,7 @@ describe('grab struct from base and deliver to construction site', function () {
     });
     describe('done building the struct gen', function () {
         it('step till done', function () {
+            var j = Object.values(game.workerJobs).find(function (job) { return job.target.uuid === strucGen.uuid; });
             // now at struct gen, process = 1, total need = 5
             expect(strucGen.structProgress).toBe(1);
             game.frame(t2, 2 * t2);
@@ -144,13 +149,18 @@ describe('grab struct from base and deliver to construction site', function () {
             expect(strucGen.structProgress).toBe(2);
             game.frame(3 * t2, 4 * t2);
             game.frame(4 * t2, 5 * t2);
-            // expect(strucGen.structProgress).toBe(3);
+            // we already spawn the second worker xd
+            expect(strucGen.structProgress).toBe(4);
+            var w = (j && j.workers[0]) || worker;
             game.frame(5 * t2, 6 * t2);
             game.frame(6 * t2, 7 * t2);
-            // expect(strucGen.structProgress).toBe(4);
+            expect(strucGen.structProgress).toBe(5);
             game.frame(7 * t2, 8 * t2);
             game.frame(8 * t2, 9 * t2);
             expect(strucGen.isFunctional()).toBe(true);
+        });
+        it('construct struct gen job done, change to move struct to base', function () {
+            expect(worker.job && worker.job.target.name).toBe(base.name);
         });
         it('would grab struct from struct gen', function () {
             if (worker.target) {

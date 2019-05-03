@@ -43,6 +43,13 @@ var Thing = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Thing.prototype, "name", {
+        get: function () {
+            return 'Thing ' + this.uuid.substr(0, 6);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Thing.prototype.frame = function (prevTick, currTick) {
         //
     };

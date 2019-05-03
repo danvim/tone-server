@@ -22,6 +22,7 @@ import { Base } from './Building/Base';
 import { buildingFactory } from './Building/BuildingFactory';
 import { Message } from 'protobufjs';
 import { Reclaimer } from './Building/Reclaimer';
+import { WorkerJob } from './Unit/WorkerJob';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -38,6 +39,7 @@ export class Game {
       [axialString: string]: boolean;
     };
   } = {};
+  public workerJobs: { [workerJobId: string]: WorkerJob } = {};
 
   // states
   public prevTicks = 0;
@@ -252,16 +254,6 @@ export class Game {
     axialLocation.range(radius).forEach((axial: Axial) => {
       this.playerClaimTile[playerId][axial.asString] = true;
     });
-    // for (let i = -radius; i <= radius; i++) {
-    //   for (let j = -radius; j <= radius; j++) {
-    //     if (Math.abs(i) + Math.abs(j) <= radius) {
-    //       let [q, r] = axialLocation.asArray;
-    //       q += i;
-    //       r += j;
-    //       this.playerClaimTile[playerId][new Axial(q, r).asString] = true;
-    //     }
-    //   }
-    // }
   }
 
   public isTileClaimedBy(playerId: number, axialLocation: Axial) {

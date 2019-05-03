@@ -35,6 +35,17 @@ var Entity = /** @class */ (function (_super) {
         });
         return _this;
     }
+    Object.defineProperty(Entity.prototype, "target", {
+        get: function () {
+            return this.mtarget;
+        },
+        set: function (target) {
+            this.mtarget = target;
+            this.updateVelocity();
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Entity.prototype, "cartesianPos", {
         get: function () {
             return this.position;
@@ -55,7 +66,7 @@ var Entity = /** @class */ (function (_super) {
         }
         if (this.target) {
             var distanceToTarget = this.position.euclideanDistance(this.target.cartesianPos);
-            if (distanceToTarget < this.arriveRange) {
+            if (distanceToTarget <= this.arriveRange) {
                 // perform arrive action
                 this.arrive();
                 this.velocity = new lib_1.Cartesian(0, 0);

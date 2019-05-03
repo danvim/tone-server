@@ -23,3 +23,12 @@ var ResourceType;
     ResourceType[ResourceType["TRAINING_DATA"] = 1] = "TRAINING_DATA";
     ResourceType[ResourceType["PRIME_DATA"] = 2] = "PRIME_DATA";
 })(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
+function SNAKE2Normal(SNAKE_CASE) {
+    return SNAKE_CASE.split('_')
+        .map(function (_a) {
+        var h = _a[0], t = _a.slice(1);
+        return [h].concat(t.toLocaleLowerCase()).join('');
+    })
+        .join(' ');
+}
+exports.SNAKE2Normal = SNAKE2Normal;

@@ -16,6 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var Helpers_1 = require("../../Helpers");
+var WorkerJob_1 = require("./WorkerJob");
 var WorkerState;
 (function (WorkerState) {
     WorkerState[WorkerState["IDLE"] = 0] = "IDLE";
@@ -53,91 +54,183 @@ var Worker = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Worker.prototype, "name", {
+        get: function () {
+            return 'Worker ' + this.uuid.substr(0, 6);
+        },
+        enumerable: true,
+        configurable: true
+    });
     Worker.prototype.frame = function (prevTicks, currTicks) {
-        if (this.state === WorkerState.IDLE) {
+        if (!this.job) {
             this.findJob();
+        }
+        else if (!this.target) {
+            if (this.state === WorkerState.IDLE ||
+                this.state === WorkerState.GRABBING) {
+                this.findGeneratorToGrab(this.job.resourceType);
+            }
+            else {
+                this.target = this.game.bases[this.playerId];
+            }
+        }
+        else if (this.state === WorkerState.IDLE) {
+            this.findGeneratorToGrab(this.job.resourceType);
         }
         else {
             _super.prototype.frame.call(this, prevTicks, currTicks);
         }
     };
-    Worker.prototype.findJob = function () {
-        switch (this.state) {
-            case WorkerState.IDLE: {
-                var targetBuilding = this.findGeneratorToGrab();
-                if (targetBuilding === false) {
-                    break;
-                }
-                this.setTarget(targetBuilding);
-                this.state = WorkerState.GRABBING;
-                break;
+    Worker.prototype.searchJob = function () {
+        var _this = this;
+        // this.game.test();
+        var jobs = Object.values(this.game.workerJobs).filter(function (j) {
+            return j.playerId === _this.playerId && j.needWorker;
+        });
+        var job;
+        job = jobs.reduce(function (prev, curr) {
+            if (prev.priority === WorkerJob_1.JobPriority.EXCLUSIVE) {
+                return prev;
             }
-            // TODO: handle other states
-            case WorkerState.DELIVERING: {
-                var targetBuilding = this.findBuildingToDeliver();
-                this.setTarget(targetBuilding);
-                this.state = WorkerState.DELIVERING;
+            if (curr.priority === WorkerJob_1.JobPriority.EXCLUSIVE) {
+                return curr;
             }
+            if (prev.priority > curr.priority) {
+                return prev;
+            }
+            if (prev.priority < curr.priority) {
+                return curr;
+            }
+            var prevTotalDist = prev.target.cartesianPos.euclideanDistance(_this.position);
+            var currTotalDist = curr.target.cartesianPos.euclideanDistance(_this.position);
+            if (prevTotalDist > currTotalDist) {
+                return curr;
+            }
+            return prev;
+        }, jobs[0]);
+        return job;
+    };
+    Worker.prototype.findJob = function (job) {
+        job = job || this.searchJob();
+        if (job) {
+            this.job = job;
+            job.addWorker(this);
+            this.findGeneratorToGrab(this.job.resourceType);
         }
+    };
+    /**
+     * Find a generator or base to collect resource
+     * for delevering to the target building
+     *
+     * if the target building is base,
+     * dont give base for collection
+     *
+     * @param target delevery target building
+     * @param resourceType
+     */
+    Worker.prototype.searchGeneratorToGrab = function (target, resourceType) {
+        var _this = this;
+        var generatorTypes = [lib_1.BuildingType.BASE];
+        if (resourceType === Helpers_1.ResourceType.STRUCT) {
+            generatorTypes.push(lib_1.BuildingType.STRUCT_GENERATOR);
+        }
+        else if (resourceType === Helpers_1.ResourceType.TRAINING_DATA) {
+            generatorTypes.push(lib_1.BuildingType.TRAINING_DATA_GENERATOR);
+        }
+        else if (resourceType === Helpers_1.ResourceType.PRIME_DATA) {
+            generatorTypes.push(lib_1.BuildingType.PRIME_DATA_GENERATOR);
+        }
+        var generators = Object.values(this.game.buildings).filter(function (building) {
+            return (building.playerId === _this.playerId &&
+                generatorTypes.indexOf(building.buildingType) !== -1 &&
+                building.isFunctional() &&
+                building.uuid !== target.uuid);
+        });
+        if (generators.length === 0) {
+            return false;
+        }
+        var weightingFun = function (source) {
+            return source.cartesianPos.euclideanDistance(_this.position) +
+                source.cartesianPos.euclideanDistance(target.cartesianPos) || Infinity;
+        };
+        var sortedGenerators = generators.sort(function (a, b) {
+            return weightingFun(a) - weightingFun(a);
+        });
+        return sortedGenerators[0];
     };
     /**
      * Find a generator or the base to collect resouces
      * currently just base on shortest distance to the worker
      */
-    Worker.prototype.findGeneratorToGrab = function () {
-        var _this = this;
-        var generatorTypes = [
-            lib_1.BuildingType.PRIME_DATA_GENERATOR,
-            lib_1.BuildingType.STRUCT_GENERATOR,
-            lib_1.BuildingType.TRAINING_DATA_GENERATOR,
-            lib_1.BuildingType.SHIELD_GENERATOR,
-            lib_1.BuildingType.BASE,
-        ];
-        var generators = Object.keys(this.game.buildings).filter(function (uuid) {
-            var building = _this.game.buildings[uuid];
-            return (building.playerId === _this.playerId &&
-                generatorTypes.indexOf(building.buildingType) !== -1 &&
-                building.isFunctional());
-        });
-        if (generators.length === 0) {
-            return false;
+    Worker.prototype.findGeneratorToGrab = function (resourceType) {
+        if (this.job) {
+            var target = this.searchGeneratorToGrab(this.job.target, resourceType);
+            if (target) {
+                this.target = target;
+                this.job.progressOnTheWay += 1;
+                this.state = WorkerState.GRABBING;
+                return true;
+            }
         }
-        return this.game.buildings[generators.sort(function (a, b) {
-            return (_this.game.buildings[a].tilePosition
-                .toCartesian(lib_1.TILE_SIZE)
-                .euclideanDistance(_this.position) -
-                _this.game.buildings[b].tilePosition
-                    .toCartesian(lib_1.TILE_SIZE)
-                    .euclideanDistance(_this.position));
-        })[0]];
-    };
-    Worker.prototype.findBuildingToDeliver = function () {
-        var _this = this;
-        var buildingKeys = Object.keys(this.game.buildings).filter(function (uuid) {
-            var building = _this.game.buildings[uuid];
-            return (building.playerId === _this.playerId &&
-                building.structProgress < building.structNeeded);
-        });
-        if (buildingKeys.length === 0) {
-            return Object.values(this.game.buildings).filter(function (building) {
-                return building.buildingType === lib_1.BuildingType.BASE &&
-                    building.playerId === _this.playerId;
-            })[0];
-        }
-        return this.game.buildings[buildingKeys[0]];
+        return false;
     };
     Worker.prototype.arrive = function () {
         var targetBuilding = this.target;
         if (this.state === WorkerState.DELIVERING) {
-            this.state = WorkerState.IDLE;
-            targetBuilding.onResouceDelivered(Helpers_1.ResourceType.STRUCT, 1);
-            this.findJob();
+            this.deliver(targetBuilding);
         }
         else if (this.state === WorkerState.GRABBING) {
             if (targetBuilding.tryGiveResource(Helpers_1.ResourceType.STRUCT, 1)) {
-                this.state = WorkerState.DELIVERING;
+                this.grab(1);
+            }
+        }
+    };
+    /**
+     *
+     * @param amount delivered amount
+     */
+    Worker.prototype.deliver = function (targetBuilding) {
+        this.state = WorkerState.IDLE;
+        targetBuilding.onResouceDelivered(Helpers_1.ResourceType.STRUCT, 1);
+        if (this.job) {
+            this.job.progressOnTheWay -= 1;
+            if (!this.job.needWorker) {
+                this.job.removeWorker(this);
+                delete this.job;
                 this.findJob();
             }
+            else {
+                if (!this.mayChangeJob()) {
+                    this.findGeneratorToGrab(this.job.resourceType);
+                }
+            }
+        }
+        else {
+            this.findJob();
+        }
+    };
+    Worker.prototype.mayChangeJob = function () {
+        var newJob = this.searchJob();
+        if (this.job && newJob) {
+            if (newJob.strictlyPriorThan(this.job)) {
+                this.job.removeWorker(this);
+                this.findJob(newJob);
+                return true;
+            }
+        }
+        return false;
+    };
+    /**
+     *
+     * @param amount grabbed amount
+     */
+    Worker.prototype.grab = function (amount) {
+        this.state = WorkerState.DELIVERING;
+        if (this.job) {
+            this.target = this.job.target;
+        }
+        else {
+            this.findJob();
         }
     };
     return Worker;

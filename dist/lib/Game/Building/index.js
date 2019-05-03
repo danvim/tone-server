@@ -17,6 +17,7 @@ var Game_1 = require("tone-core/dist/lib/Game");
 var lib_1 = require("tone-core/dist/lib");
 var Thing_1 = require("../Thing");
 var Helpers_1 = require("../../Helpers");
+var WorkerJob_1 = require("../Unit/WorkerJob");
 // // export {} from './';
 var Building = /** @class */ (function (_super) {
     __extends(Building, _super);
@@ -29,6 +30,9 @@ var Building = /** @class */ (function (_super) {
         _this.buildingType = buildingType;
         _this.tilePosition = tilePosition;
         _this.structNeeded = Game_1.BuildingProperty[buildingType].struct;
+        if (_this.structNeeded > 0) {
+            var j = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.MEDIUM, false);
+        }
         _this.game.emit(lib_1.PackageType.BUILD, {
             playerId: playerId,
             uid: _this.uuid,
@@ -41,6 +45,15 @@ var Building = /** @class */ (function (_super) {
     Object.defineProperty(Building.prototype, "cartesianPos", {
         get: function () {
             return this.tilePosition.toCartesian(Game_1.TILE_SIZE);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Building.prototype, "name", {
+        get: function () {
+            return (Helpers_1.SNAKE2Normal(Game_1.BuildingType[this.buildingType]) +
+                ' ' +
+                this.uuid.substr(0, 6));
         },
         enumerable: true,
         configurable: true

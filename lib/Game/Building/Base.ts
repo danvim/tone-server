@@ -4,6 +4,7 @@ import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { ResourceType } from '../../Helpers';
+import { WorkerJob, JobPriority } from '../Unit/WorkerJob';
 export class Base extends Building implements BuildingInterface {
   public periodStrategy: PeriodStrategy;
   public structStorage = 0;
@@ -13,6 +14,27 @@ export class Base extends Building implements BuildingInterface {
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.BASE, tilePosition);
     this.periodStrategy = new PeriodStrategy(2000, this.generateStruct);
+    const s = new WorkerJob(
+      playerId,
+      this,
+      ResourceType.STRUCT,
+      JobPriority.LOW,
+      true,
+    );
+    const t = new WorkerJob(
+      playerId,
+      this,
+      ResourceType.TRAINING_DATA,
+      JobPriority.LOW,
+      true,
+    );
+    const p = new WorkerJob(
+      playerId,
+      this,
+      ResourceType.PRIME_DATA,
+      JobPriority.LOW,
+      true,
+    );
   }
 
   public frame(prevTicks: number, currTicks: number) {

@@ -17,6 +17,7 @@ var Game_1 = require("tone-core/dist/lib/Game");
 var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
 var Helpers_1 = require("../../Helpers");
+var WorkerJob_1 = require("../Unit/WorkerJob");
 var Base = /** @class */ (function (_super) {
     __extends(Base, _super);
     function Base(game, playerId, tilePosition) {
@@ -29,6 +30,9 @@ var Base = /** @class */ (function (_super) {
             _this.structStorage++;
         };
         _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(2000, _this.generateStruct);
+        var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.LOW, true);
+        var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, true);
+        var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, WorkerJob_1.JobPriority.LOW, true);
         return _this;
     }
     Base.prototype.frame = function (prevTicks, currTicks) {

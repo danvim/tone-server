@@ -24,3 +24,9 @@ export enum ResourceType {
   TRAINING_DATA,
   PRIME_DATA,
 }
+
+export function SNAKE2Normal(SNAKE_CASE: string) {
+  return SNAKE_CASE.split('_')
+    .map(([h, ...t]: any) => [h, ...t.toLocaleLowerCase()].join(''))
+    .join(' ');
+}

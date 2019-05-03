@@ -6,6 +6,8 @@ var SpawnPoint_1 = require("./SpawnPoint");
 var StructGenerator_1 = require("./StructGenerator");
 var _1 = require(".");
 var Reclaimer_1 = require("./Reclaimer");
+var TrainingDataGenerator_1 = require("./TrainingDataGenerator");
+var Barrack_1 = require("./Barrack");
 function buildingFactory(game, playerId, buildingType, tilePosition) {
     switch (buildingType) {
         case lib_1.BuildingType.BASE:
@@ -16,6 +18,10 @@ function buildingFactory(game, playerId, buildingType, tilePosition) {
             return new StructGenerator_1.StructGenerator(game, playerId, tilePosition);
         case lib_1.BuildingType.RECLAIMATOR:
             return new Reclaimer_1.Reclaimer(game, playerId, tilePosition);
+        case lib_1.BuildingType.TRAINING_DATA_GENERATOR:
+            return new TrainingDataGenerator_1.TrainingDataGenerator(game, playerId, tilePosition);
+        case lib_1.BuildingType.BARRACK:
+            return new Barrack_1.Barrack(game, playerId, tilePosition);
         default:
             return new _1.Building(game, playerId, buildingType, tilePosition);
     }

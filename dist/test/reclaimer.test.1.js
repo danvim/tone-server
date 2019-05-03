@@ -86,6 +86,3 @@ describe('claimer destroyed lose territory', function () {
         expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(10, 0))).toBe(false);
     });
 });
-// it('dummie', () => {
-//   expect(1).toBe(1);
-// });

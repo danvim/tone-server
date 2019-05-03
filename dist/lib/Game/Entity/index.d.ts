@@ -3,15 +3,16 @@ import { Cartesian, XyzEuler } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
 export declare class Entity extends Thing implements EntityInterface {
+    target: Thing | undefined;
+    readonly cartesianPos: Cartesian;
     type: EntityType;
     position: Cartesian;
     rotation: XyzEuler;
     velocity: Cartesian;
     speed: number;
-    target?: Thing;
     arriveRange: number;
+    private mtarget?;
     constructor(game: Game, playerId: number, type: EntityType, position: Cartesian, rotation: XyzEuler);
-    readonly cartesianPos: Cartesian;
     frame(prevTicks: number, currTicks: number): void;
     travelByVelocity(prevTick: number, currTick: number): void;
     moveToTarget(prevTicks: number, currTicks: number, target?: Thing): void;

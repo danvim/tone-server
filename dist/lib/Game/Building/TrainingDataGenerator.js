@@ -17,10 +17,10 @@ var Game_1 = require("tone-core/dist/lib/Game");
 var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
 var Helpers_1 = require("../../Helpers");
-var StructGenerator = /** @class */ (function (_super) {
-    __extends(StructGenerator, _super);
-    function StructGenerator(game, playerId, tilePosition) {
-        var _this = _super.call(this, game, playerId, Game_1.BuildingType.STRUCT_GENERATOR, tilePosition) || this;
+var TrainingDataGenerator = /** @class */ (function (_super) {
+    __extends(TrainingDataGenerator, _super);
+    function TrainingDataGenerator(game, playerId, tilePosition) {
+        var _this = _super.call(this, game, playerId, Game_1.BuildingType.TRAINING_DATA_GENERATOR, tilePosition) || this;
         _this.amount = 0;
         _this.capacity = 1;
         _this.generate = function () {
@@ -30,22 +30,22 @@ var StructGenerator = /** @class */ (function (_super) {
         };
         return _this;
     }
-    StructGenerator.prototype.frame = function (prevTicks, currTicks) {
+    TrainingDataGenerator.prototype.frame = function (prevTicks, currTicks) {
         if (this.periodStrategy) {
             this.periodStrategy.frame(prevTicks, currTicks);
         }
     };
-    StructGenerator.prototype.tryGiveResource = function (type, amount) {
-        if (type === Helpers_1.ResourceType.STRUCT) {
+    TrainingDataGenerator.prototype.tryGiveResource = function (type, amount) {
+        if (type === Helpers_1.ResourceType.TRAINING_DATA) {
             var a = Math.min(amount, this.amount);
             this.amount -= a;
             return a;
         }
         return 0;
     };
-    StructGenerator.prototype.doneConstruction = function () {
+    TrainingDataGenerator.prototype.doneConstruction = function () {
         this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(1000, this.generate);
     };
-    return StructGenerator;
+    return TrainingDataGenerator;
 }(_1.Building));
-exports.StructGenerator = StructGenerator;
+exports.TrainingDataGenerator = TrainingDataGenerator;

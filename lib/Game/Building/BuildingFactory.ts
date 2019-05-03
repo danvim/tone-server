@@ -5,6 +5,8 @@ import { SpawnPoint } from './SpawnPoint';
 import { StructGenerator } from './StructGenerator';
 import { Building } from '.';
 import { Reclaimer } from './Reclaimer';
+import { TrainingDataGenerator } from './TrainingDataGenerator';
+import { Barrack } from './Barrack';
 
 export function buildingFactory(
   game: Game,
@@ -21,6 +23,10 @@ export function buildingFactory(
       return new StructGenerator(game, playerId, tilePosition);
     case BuildingType.RECLAIMATOR:
       return new Reclaimer(game, playerId, tilePosition);
+    case BuildingType.TRAINING_DATA_GENERATOR:
+      return new TrainingDataGenerator(game, playerId, tilePosition);
+    case BuildingType.BARRACK:
+      return new Barrack(game, playerId, tilePosition);
     default:
       return new Building(game, playerId, buildingType, tilePosition);
   }

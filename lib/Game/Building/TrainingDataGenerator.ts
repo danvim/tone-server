@@ -10,12 +10,12 @@ import { PeriodStrategy } from './PeroidStrategy';
 import { Worker } from '../Unit/Worker';
 import { ResourceType } from '../../Helpers';
 
-export class StructGenerator extends Building {
+export class TrainingDataGenerator extends Building {
   public periodStrategy?: PeriodStrategy;
   public amount: number = 0;
   public capacity: number = 1;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
-    super(game, playerId, BuildingType.STRUCT_GENERATOR, tilePosition);
+    super(game, playerId, BuildingType.TRAINING_DATA_GENERATOR, tilePosition);
   }
 
   public frame(prevTicks: number, currTicks: number) {
@@ -31,7 +31,7 @@ export class StructGenerator extends Building {
   }
 
   public tryGiveResource(type: ResourceType, amount: number) {
-    if (type === ResourceType.STRUCT) {
+    if (type === ResourceType.TRAINING_DATA) {
       const a = Math.min(amount, this.amount);
       this.amount -= a;
       return a;

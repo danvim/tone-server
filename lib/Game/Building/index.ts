@@ -7,14 +7,23 @@ import {
 import { Axial, Cartesian, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
-import { ResourceType } from '../../Helpers';
+import { ResourceType, SNAKE2Normal } from '../../Helpers';
 import { Base } from './Base';
 import { SpawnPoint } from './SpawnPoint';
+import { WorkerJob, JobPriority } from '../Unit/WorkerJob';
 // // export {} from './';
 
 export class Building extends Thing implements BuildingInterface {
   public get cartesianPos(): Cartesian {
     return this.tilePosition.toCartesian(TILE_SIZE);
+  }
+
+  public get name(): string {
+    return (
+      SNAKE2Normal(BuildingType[this.buildingType]) +
+      ' ' +
+      this.uuid.substr(0, 6)
+    );
   }
 
   public buildingType: BuildingType;
@@ -35,6 +44,15 @@ export class Building extends Thing implements BuildingInterface {
     this.buildingType = buildingType;
     this.tilePosition = tilePosition;
     this.structNeeded = BuildingProperty[buildingType].struct;
+    if (this.structNeeded > 0) {
+      const j = new WorkerJob(
+        playerId,
+        this,
+        ResourceType.STRUCT,
+        JobPriority.MEDIUM,
+        false,
+      );
+    }
     this.game.emit(PackageType.BUILD, {
       playerId,
       uid: this.uuid,

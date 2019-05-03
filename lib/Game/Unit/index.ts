@@ -21,4 +21,9 @@ export class Unit extends Entity implements UnitInterface {
     this.game.units[this.uuid] = this;
     this.fightingStyle = FightingStyle.PASSIVE;
   }
+
+  public onDie() {
+    delete this.game.units[this.uuid];
+    super.onDie();
+  }
 }

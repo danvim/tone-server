@@ -23,6 +23,10 @@ var Unit = /** @class */ (function (_super) {
         _this.fightingStyle = lib_1.FightingStyle.PASSIVE;
         return _this;
     }
+    Unit.prototype.onDie = function () {
+        delete this.game.units[this.uuid];
+        _super.prototype.onDie.call(this);
+    };
     return Unit;
 }(Entity_1.Entity));
 exports.Unit = Unit;

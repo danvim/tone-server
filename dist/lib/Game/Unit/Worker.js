@@ -220,12 +220,12 @@ var Worker = /** @class */ (function (_super) {
     Worker.prototype.deliver = function (targetBuilding) {
         this.state = WorkerState.IDLE;
         if (this.job) {
-            targetBuilding.onResouceDelivered(this.job.resourceType, 1);
+            targetBuilding.onResouceDelivered(this.job.resourceType, 1, this);
             this.job.progressOnTheWay -= 1;
             if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
-                // console.log(this.name + this.job.target.name + 'RECRUITED');
-                this.hp = 0;
                 this.job.removeWorker(this);
+                delete this.job;
+                this.hp = 0;
                 return;
             }
             if (!this.job.needWorker) {
@@ -266,6 +266,14 @@ var Worker = /** @class */ (function (_super) {
         else {
             this.findJob();
         }
+    };
+    Worker.prototype.onDie = function () {
+        if (this.job) {
+            console.log('on die');
+            this.job.progressOnTheWay--;
+            this.job.removeWorker(this);
+        }
+        _super.prototype.onDie.call(this);
     };
     return Worker;
 }(_1.Unit));

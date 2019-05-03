@@ -46,4 +46,5 @@ export declare class Worker extends Unit {
      * @param amount grabbed amount
      */
     grab(amount: number): void;
+    onDie(): void;
 }

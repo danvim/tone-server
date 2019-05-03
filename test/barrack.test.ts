@@ -141,7 +141,7 @@ describe('recuitment', () => {
     // console.log(j.workers.map((w: Worker) => w.name));
     expect(j.workers.length).toBeGreaterThan(0);
     worker = j.workers[0];
-    global.console.log(worker.name);
+    global.console.log(worker.name, j.workers.length);
   });
   it('recruitment job worker\'s job is get recuited', () => {
     expect(worker.job && worker.job.id).toBe(j.id);
@@ -158,6 +158,31 @@ describe('recuitment', () => {
   });
   it('barrack in training state', () => {
     expect(barrack.trainingCount).toBeGreaterThan(0);
+  });
+  it('after die no key', () => {
+    expect(game.units[worker.uuid]).toBeFalsy();
+  });
+});
+
+describe('barrack train the unit', () => {
+  it('no soldiers', () => {
+    expect(
+      Object.values(game.myUnits(0)).filter(
+        (unit: Unit) => unit.type === EntityType.SOLDIER_0,
+      ).length,
+    ).toBe(0);
+  });
+  it('barrack become training state after frame', () => {
+    game.frame(88000, 88000);
+    expect(barrack.nowTraining).toBe(true);
+  });
+  it('after 3000 1 soldiers', () => {
+    game.frame(88000, 91000);
+    expect(
+      Object.values(game.myUnits(0)).filter(
+        (unit: Unit) => unit.type === EntityType.SOLDIER_0,
+      ).length,
+    ).toBe(1);
   });
 });
 

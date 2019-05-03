@@ -70,7 +70,7 @@ var Building = /** @class */ (function (_super) {
      * @param amount amount of resource trying to get
      * @return amount that this building really get
      */
-    Building.prototype.onResouceDelivered = function (type, amount) {
+    Building.prototype.onResouceDelivered = function (type, amount, worker) {
         if (type === Helpers_1.ResourceType.STRUCT &&
             this.structProgress < this.structNeeded) {
             this.structProgress += amount;

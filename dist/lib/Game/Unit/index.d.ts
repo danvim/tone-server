@@ -5,4 +5,5 @@ import { Entity } from '../Entity';
 export declare class Unit extends Entity implements UnitInterface {
     fightingStyle: FightingStyle;
     constructor(game: Game, playerId: number, type: EntityType, position: Cartesian, rotation: XyzEuler);
+    onDie(): void;
 }

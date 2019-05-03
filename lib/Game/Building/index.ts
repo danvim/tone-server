@@ -11,6 +11,7 @@ import { ResourceType, SNAKE2Normal } from '../../Helpers';
 import { Base } from './Base';
 import { SpawnPoint } from './SpawnPoint';
 import { WorkerJob, JobPriority, JobNature } from '../Unit/WorkerJob';
+import { Worker } from '../Unit/Worker';
 // // export {} from './';
 
 export class Building extends Thing implements BuildingInterface {
@@ -76,7 +77,11 @@ export class Building extends Thing implements BuildingInterface {
    * @param amount amount of resource trying to get
    * @return amount that this building really get
    */
-  public onResouceDelivered(type: ResourceType, amount: number): number {
+  public onResouceDelivered(
+    type: ResourceType,
+    amount: number,
+    worker?: Worker,
+  ): number {
     if (
       type === ResourceType.STRUCT &&
       this.structProgress < this.structNeeded

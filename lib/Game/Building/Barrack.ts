@@ -20,15 +20,37 @@ export class Barrack extends Building {
   public soldierQuota: number = 3;
   public soldiers: Soldier[] = [];
   public recruitmentJob?: WorkerJob;
-  public trainingCount = 0;
-  public trainingTime = 3000;
+
+  public trainingCount = 0; // number of soldiers now training
+  public trainingTime = 3000; // total ticks required to train a soldier
+  public trainStartTime = 0; // the start tick of current training soldier
+  public nowTraining = false; // now barrack is training
 
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.BARRACK, tilePosition);
   }
 
   public frame(prevTicks: number, currTicks: number) {
-    //
+    if (this.nowTraining) {
+      if (currTicks >= this.trainStartTime + this.trainingTime) {
+        this.trainingCount--;
+        this.soldiers.push(
+          new Soldier(
+            this.game,
+            this.playerId,
+            this.soldierVariant,
+            this.cartesianPos,
+            this,
+          ),
+        );
+        this.nowTraining = false;
+      }
+    } else {
+      if (this.trainingCount > 0) {
+        this.trainStartTime = currTicks;
+        this.nowTraining = true;
+      }
+    }
   }
 
   public doneConstruction() {
@@ -55,9 +77,13 @@ export class Barrack extends Building {
     }
   }
 
-  public onResouceDelivered(type: ResourceType, amount: number): number {
+  public onResouceDelivered(
+    type: ResourceType,
+    amount: number,
+    worker?: Worker,
+  ): number {
     if (!this.isFunctional()) {
-      return super.onResouceDelivered(type, amount);
+      return super.onResouceDelivered(type, amount, worker);
     } else {
       if (type === ResourceType.TRAINING_DATA) {
         this.trainingDataStorage += amount;

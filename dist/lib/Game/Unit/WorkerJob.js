@@ -100,11 +100,14 @@ var WorkerJob = /** @class */ (function () {
             return;
         }
         if (this.workers.length === 0) {
-            delete this.game.workerJobs[this.id];
+            this.removeJob();
         }
     };
     WorkerJob.prototype.strictlyPriorThan = function (job) {
         return this.priority > job.priority;
+    };
+    WorkerJob.prototype.removeJob = function () {
+        delete this.game.workerJobs[this.id];
     };
     return WorkerJob;
 }());

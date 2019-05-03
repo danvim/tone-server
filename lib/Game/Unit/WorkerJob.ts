@@ -109,11 +109,15 @@ export class WorkerJob {
       return;
     }
     if (this.workers.length === 0) {
-      delete this.game.workerJobs[this.id];
+      this.removeJob();
     }
   }
 
   public strictlyPriorThan(job: WorkerJob) {
     return this.priority > job.priority;
+  }
+
+  public removeJob() {
+    delete this.game.workerJobs[this.id];
   }
 }

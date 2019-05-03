@@ -32,4 +32,5 @@ export declare class WorkerJob {
     addWorker(worker: Worker): void;
     removeWorker(rworker: Worker): void;
     strictlyPriorThan(job: WorkerJob): boolean;
+    removeJob(): void;
 }

@@ -18,6 +18,7 @@ var _1 = require(".");
 var Worker_1 = require("../Unit/Worker");
 var Helpers_1 = require("../../Helpers");
 var WorkerJob_1 = require("../Unit/WorkerJob");
+var Soldier_1 = require("../Unit/Soldier");
 var Barrack = /** @class */ (function (_super) {
     __extends(Barrack, _super);
     function Barrack(game, playerId, tilePosition) {
@@ -26,12 +27,26 @@ var Barrack = /** @class */ (function (_super) {
         _this.soldierVariant = Game_1.EntityType.SOLDIER_0;
         _this.soldierQuota = 3;
         _this.soldiers = [];
-        _this.trainingCount = 0;
-        _this.trainingTime = 3000;
+        _this.trainingCount = 0; // number of soldiers now training
+        _this.trainingTime = 3000; // total ticks required to train a soldier
+        _this.trainStartTime = 0; // the start tick of current training soldier
+        _this.nowTraining = false; // now barrack is training
         return _this;
     }
     Barrack.prototype.frame = function (prevTicks, currTicks) {
-        //
+        if (this.nowTraining) {
+            if (currTicks >= this.trainStartTime + this.trainingTime) {
+                this.trainingCount--;
+                this.soldiers.push(new Soldier_1.Soldier(this.game, this.playerId, this.soldierVariant, this.cartesianPos, this));
+                this.nowTraining = false;
+            }
+        }
+        else {
+            if (this.trainingCount > 0) {
+                this.trainStartTime = currTicks;
+                this.nowTraining = true;
+            }
+        }
     };
     Barrack.prototype.doneConstruction = function () {
         this.storageJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
@@ -51,9 +66,9 @@ var Barrack = /** @class */ (function (_super) {
             delete this.game.workerJobs[this.storageJob.id];
         }
     };
-    Barrack.prototype.onResouceDelivered = function (type, amount) {
+    Barrack.prototype.onResouceDelivered = function (type, amount, worker) {
         if (!this.isFunctional()) {
-            return _super.prototype.onResouceDelivered.call(this, type, amount);
+            return _super.prototype.onResouceDelivered.call(this, type, amount, worker);
         }
         else {
             if (type === Helpers_1.ResourceType.TRAINING_DATA) {

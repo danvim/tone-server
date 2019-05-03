@@ -228,12 +228,12 @@ export class Worker extends Unit {
   public deliver(targetBuilding: Building) {
     this.state = WorkerState.IDLE;
     if (this.job) {
-      targetBuilding.onResouceDelivered(this.job.resourceType, 1);
+      targetBuilding.onResouceDelivered(this.job.resourceType, 1, this);
       this.job.progressOnTheWay -= 1;
       if (this.job.jobNature === JobNature.RECRUITMENT) {
-        // console.log(this.name + this.job.target.name + 'RECRUITED');
-        this.hp = 0;
         this.job.removeWorker(this);
+        delete this.job;
+        this.hp = 0;
         return;
       }
       if (!this.job.needWorker) {
@@ -273,5 +273,14 @@ export class Worker extends Unit {
     } else {
       this.findJob();
     }
+  }
+
+  public onDie() {
+    if (this.job) {
+      console.log('on die');
+      this.job.progressOnTheWay--;
+      this.job.removeWorker(this);
+    }
+    super.onDie();
   }
 }

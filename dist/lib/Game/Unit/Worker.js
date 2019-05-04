@@ -89,8 +89,17 @@ var Worker = /** @class */ (function (_super) {
     Worker.prototype.searchJob = function () {
         var _this = this;
         // this.game.test();
+        var myBuildings = Object.values(this.game.myBuildings(this.playerId));
+        var haveStruGen = !!myBuildings.find(function (b) { return b.buildingType === lib_1.BuildingType.STRUCT_GENERATOR; });
+        var haveDataGen = !!myBuildings.find(function (b) { return b.buildingType === lib_1.BuildingType.TRAINING_DATA_GENERATOR; });
         var jobs = Object.values(this.game.workerJobs).filter(function (j) {
-            return j.playerId === _this.playerId && j.needWorker;
+            return (j.playerId === _this.playerId &&
+                j.needWorker &&
+                j.priority !== WorkerJob_1.JobPriority.SUSPENDED &&
+                j.priority !== WorkerJob_1.JobPriority.PAUSED &&
+                (j.jobNature !== WorkerJob_1.JobNature.STORAGE ||
+                    ((j.resourceType === Helpers_1.ResourceType.STRUCT && haveStruGen) ||
+                        (j.resourceType === Helpers_1.ResourceType.TRAINING_DATA && haveDataGen))));
         });
         var job;
         job = jobs.reduce(function (prev, curr) {

@@ -47,7 +47,7 @@ var Soldier = /** @class */ (function (_super) {
             }
         },
         set: function (range) {
-            // no effect
+            this.grabRange = range;
         },
         enumerable: true,
         configurable: true

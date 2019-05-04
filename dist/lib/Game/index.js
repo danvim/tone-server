@@ -19,8 +19,14 @@ var Game = /** @class */ (function () {
         this.build = function (object, conn) {
             var player = _this.mapConnToPlayer(conn);
             if (player) {
+                console.log(player.username, player.id, Object(object));
                 var _a = Object(object), buildingType = _a.buildingType, axialCoords = _a.axialCoords;
-                var canBuild = axialCoords.reduce(function (flag, axial) {
+                var canBuild = axialCoords.reduce(function (flag, ax) {
+                    var axial = new lib_1.Axial(ax.q, ax.r);
+                    console.log(axial.asString);
+                    console.log(_this.playerClaimTile[player.id][axial.asString], Object.values(_this.myBuildings(player.id)).findIndex(function (building) {
+                        return building.tilePosition.asString === axial.asString;
+                    }) === -1);
                     return (flag &&
                         _this.playerClaimTile[player.id][axial.asString] &&
                         Object.values(_this.myBuildings(player.id)).findIndex(function (building) {
@@ -28,6 +34,8 @@ var Game = /** @class */ (function () {
                         }) === -1);
                 }, true);
                 if (!canBuild) {
+                    console.log('cannot build');
+                    console.log(_this.playerClaimTile, axialCoords);
                     return false;
                 }
                 var axialCoord = void 0;
@@ -37,7 +45,9 @@ var Game = /** @class */ (function () {
                 else if (axialCoords.length > 0) {
                     axialCoord = axialCoords[0];
                 }
-                BuildingFactory_1.buildingFactory(_this, player.id, buildingType, axialCoord);
+                var a = new lib_1.Axial(axialCoord.q, axialCoord.r);
+                BuildingFactory_1.buildingFactory(_this, player.id, buildingType, a);
+                console.log('built');
                 return true;
             }
             return false;
@@ -55,6 +65,7 @@ var Game = /** @class */ (function () {
         this.initClusterTiles();
         this.initBase();
         this.evaluateTerritory();
+        this.initProtocol(protocol);
         this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 100);
     }
     // connection functions
@@ -212,6 +223,9 @@ var Game = /** @class */ (function () {
                 velocity: { x: vx, y: 0, z: vz },
             });
         });
+        // const w = Object.values(this.myUnits(0))[0] as Worker;
+        // const j = w.job;
+        // console.log(w.name, j && j.name, w.position);
         this.prevTicks = currTicks;
     };
     Game.prototype.test = function () {

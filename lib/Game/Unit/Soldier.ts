@@ -36,7 +36,7 @@ export class Soldier extends Unit {
   public grabRange = 0; // eucledian dist
   public defenseRadius = 5;
   public set arriveRange(range: number) {
-    // no effect
+    this.grabRange = range;
   }
   public get arriveRange() {
     switch (this.soldierState) {

@@ -83,18 +83,24 @@ describe('game initialize', () => {
       entityCount++;
     });
     it('one entity with player id 0', () => {
-      const structGen = new Building(
-        game,
-        0,
-        BuildingType.STRUCT_GENERATOR,
-        new Axial(1, 2),
-      );
       game.frame(0, 2000);
       units = Object.values(game.units).filter((entity: Unit) => {
         return entity.playerId === 0;
       });
       expect(units.length).toBe(1);
     });
+    it('the newly spawned worker would not want to grab from the base since there is not working struct gen', () => {
+      const worker = units[0] as Worker;
+      expect(worker.job).toBeFalsy();
+      const structGen = new Building(
+        game,
+        0,
+        BuildingType.STRUCT_GENERATOR,
+        new Axial(1, 2),
+      );
+      game.frame(2000, 2000);
+    });
+
     it('the newly spawned worker would want to grab from the base', () => {
       if (units.length !== 1) {
         expect(units.length).toBe(1);
@@ -112,3 +118,4 @@ describe('game initialize', () => {
 // it('dummie', () => {
 //   expect(1).toBe(1);
 // });
+// window.protocol.emit(9,{axialCoords:[{q: 1, r:1}], buildingType: 2})

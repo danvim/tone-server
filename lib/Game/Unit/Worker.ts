@@ -84,8 +84,23 @@ export class Worker extends Unit {
 
   public searchJob() {
     // this.game.test();
+    const myBuildings = Object.values(this.game.myBuildings(this.playerId));
+    const haveStruGen = !!myBuildings.find(
+      (b: Building) => b.buildingType === BuildingType.STRUCT_GENERATOR,
+    );
+    const haveDataGen = !!myBuildings.find(
+      (b: Building) => b.buildingType === BuildingType.TRAINING_DATA_GENERATOR,
+    );
     const jobs = Object.values(this.game.workerJobs).filter((j: WorkerJob) => {
-      return j.playerId === this.playerId && j.needWorker;
+      return (
+        j.playerId === this.playerId &&
+        j.needWorker &&
+        j.priority !== JobPriority.SUSPENDED &&
+        j.priority !== JobPriority.PAUSED &&
+        (j.jobNature !== JobNature.STORAGE ||
+          ((j.resourceType === ResourceType.STRUCT && haveStruGen) ||
+            (j.resourceType === ResourceType.TRAINING_DATA && haveDataGen)))
+      );
     });
     let job: WorkerJob | undefined;
     job = jobs.reduce((prev: WorkerJob, curr: WorkerJob) => {

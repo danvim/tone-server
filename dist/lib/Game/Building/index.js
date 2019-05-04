@@ -44,6 +44,7 @@ var Building = /** @class */ (function (_super) {
     }
     Object.defineProperty(Building.prototype, "cartesianPos", {
         get: function () {
+            console.log('tile position', this.tilePosition);
             return this.tilePosition.toCartesian(Game_1.TILE_SIZE);
         },
         enumerable: true,

@@ -23,6 +23,7 @@ import { buildingFactory } from './Building/BuildingFactory';
 import { Message } from 'protobufjs';
 import { Reclaimer } from './Building/Reclaimer';
 import { WorkerJob } from './Unit/WorkerJob';
+import { Worker } from './Unit/Worker';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -49,7 +50,6 @@ export class Game {
     this.players = [];
     this.protocol = protocol;
     this.map = MapGen();
-    // global.console.log('try update tiles');
     this.emit(PackageType.UPDATE_TILES, { tiles: this.map });
     this.buildings = {};
     this.entities = {};
@@ -60,6 +60,7 @@ export class Game {
     this.initClusterTiles();
     this.initBase();
     this.evaluateTerritory();
+    this.initProtocol(protocol);
 
     this.frameTimer = setInterval(
       () => this.frame(this.prevTicks, now('ms')),
@@ -222,7 +223,8 @@ export class Game {
     const player = this.mapConnToPlayer(conn);
     if (player) {
       const { buildingType, axialCoords } = Object(object);
-      const canBuild = axialCoords.reduce((flag: boolean, axial: Axial) => {
+      const canBuild = axialCoords.reduce((flag: boolean, ax: any) => {
+        const axial = new Axial(ax.q, ax.r);
         return (
           flag &&
           this.playerClaimTile[player.id][axial.asString] &&
@@ -244,7 +246,8 @@ export class Game {
       } else if (axialCoords.length > 0) {
         axialCoord = axialCoords[0];
       }
-      buildingFactory(this, player.id, buildingType, axialCoord);
+      const a = new Axial(axialCoord.q, axialCoord.r);
+      buildingFactory(this, player.id, buildingType, a);
       return true;
     }
     return false;
@@ -282,6 +285,10 @@ export class Game {
         velocity: { x: vx, y: 0, z: vz },
       });
     });
+
+    // const w = Object.values(this.myUnits(0))[0] as Worker;
+    // const j = w.job;
+    // console.log(w.name, j && j.name, w.position);
 
     this.prevTicks = currTicks;
   }

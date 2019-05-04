@@ -141,7 +141,7 @@ describe('recuitment', () => {
     // console.log(j.workers.map((w: Worker) => w.name));
     expect(j.workers.length).toBeGreaterThan(0);
     worker = j.workers[0];
-    global.console.log(worker.name, j.workers.length);
+    // global.console.log(worker.name, j.workers.length);
   });
   it('recruitment job worker\'s job is get recuited', () => {
     expect(worker.job && worker.job.id).toBe(j.id);

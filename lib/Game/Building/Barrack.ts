@@ -3,6 +3,7 @@ import {
   BuildingType,
   TILE_SIZE,
   EntityType,
+  FightingStyle,
 } from 'tone-core/dist/lib/Game';
 import { Axial, XyzEuler } from 'tone-core/dist/lib';
 import { Game } from '..';
@@ -26,6 +27,17 @@ export class Barrack extends Building {
   public trainStartTime = 0; // the start tick of current training soldier
   public nowTraining = false; // now barrack is training
 
+  private mFightingStyle = FightingStyle.AGGRESSIVE;
+  public get fightingStyle() {
+    return this.mFightingStyle;
+  }
+  public set fightingStyle(fs: FightingStyle) {
+    this.mFightingStyle = fs;
+    this.soldiers.forEach((s: Soldier) => {
+      s.fightingStyle = fs;
+    });
+  }
+
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.BARRACK, tilePosition);
   }
@@ -34,15 +46,15 @@ export class Barrack extends Building {
     if (this.nowTraining) {
       if (currTicks >= this.trainStartTime + this.trainingTime) {
         this.trainingCount--;
-        this.soldiers.push(
-          new Soldier(
-            this.game,
-            this.playerId,
-            this.soldierVariant,
-            this.cartesianPos,
-            this,
-          ),
+        const newSoldier = new Soldier(
+          this.game,
+          this.playerId,
+          this.soldierVariant,
+          this.cartesianPos,
+          this,
         );
+        newSoldier.fightingStyle = this.fightingStyle;
+        this.soldiers.push(newSoldier);
         this.nowTraining = false;
       }
     } else {
@@ -108,6 +120,17 @@ export class Barrack extends Building {
         return 0;
       }
     }
+  }
+
+  public tryGiveResource(resourceType: ResourceType, amount: number) {
+    if (this.isFunctional()) {
+      if (resourceType === ResourceType.TRAINING_DATA) {
+        const a = Math.min(amount, this.trainingDataStorage);
+        this.trainingDataStorage -= a;
+        return a;
+      }
+    }
+    return 0;
   }
 
   public callForRecuitment() {

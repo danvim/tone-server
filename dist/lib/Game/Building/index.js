@@ -22,7 +22,7 @@ var WorkerJob_1 = require("../Unit/WorkerJob");
 var Building = /** @class */ (function (_super) {
     __extends(Building, _super);
     function Building(game, playerId, buildingType, tilePosition) {
-        var _this = _super.call(this, game, playerId, 100) || this;
+        var _this = _super.call(this, game, playerId, 1000) || this;
         // for construction
         _this.structProgress = 0;
         _this.structNeeded = 0;

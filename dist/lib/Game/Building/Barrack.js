@@ -32,13 +32,29 @@ var Barrack = /** @class */ (function (_super) {
         _this.trainingTime = 3000; // total ticks required to train a soldier
         _this.trainStartTime = 0; // the start tick of current training soldier
         _this.nowTraining = false; // now barrack is training
+        _this.mFightingStyle = Game_1.FightingStyle.AGGRESSIVE;
         return _this;
     }
+    Object.defineProperty(Barrack.prototype, "fightingStyle", {
+        get: function () {
+            return this.mFightingStyle;
+        },
+        set: function (fs) {
+            this.mFightingStyle = fs;
+            this.soldiers.forEach(function (s) {
+                s.fightingStyle = fs;
+            });
+        },
+        enumerable: true,
+        configurable: true
+    });
     Barrack.prototype.frame = function (prevTicks, currTicks) {
         if (this.nowTraining) {
             if (currTicks >= this.trainStartTime + this.trainingTime) {
                 this.trainingCount--;
-                this.soldiers.push(new Soldier_1.Soldier(this.game, this.playerId, this.soldierVariant, this.cartesianPos, this));
+                var newSoldier = new Soldier_1.Soldier(this.game, this.playerId, this.soldierVariant, this.cartesianPos, this);
+                newSoldier.fightingStyle = this.fightingStyle;
+                this.soldiers.push(newSoldier);
                 this.nowTraining = false;
             }
         }
@@ -92,6 +108,16 @@ var Barrack = /** @class */ (function (_super) {
                 return 0;
             }
         }
+    };
+    Barrack.prototype.tryGiveResource = function (resourceType, amount) {
+        if (this.isFunctional()) {
+            if (resourceType === Helpers_1.ResourceType.TRAINING_DATA) {
+                var a = Math.min(amount, this.trainingDataStorage);
+                this.trainingDataStorage -= a;
+                return a;
+            }
+        }
+        return 0;
     };
     Barrack.prototype.callForRecuitment = function () {
         this.recruitmentJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.WORKER, WorkerJob_1.JobPriority.EXCLUSIVE, WorkerJob_1.JobNature.RECRUITMENT);

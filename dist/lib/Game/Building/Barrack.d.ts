@@ -1,4 +1,4 @@
-import { EntityType } from 'tone-core/dist/lib/Game';
+import { EntityType, FightingStyle } from 'tone-core/dist/lib/Game';
 import { Axial } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
@@ -17,10 +17,13 @@ export declare class Barrack extends Building {
     trainingTime: number;
     trainStartTime: number;
     nowTraining: boolean;
+    private mFightingStyle;
+    fightingStyle: FightingStyle;
     constructor(game: Game, playerId: number, tilePosition: Axial);
     frame(prevTicks: number, currTicks: number): void;
     doneConstruction(): void;
     onDie(): void;
     onResouceDelivered(type: ResourceType, amount: number, worker?: Worker): number;
+    tryGiveResource(resourceType: ResourceType, amount: number): number;
     callForRecuitment(): WorkerJob;
 }

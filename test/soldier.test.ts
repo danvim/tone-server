@@ -24,6 +24,8 @@ import { Barrack } from '../lib/Game/Building/Barrack';
 import { WorkerJob, JobPriority, JobNature } from '../lib/Game/Unit/WorkerJob';
 import { Unit } from '../lib/Game/Unit';
 import { Soldier, SoldierState } from '../lib/Game/Unit/Soldier';
+import { Entity } from '../lib/Game/Entity';
+import { Bullet } from '../lib/Game/Entity/Bullet';
 
 const conn1c = new StubConn();
 const conn1s = new StubConn();
@@ -101,5 +103,35 @@ describe('soilder find enemy', () => {
     } else {
       expect(soldier.attackTarget).toBeTruthy();
     }
+  });
+
+  let bullet: Bullet;
+  it('spawn a bullet', () => {
+    bullet = Object.values(game.myEntities(0)).find(
+      (e: Entity) => e.type === EntityType.BULLET_0,
+    ) as Bullet;
+    expect(bullet).toBeTruthy();
+  });
+
+  it('bullet make damage', () => {
+    const prevHp = (bullet.target && bullet.target.hp) || 0;
+    game.frame(30000, 60000);
+    const afterHp = (bullet.target && bullet.target.hp) || 0;
+    expect(afterHp).toBeLessThan(prevHp);
+  });
+
+  it('bullet consume training data', () => {
+    expect(soldier.trainingDataHolding).toBeLessThan(
+      soldier.trainingDataCapacity,
+    );
+  });
+
+  it('after consume all training data, go back get training data', () => {
+    let i = 60000;
+    while (soldier.trainingDataHolding >= soldier.trainingDataPerAttack) {
+      game.frame(i, (i += 30000));
+    }
+    game.frame(i, i + 30000);
+    expect(soldier.target && soldier.target.name).toBe(barrack.name);
   });
 });

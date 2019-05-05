@@ -49,5 +49,7 @@ export class Thing implements ThingInterface {
 
   public onDie() {
     delete this.game.buildings[this.uuid];
+    delete this.game.entities[this.uuid];
+    delete this.game.units[this.uuid];
   }
 }

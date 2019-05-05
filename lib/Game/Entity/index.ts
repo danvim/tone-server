@@ -66,14 +66,14 @@ export class Entity extends Thing implements EntityInterface {
 
       if (distanceToTarget <= this.arriveRange) {
         // perform arrive action
-        this.arrive();
+        this.arrive(prevTicks, currTicks);
         this.velocity = new Cartesian(0, 0);
       } else {
         this.updateVelocity();
         if (distanceToTarget < this.velocity.norm() * (currTicks - prevTicks)) {
           // avoid overshooting to target position
           this.position = this.target.cartesianPos.clone();
-          this.arrive();
+          this.arrive(prevTicks, currTicks);
           this.velocity = new Cartesian(0, 0);
         } else {
           this.travelByVelocity(prevTicks, currTicks);
@@ -110,7 +110,7 @@ export class Entity extends Thing implements EntityInterface {
    * execute when this is at the target thing
    * to be overrided by children class
    */
-  public arrive() {
+  public arrive(prevTicks: number, currTicks: number) {
     //
   }
 }

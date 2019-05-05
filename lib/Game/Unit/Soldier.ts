@@ -17,6 +17,7 @@ import { ResourceType } from '../../Helpers';
 import { Thing } from '../Thing';
 import { WorkerJob, JobPriority } from './WorkerJob';
 import { Barrack } from '../Building/Barrack';
+import { Bullet } from '../Entity/Bullet';
 
 export enum SoldierState {
   IDLE,
@@ -35,6 +36,9 @@ export class Soldier extends Unit {
   public attackRange = 3; // eucledian dist
   public grabRange = 0; // eucledian dist
   public defenseRadius = 5;
+  public attackPeriod = 1000;
+  public lastAttack = 0;
+
   public set arriveRange(range: number) {
     this.grabRange = range;
   }
@@ -169,7 +173,7 @@ export class Soldier extends Unit {
     }, opponentThings[0]);
   }
 
-  public arrive() {
+  public arrive(prevTicks: number, currTicks: number) {
     if (this.target === this.barrack) {
       const amount = this.barrack.tryGiveResource(
         ResourceType.TRAINING_DATA,
@@ -183,11 +187,26 @@ export class Soldier extends Unit {
         }
       }
     } else if (this.target === this.attackTarget) {
-      this.attack();
+      this.attack(prevTicks, currTicks);
     }
   }
 
-  public attack() {
-    console.log('attack');
+  public attack(prevTicks: number, currTicks: number) {
+    if (
+      this.trainingDataHolding >= this.trainingDataPerAttack &&
+      this.attackTarget
+    ) {
+      if (this.lastAttack + this.attackPeriod <= currTicks) {
+        this.lastAttack = currTicks;
+        this.trainingDataHolding -= this.trainingDataPerAttack;
+        const bullect = new Bullet(
+          this.game,
+          this.playerId,
+          this.position,
+          this.attackTarget,
+          20,
+        );
+      }
+    }
   }
 }

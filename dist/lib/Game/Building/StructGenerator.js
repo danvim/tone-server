@@ -44,8 +44,9 @@ var StructGenerator = /** @class */ (function (_super) {
         return 0;
     };
     StructGenerator.prototype.doneConstruction = function () {
-        this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(1000, this.generate);
+        this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(StructGenerator.structGenPeriod, this.generate);
     };
+    StructGenerator.structGenPeriod = 3000;
     return StructGenerator;
 }(_1.Building));
 exports.StructGenerator = StructGenerator;

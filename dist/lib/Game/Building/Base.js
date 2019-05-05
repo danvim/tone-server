@@ -29,7 +29,7 @@ var Base = /** @class */ (function (_super) {
         _this.generateStruct = function () {
             _this.structStorage++;
         };
-        _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(2000, _this.generateStruct);
+        _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(Base.structGenPeriod, _this.generateStruct);
         var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
         var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
         var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
@@ -73,6 +73,7 @@ var Base = /** @class */ (function (_super) {
                 return 0;
         }
     };
+    Base.structGenPeriod = 5000;
     return Base;
 }(_1.Building));
 exports.Base = Base;

@@ -46,7 +46,7 @@ player1.id = 0;
 player2.id = 1;
 player1.username = 'Player1';
 player2.username = 'Player2';
-const game: Game = new Game([player1, player2], protocol1s);
+const game: Game = new Game([player1, player2], protocol1s, true);
 game.terminate();
 
 let entityTest: any = [];

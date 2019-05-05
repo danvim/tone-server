@@ -31,3 +31,5 @@ export function SNAKE2Normal(SNAKE_CASE: string) {
     .map(([h, ...t]: any) => [h, ...t.toLocaleLowerCase()].join(''))
     .join(' ');
 }
+
+export const MAX_UNIT_CNT = 50;

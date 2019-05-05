@@ -48,7 +48,7 @@ describe('client side tests on initialization', () => {
   });
 });
 
-const game: Game = new Game([player2, player1], protocol1s);
+const game: Game = new Game([player2, player1], protocol1s, true);
 game.terminate();
 
 describe('game initialize', () => {

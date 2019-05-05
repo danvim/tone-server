@@ -41,7 +41,7 @@ describe('client side tests on initialization', function () {
         expect(buildObjects.length).toBe(4);
     });
 });
-var game = new Game_1.Game([player2, player1], protocol1s);
+var game = new Game_1.Game([player2, player1], protocol1s, true);
 game.terminate();
 describe('game initialize', function () {
     it('constructed', function () {

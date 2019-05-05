@@ -11,6 +11,7 @@ import { Worker } from '../Unit/Worker';
 import { ResourceType } from '../../Helpers';
 
 export class StructGenerator extends Building {
+  public static structGenPeriod = 3000;
   public periodStrategy?: PeriodStrategy;
   public amount: number = 0;
   public capacity: number = 1;
@@ -40,6 +41,9 @@ export class StructGenerator extends Building {
   }
 
   public doneConstruction() {
-    this.periodStrategy = new PeriodStrategy(1000, this.generate);
+    this.periodStrategy = new PeriodStrategy(
+      StructGenerator.structGenPeriod,
+      this.generate,
+    );
   }
 }

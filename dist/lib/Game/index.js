@@ -7,10 +7,11 @@ var Helpers_1 = require("../Helpers");
 var SpawnPoint_1 = require("./Building/SpawnPoint");
 var Base_1 = require("./Building/Base");
 var BuildingFactory_1 = require("./Building/BuildingFactory");
+var StructGenerator_1 = require("./Building/StructGenerator");
 // import { protocol } from '../Connection';
 var Game = /** @class */ (function () {
     // game start
-    function Game(players, protocol) {
+    function Game(players, protocol, unitTest) {
         var _this = this;
         this.playerClaimTile = {};
         this.workerJobs = {};
@@ -19,14 +20,9 @@ var Game = /** @class */ (function () {
         this.build = function (object, conn) {
             var player = _this.mapConnToPlayer(conn);
             if (player) {
-                console.log(player.username, player.id, Object(object));
                 var _a = Object(object), buildingType = _a.buildingType, axialCoords = _a.axialCoords;
                 var canBuild = axialCoords.reduce(function (flag, ax) {
                     var axial = new lib_1.Axial(ax.q, ax.r);
-                    console.log(axial.asString);
-                    console.log(_this.playerClaimTile[player.id][axial.asString], Object.values(_this.myBuildings(player.id)).findIndex(function (building) {
-                        return building.tilePosition.asString === axial.asString;
-                    }) === -1);
                     return (flag &&
                         _this.playerClaimTile[player.id][axial.asString] &&
                         Object.values(_this.myBuildings(player.id)).findIndex(function (building) {
@@ -34,8 +30,6 @@ var Game = /** @class */ (function () {
                         }) === -1);
                 }, true);
                 if (!canBuild) {
-                    console.log('cannot build');
-                    console.log(_this.playerClaimTile, axialCoords);
                     return false;
                 }
                 var axialCoord = void 0;
@@ -47,7 +41,6 @@ var Game = /** @class */ (function () {
                 }
                 var a = new lib_1.Axial(axialCoord.q, axialCoord.r);
                 BuildingFactory_1.buildingFactory(_this, player.id, buildingType, a);
-                console.log('built');
                 return true;
             }
             return false;
@@ -55,18 +48,24 @@ var Game = /** @class */ (function () {
         this.players = [];
         this.protocol = protocol;
         this.map = MapGen_1.MapGen();
-        // global.console.log('try update tiles');
         this.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
         this.buildings = {};
         this.entities = {};
         this.units = {};
         this.bases = {};
+        if (unitTest) {
+            SpawnPoint_1.SpawnPoint.spawnPeriod = 2000;
+            Base_1.Base.structGenPeriod = 2000;
+            StructGenerator_1.StructGenerator.structGenPeriod = 1000;
+        }
         this.reassignPlayerId(players);
-        this.initClusterTiles();
+        this.initClusterTiles(unitTest ? 0 : 10);
         this.initBase();
         this.evaluateTerritory();
         this.initProtocol(protocol);
-        this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 100);
+        if (!unitTest) {
+            this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 60);
+        }
     }
     // connection functions
     Game.prototype.emit = function (packageType, object) {
@@ -99,16 +98,22 @@ var Game = /** @class */ (function () {
         });
     };
     /**
-     * assign clusters to players
+     * assign clusters to players and spawn inital workers
      */
-    Game.prototype.initClusterTiles = function () {
+    Game.prototype.initClusterTiles = function (initialWorkerCount) {
         var _this = this;
-        var initedClusterCount = 0;
+        if (initialWorkerCount === void 0) { initialWorkerCount = 0; }
+        var clusters = [];
         Object.keys(this.map).forEach(function (axialString) {
             var tileInfo = _this.map[axialString];
             if (tileInfo.type === lib_1.TileType.INFORMATION_CLUSTER) {
-                var playerId = initedClusterCount++;
-                var cluster = new SpawnPoint_1.SpawnPoint(_this, playerId, lib_1.Axial.fromString(axialString));
+                clusters.push(lib_1.Axial.fromString(axialString));
+            }
+        });
+        this.players.forEach(function (player, index) {
+            var sp = new SpawnPoint_1.SpawnPoint(_this, player.id, clusters[index]);
+            for (var i = 0; i < initialWorkerCount; i++) {
+                sp.spawn();
             }
         });
     };

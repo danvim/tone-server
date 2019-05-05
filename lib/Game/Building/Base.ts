@@ -6,6 +6,7 @@ import { PeriodStrategy } from './PeroidStrategy';
 import { ResourceType } from '../../Helpers';
 import { WorkerJob, JobPriority, JobNature } from '../Unit/WorkerJob';
 export class Base extends Building implements BuildingInterface {
+  public static structGenPeriod = 5000;
   public periodStrategy: PeriodStrategy;
   public structStorage = 0;
   public trainingDataStorage = 0;
@@ -13,7 +14,10 @@ export class Base extends Building implements BuildingInterface {
   public territoryRadius: number = 8;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.BASE, tilePosition);
-    this.periodStrategy = new PeriodStrategy(2000, this.generateStruct);
+    this.periodStrategy = new PeriodStrategy(
+      Base.structGenPeriod,
+      this.generateStruct,
+    );
     const s = new WorkerJob(
       playerId,
       this,

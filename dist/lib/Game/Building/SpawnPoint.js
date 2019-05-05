@@ -18,19 +18,23 @@ var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
 var Worker_1 = require("../Unit/Worker");
+var Helpers_1 = require("../../Helpers");
 var SpawnPoint = /** @class */ (function (_super) {
     __extends(SpawnPoint, _super);
     function SpawnPoint(game, playerId, tilePosition) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.SPAWN_POINT, tilePosition) || this;
         _this.spawn = function () {
-            var worker = new Worker_1.Worker(_this.game, _this.playerId, _this.cartesianPos, new lib_1.XyzEuler(1, 0, 0));
+            if (Object.values(_this.game.myUnits(_this.playerId)).length < Helpers_1.MAX_UNIT_CNT) {
+                var worker = new Worker_1.Worker(_this.game, _this.playerId, _this.cartesianPos, new lib_1.XyzEuler(1, 0, 0));
+            }
         };
-        _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(2000, _this.spawn);
+        _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(SpawnPoint.spawnPeriod, _this.spawn);
         return _this;
     }
     SpawnPoint.prototype.frame = function (prevTicks, currTicks) {
         this.periodStrategy.frame(prevTicks, currTicks);
     };
+    SpawnPoint.spawnPeriod = 30000;
     return SpawnPoint;
 }(_1.Building));
 exports.SpawnPoint = SpawnPoint;

@@ -35,7 +35,7 @@ export declare class Game {
         [workerJobId: string]: WorkerJob;
     };
     prevTicks: number;
-    constructor(players: Player[], protocol: Protocol);
+    constructor(players: Player[], protocol: Protocol, unitTest?: boolean);
     emit(packageType: PackageType, object: object): void;
     mapConnToPlayer(conn: Conn): Player | undefined;
     initProtocol(protocol: Protocol): void;
@@ -46,9 +46,9 @@ export declare class Game {
      */
     reassignPlayerId(players: Player[]): void;
     /**
-     * assign clusters to players
+     * assign clusters to players and spawn inital workers
      */
-    initClusterTiles(): void;
+    initClusterTiles(initialWorkerCount?: number): void;
     initBase(): void;
     evaluateTerritory(): void;
     myBuildings(playerId: number): {

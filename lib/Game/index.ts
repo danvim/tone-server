@@ -24,6 +24,7 @@ import { Message } from 'protobufjs';
 import { Reclaimer } from './Building/Reclaimer';
 import { WorkerJob } from './Unit/WorkerJob';
 import { Worker } from './Unit/Worker';
+import { StructGenerator } from './Building/StructGenerator';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -46,7 +47,7 @@ export class Game {
   public prevTicks = 0;
 
   // game start
-  constructor(players: Player[], protocol: Protocol) {
+  constructor(players: Player[], protocol: Protocol, unitTest?: boolean) {
     this.players = [];
     this.protocol = protocol;
     this.map = MapGen();
@@ -56,16 +57,24 @@ export class Game {
     this.units = {};
     this.bases = {};
 
+    if (unitTest) {
+      SpawnPoint.spawnPeriod = 2000;
+      Base.structGenPeriod = 2000;
+      StructGenerator.structGenPeriod = 1000;
+    }
+
     this.reassignPlayerId(players);
-    this.initClusterTiles();
+    this.initClusterTiles(unitTest ? 0 : 10);
     this.initBase();
     this.evaluateTerritory();
     this.initProtocol(protocol);
 
-    this.frameTimer = setInterval(
-      () => this.frame(this.prevTicks, now('ms')),
-      100,
-    );
+    if (!unitTest) {
+      this.frameTimer = setInterval(
+        () => this.frame(this.prevTicks, now('ms')),
+        60,
+      );
+    }
   }
 
   // connection functions
@@ -108,19 +117,20 @@ export class Game {
   }
 
   /**
-   * assign clusters to players
+   * assign clusters to players and spawn inital workers
    */
-  public initClusterTiles() {
-    let initedClusterCount = 0;
+  public initClusterTiles(initialWorkerCount: number = 0) {
+    const clusters: Axial[] = [];
     Object.keys(this.map).forEach((axialString: string) => {
       const tileInfo = this.map[axialString];
       if (tileInfo.type === TileType.INFORMATION_CLUSTER) {
-        const playerId = initedClusterCount++;
-        const cluster = new SpawnPoint(
-          this,
-          playerId,
-          Axial.fromString(axialString),
-        );
+        clusters.push(Axial.fromString(axialString));
+      }
+    });
+    this.players.forEach((player: Player, index: number) => {
+      const sp = new SpawnPoint(this, player.id, clusters[index]);
+      for (let i = 0; i < initialWorkerCount; i++) {
+        sp.spawn();
       }
     });
   }

@@ -33,7 +33,7 @@ player1.id = 0;
 player2.id = 1;
 player1.username = 'Player1';
 player2.username = 'Player2';
-var game = new Game_1.Game([player1, player2], protocol1s);
+var game = new Game_1.Game([player1, player2], protocol1s, true);
 game.terminate();
 var entityTest = [];
 protocol1c.on(lib_1.PackageType.MOVE_ENTITY, function (object) {

@@ -33,3 +33,4 @@ function SNAKE2Normal(SNAKE_CASE) {
         .join(' ');
 }
 exports.SNAKE2Normal = SNAKE2Normal;
+exports.MAX_UNIT_CNT = 50;

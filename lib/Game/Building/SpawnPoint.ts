@@ -8,12 +8,17 @@ import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { Worker } from '../Unit/Worker';
+import { MAX_UNIT_CNT } from '../../Helpers';
 
 export class SpawnPoint extends Building {
+  public static spawnPeriod = 30000;
   public periodStrategy: PeriodStrategy;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.SPAWN_POINT, tilePosition);
-    this.periodStrategy = new PeriodStrategy(2000, this.spawn);
+    this.periodStrategy = new PeriodStrategy(
+      SpawnPoint.spawnPeriod,
+      this.spawn,
+    );
   }
 
   public frame(prevTicks: number, currTicks: number) {
@@ -21,11 +26,13 @@ export class SpawnPoint extends Building {
   }
 
   public spawn = () => {
-    const worker = new Worker(
-      this.game,
-      this.playerId,
-      this.cartesianPos,
-      new XyzEuler(1, 0, 0),
-    );
+    if (Object.values(this.game.myUnits(this.playerId)).length < MAX_UNIT_CNT) {
+      const worker = new Worker(
+        this.game,
+        this.playerId,
+        this.cartesianPos,
+        new XyzEuler(1, 0, 0),
+      );
+    }
   }
 }

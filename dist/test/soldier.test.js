@@ -26,7 +26,7 @@ player1.id = 0;
 player2.id = 1;
 player1.username = 'Player1';
 player2.username = 'Player2';
-var game = new Game_1.Game([player1, player2], protocol1s);
+var game = new Game_1.Game([player1, player2], protocol1s, true);
 game.terminate();
 var barrack = new Barrack_1.Barrack(game, 0, new lib_1.Axial(0, 2));
 barrack.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.BARRACK].struct);

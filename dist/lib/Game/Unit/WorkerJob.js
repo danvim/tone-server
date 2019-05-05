@@ -6,21 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Helpers_1 = require("../../Helpers");
 var v4_1 = __importDefault(require("uuid/v4"));
 var Worker_1 = require("./Worker");
-var JobPriority;
-(function (JobPriority) {
-    JobPriority[JobPriority["SUSPENDED"] = 0] = "SUSPENDED";
-    JobPriority[JobPriority["PAUSED"] = 1] = "PAUSED";
-    JobPriority[JobPriority["LOW"] = 2] = "LOW";
-    JobPriority[JobPriority["MEDIUM"] = 3] = "MEDIUM";
-    JobPriority[JobPriority["HIGH"] = 4] = "HIGH";
-    JobPriority[JobPriority["EXCLUSIVE"] = 5] = "EXCLUSIVE";
-})(JobPriority = exports.JobPriority || (exports.JobPriority = {}));
-var JobNature;
-(function (JobNature) {
-    JobNature[JobNature["CONSTRUCTION"] = 0] = "CONSTRUCTION";
-    JobNature[JobNature["STORAGE"] = 1] = "STORAGE";
-    JobNature[JobNature["RECRUITMENT"] = 2] = "RECRUITMENT";
-})(JobNature = exports.JobNature || (exports.JobNature = {}));
+var Job_1 = require("tone-core/dist/lib/Game/Job");
 var WorkerJob = /** @class */ (function () {
     function WorkerJob(playerId, target, resourceType, priority, jobNature) {
         this.workers = [];
@@ -41,7 +27,7 @@ var WorkerJob = /** @class */ (function () {
                     this.progressOnTheWay -
                     this.target.structProgress);
             }
-            else if (this.jobNature === JobNature.STORAGE) {
+            else if (this.jobNature === Job_1.JobNature.STORAGE) {
                 return 9999;
             }
             else {
@@ -54,10 +40,10 @@ var WorkerJob = /** @class */ (function () {
     });
     Object.defineProperty(WorkerJob.prototype, "needWorker", {
         get: function () {
-            if (this.jobNature === JobNature.STORAGE) {
+            if (this.jobNature === Job_1.JobNature.STORAGE) {
                 return true;
             }
-            if (this.jobNature === JobNature.RECRUITMENT) {
+            if (this.jobNature === Job_1.JobNature.RECRUITMENT) {
                 var barrack = this.target;
                 return (barrack.soldierQuota -
                     barrack.trainingCount -
@@ -89,7 +75,7 @@ var WorkerJob = /** @class */ (function () {
     });
     Object.defineProperty(WorkerJob.prototype, "name", {
         get: function () {
-            return "[" + JobPriority[this.priority] + "] " + this.target.name + " " + JobNature[this.jobNature];
+            return "[" + Job_1.JobPriority[this.priority] + "] " + this.target.name + " " + Job_1.JobNature[this.jobNature];
         },
         enumerable: true,
         configurable: true
@@ -99,7 +85,7 @@ var WorkerJob = /** @class */ (function () {
     };
     WorkerJob.prototype.removeWorker = function (rworker) {
         this.workers = this.workers.filter(function (worker) { return worker.uuid !== rworker.uuid; });
-        if (this.jobNature === JobNature.STORAGE) {
+        if (this.jobNature === Job_1.JobNature.STORAGE) {
             return;
         }
         if (this.workers.length === 0) {
@@ -124,7 +110,7 @@ var WorkerJob = /** @class */ (function () {
     WorkerJob.prototype.removeJob = function () {
         this.freeAllWorkers();
         delete this.game.workerJobs[this.id];
-        this.priority = JobPriority.SUSPENDED;
+        this.priority = Job_1.JobPriority.SUSPENDED;
     };
     return WorkerJob;
 }());

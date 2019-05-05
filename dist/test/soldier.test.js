@@ -65,4 +65,26 @@ describe('soilder find enemy', function () {
             expect(soldier.attackTarget).toBeTruthy();
         }
     });
+    var bullet;
+    it('spawn a bullet', function () {
+        bullet = Object.values(game.myEntities(0)).find(function (e) { return e.type === lib_1.EntityType.BULLET_0; });
+        expect(bullet).toBeTruthy();
+    });
+    it('bullet make damage', function () {
+        var prevHp = (bullet.target && bullet.target.hp) || 0;
+        game.frame(30000, 60000);
+        var afterHp = (bullet.target && bullet.target.hp) || 0;
+        expect(afterHp).toBeLessThan(prevHp);
+    });
+    it('bullet consume training data', function () {
+        expect(soldier.trainingDataHolding).toBeLessThan(soldier.trainingDataCapacity);
+    });
+    it('after consume all training data, go back get training data', function () {
+        var i = 60000;
+        while (soldier.trainingDataHolding >= soldier.trainingDataPerAttack) {
+            game.frame(i, (i += 30000));
+        }
+        game.frame(i, i + 30000);
+        expect(soldier.target && soldier.target.name).toBe(barrack.name);
+    });
 });

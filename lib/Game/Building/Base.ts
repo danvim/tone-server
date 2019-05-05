@@ -4,7 +4,8 @@ import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { ResourceType } from '../../Helpers';
-import { WorkerJob, JobPriority, JobNature } from '../Unit/WorkerJob';
+import { WorkerJob } from '../Unit/WorkerJob';
+import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
 export class Base extends Building implements BuildingInterface {
   public static structGenPeriod = 5000;
   public periodStrategy: PeriodStrategy;

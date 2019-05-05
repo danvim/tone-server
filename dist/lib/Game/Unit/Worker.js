@@ -16,7 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var Helpers_1 = require("../../Helpers");
-var WorkerJob_1 = require("./WorkerJob");
+var Job_1 = require("tone-core/dist/lib/Game/Job");
 var WorkerState;
 (function (WorkerState) {
     WorkerState[WorkerState["IDLE"] = 0] = "IDLE";
@@ -75,7 +75,7 @@ var Worker = /** @class */ (function (_super) {
             }
         }
         else if (this.state === WorkerState.IDLE) {
-            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+            if (this.job.jobNature === Job_1.JobNature.RECRUITMENT) {
                 _super.prototype.frame.call(this, prevTicks, currTicks);
             }
             else {
@@ -95,18 +95,18 @@ var Worker = /** @class */ (function (_super) {
         var jobs = Object.values(this.game.workerJobs).filter(function (j) {
             return (j.playerId === _this.playerId &&
                 j.needWorker &&
-                j.priority !== WorkerJob_1.JobPriority.SUSPENDED &&
-                j.priority !== WorkerJob_1.JobPriority.PAUSED &&
-                (j.jobNature !== WorkerJob_1.JobNature.STORAGE ||
+                j.priority !== Job_1.JobPriority.SUSPENDED &&
+                j.priority !== Job_1.JobPriority.PAUSED &&
+                (j.jobNature !== Job_1.JobNature.STORAGE ||
                     ((j.resourceType === Helpers_1.ResourceType.STRUCT && haveStruGen) ||
                         (j.resourceType === Helpers_1.ResourceType.TRAINING_DATA && haveDataGen))));
         });
         var job;
         job = jobs.reduce(function (prev, curr) {
-            if (prev.priority === WorkerJob_1.JobPriority.EXCLUSIVE) {
+            if (prev.priority === Job_1.JobPriority.EXCLUSIVE) {
                 return prev;
             }
-            if (curr.priority === WorkerJob_1.JobPriority.EXCLUSIVE) {
+            if (curr.priority === Job_1.JobPriority.EXCLUSIVE) {
                 return curr;
             }
             if (prev.priority > curr.priority) {
@@ -185,7 +185,7 @@ var Worker = /** @class */ (function (_super) {
      */
     Worker.prototype.findGeneratorToGrab = function (resourceType) {
         if (this.job) {
-            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+            if (this.job.jobNature === Job_1.JobNature.RECRUITMENT) {
                 this.target = this.job.target;
                 this.job.progressOnTheWay += 1;
             }
@@ -204,7 +204,7 @@ var Worker = /** @class */ (function (_super) {
     Worker.prototype.arrive = function () {
         var targetBuilding = this.target;
         if (this.job) {
-            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+            if (this.job.jobNature === Job_1.JobNature.RECRUITMENT) {
                 this.deliver(targetBuilding);
             }
         }
@@ -231,7 +231,7 @@ var Worker = /** @class */ (function (_super) {
         if (this.job) {
             targetBuilding.onResouceDelivered(this.job.resourceType, 1, this);
             this.job.progressOnTheWay -= 1;
-            if (this.job.jobNature === WorkerJob_1.JobNature.RECRUITMENT) {
+            if (this.job.jobNature === Job_1.JobNature.RECRUITMENT) {
                 this.job.removeWorker(this);
                 delete this.job;
                 this.hp = 0;

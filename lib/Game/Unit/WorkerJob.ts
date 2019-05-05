@@ -6,21 +6,7 @@ import uuid from 'uuid/v4';
 import { BuildingType } from 'tone-core/dist/lib';
 import { Worker, WorkerState } from './Worker';
 import { Barrack } from '../Building/Barrack';
-
-export enum JobPriority {
-  SUSPENDED,
-  PAUSED,
-  LOW,
-  MEDIUM,
-  HIGH,
-  EXCLUSIVE,
-}
-
-export enum JobNature {
-  CONSTRUCTION,
-  STORAGE,
-  RECRUITMENT,
-}
+import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
 
 export class WorkerJob {
   public id: string;

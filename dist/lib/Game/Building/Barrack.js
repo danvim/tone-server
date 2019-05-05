@@ -20,6 +20,7 @@ var Worker_1 = require("../Unit/Worker");
 var Helpers_1 = require("../../Helpers");
 var WorkerJob_1 = require("../Unit/WorkerJob");
 var Soldier_1 = require("../Unit/Soldier");
+var Job_1 = require("tone-core/dist/lib/Game/Job");
 var Barrack = /** @class */ (function (_super) {
     __extends(Barrack, _super);
     function Barrack(game, playerId, tilePosition) {
@@ -66,7 +67,7 @@ var Barrack = /** @class */ (function (_super) {
         }
     };
     Barrack.prototype.doneConstruction = function () {
-        this.storageJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
+        this.storageJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.TRAINING_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
     };
     Barrack.prototype.onDie = function () {
         var _this = this;
@@ -120,7 +121,7 @@ var Barrack = /** @class */ (function (_super) {
         return 0;
     };
     Barrack.prototype.callForRecuitment = function () {
-        this.recruitmentJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.WORKER, WorkerJob_1.JobPriority.EXCLUSIVE, WorkerJob_1.JobNature.RECRUITMENT);
+        this.recruitmentJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.WORKER, Job_1.JobPriority.EXCLUSIVE, Job_1.JobNature.RECRUITMENT);
         return this.recruitmentJob;
     };
     return Barrack;

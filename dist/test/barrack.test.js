@@ -7,7 +7,7 @@ var Worker_1 = require("../lib/Game/Unit/Worker");
 var test_1 = require("tone-core/dist/test");
 var BuildingFactory_1 = require("../lib/Game/Building/BuildingFactory");
 var Helpers_1 = require("../lib/Helpers");
-var WorkerJob_1 = require("../lib/Game/Unit/WorkerJob");
+var Job_1 = require("tone-core/dist/lib/Game/Job");
 var conn1c = new test_1.StubConn();
 var conn1s = new test_1.StubConn();
 conn1c.connect(conn1s);
@@ -41,10 +41,10 @@ describe('barrack accept training data', function () {
     });
     it('worker want to grab trainning data', function () {
         var j = Object.values(game.workerJobs).find(function (job) {
-            return job.target.uuid === barrack.uuid && job.jobNature === WorkerJob_1.JobNature.STORAGE;
+            return job.target.uuid === barrack.uuid && job.jobNature === Job_1.JobNature.STORAGE;
         });
         if (j) {
-            j.priority = WorkerJob_1.JobPriority.HIGH;
+            j.priority = Job_1.JobPriority.HIGH;
         }
         worker = new Worker_1.Worker(game, 0, new lib_1.Axial(0, 2).toCartesian(lib_1.TILE_SIZE), new lib_1.XyzEuler(1, 0, 0));
         game.frame(1000, 1000);

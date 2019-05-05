@@ -10,8 +10,9 @@ import { Thing } from '../Thing';
 import { ResourceType, SNAKE2Normal } from '../../Helpers';
 import { Base } from './Base';
 import { SpawnPoint } from './SpawnPoint';
-import { WorkerJob, JobPriority, JobNature } from '../Unit/WorkerJob';
+import { WorkerJob } from '../Unit/WorkerJob';
 import { Worker } from '../Unit/Worker';
+import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
 // // export {} from './';
 
 export class Building extends Thing implements BuildingInterface {

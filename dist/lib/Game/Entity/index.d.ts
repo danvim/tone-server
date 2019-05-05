@@ -22,5 +22,5 @@ export declare class Entity extends Thing implements EntityInterface {
      * execute when this is at the target thing
      * to be overrided by children class
      */
-    arrive(): void;
+    arrive(prevTicks: number, currTicks: number): void;
 }

@@ -14,7 +14,8 @@ import { Entity } from '../Entity';
 import { Building } from '../Building';
 import { ResourceType } from '../../Helpers';
 import { Thing } from '../Thing';
-import { WorkerJob, JobPriority, JobNature } from './WorkerJob';
+import { WorkerJob } from './WorkerJob';
+import { JobNature, JobPriority } from 'tone-core/dist/lib/Game/Job';
 
 export enum WorkerState {
   IDLE,

@@ -21,7 +21,7 @@ import { buildingFactory } from '../lib/Game/Building/BuildingFactory';
 import { ResourceType } from '../lib/Helpers';
 import { TrainingDataGenerator } from '../lib/Game/Building/TrainingDataGenerator';
 import { Barrack } from '../lib/Game/Building/Barrack';
-import { WorkerJob, JobPriority, JobNature } from '../lib/Game/Unit/WorkerJob';
+import { WorkerJob } from '../lib/Game/Unit/WorkerJob';
 import { Unit } from '../lib/Game/Unit';
 import { Soldier, SoldierState } from '../lib/Game/Unit/Soldier';
 import { Entity } from '../lib/Game/Entity';

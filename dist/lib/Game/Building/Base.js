@@ -18,6 +18,7 @@ var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
 var Helpers_1 = require("../../Helpers");
 var WorkerJob_1 = require("../Unit/WorkerJob");
+var Job_1 = require("tone-core/dist/lib/Game/Job");
 var Base = /** @class */ (function (_super) {
     __extends(Base, _super);
     function Base(game, playerId, tilePosition) {
@@ -30,9 +31,9 @@ var Base = /** @class */ (function (_super) {
             _this.structStorage++;
         };
         _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(Base.structGenPeriod, _this.generateStruct);
-        var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
-        var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
-        var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, WorkerJob_1.JobPriority.LOW, WorkerJob_1.JobNature.STORAGE);
+        var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
+        var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
+        var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
         return _this;
     }
     Base.prototype.frame = function (prevTicks, currTicks) {

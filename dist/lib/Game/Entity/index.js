@@ -68,7 +68,7 @@ var Entity = /** @class */ (function (_super) {
             var distanceToTarget = this.position.euclideanDistance(this.target.cartesianPos);
             if (distanceToTarget <= this.arriveRange) {
                 // perform arrive action
-                this.arrive();
+                this.arrive(prevTicks, currTicks);
                 this.velocity = new lib_1.Cartesian(0, 0);
             }
             else {
@@ -76,7 +76,7 @@ var Entity = /** @class */ (function (_super) {
                 if (distanceToTarget < this.velocity.norm() * (currTicks - prevTicks)) {
                     // avoid overshooting to target position
                     this.position = this.target.cartesianPos.clone();
-                    this.arrive();
+                    this.arrive(prevTicks, currTicks);
                     this.velocity = new lib_1.Cartesian(0, 0);
                 }
                 else {
@@ -114,7 +114,7 @@ var Entity = /** @class */ (function (_super) {
      * execute when this is at the target thing
      * to be overrided by children class
      */
-    Entity.prototype.arrive = function () {
+    Entity.prototype.arrive = function (prevTicks, currTicks) {
         //
     };
     return Entity;

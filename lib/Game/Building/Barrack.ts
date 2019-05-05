@@ -11,8 +11,9 @@ import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { Worker, WorkerState } from '../Unit/Worker';
 import { ResourceType } from '../../Helpers';
-import { WorkerJob, JobPriority, JobNature } from '../Unit/WorkerJob';
+import { WorkerJob } from '../Unit/WorkerJob';
 import { Soldier } from '../Unit/Soldier';
+import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
 
 export class Barrack extends Building {
   public trainingDataStorage: number = 0;

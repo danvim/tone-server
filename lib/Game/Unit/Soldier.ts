@@ -15,7 +15,7 @@ import { Entity } from '../Entity';
 import { Building } from '../Building';
 import { ResourceType } from '../../Helpers';
 import { Thing } from '../Thing';
-import { WorkerJob, JobPriority } from './WorkerJob';
+import { WorkerJob } from './WorkerJob';
 import { Barrack } from '../Building/Barrack';
 import { Bullet } from '../Entity/Bullet';
 

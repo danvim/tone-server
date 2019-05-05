@@ -19,6 +19,8 @@ export declare class Soldier extends Unit {
     attackRange: number;
     grabRange: number;
     defenseRadius: number;
+    attackPeriod: number;
+    lastAttack: number;
     arriveRange: number;
     readonly soldierState: SoldierState;
     constructor(game: Game, playerId: number, type: EntityType, position: Cartesian, barrack: Barrack);
@@ -27,6 +29,6 @@ export declare class Soldier extends Unit {
     aggressiveBehavior(prevTicks: number, currTicks: number): void;
     passiveBehavior(prevTicks: number, currTicks: number): void;
     searchAttackTarget(): Thing;
-    arrive(): void;
-    attack(): void;
+    arrive(prevTicks: number, currTicks: number): void;
+    attack(prevTicks: number, currTicks: number): void;
 }

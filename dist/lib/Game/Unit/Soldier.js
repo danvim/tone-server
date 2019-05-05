@@ -16,6 +16,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var Helpers_1 = require("../../Helpers");
+var Bullet_1 = require("../Entity/Bullet");
 var SoldierState;
 (function (SoldierState) {
     SoldierState[SoldierState["IDLE"] = 0] = "IDLE";
@@ -33,6 +34,8 @@ var Soldier = /** @class */ (function (_super) {
         _this.attackRange = 3; // eucledian dist
         _this.grabRange = 0; // eucledian dist
         _this.defenseRadius = 5;
+        _this.attackPeriod = 1000;
+        _this.lastAttack = 0;
         _this.fightingStyle = lib_1.FightingStyle.AGGRESSIVE;
         _this.barrack = barrack;
         return _this;
@@ -162,7 +165,7 @@ var Soldier = /** @class */ (function (_super) {
             return prev;
         }, opponentThings[0]);
     };
-    Soldier.prototype.arrive = function () {
+    Soldier.prototype.arrive = function (prevTicks, currTicks) {
         if (this.target === this.barrack) {
             var amount = this.barrack.tryGiveResource(Helpers_1.ResourceType.TRAINING_DATA, this.trainingDataCapacity - this.trainingDataHolding);
             if (amount) {
@@ -174,11 +177,18 @@ var Soldier = /** @class */ (function (_super) {
             }
         }
         else if (this.target === this.attackTarget) {
-            this.attack();
+            this.attack(prevTicks, currTicks);
         }
     };
-    Soldier.prototype.attack = function () {
-        console.log('attack');
+    Soldier.prototype.attack = function (prevTicks, currTicks) {
+        if (this.trainingDataHolding >= this.trainingDataPerAttack &&
+            this.attackTarget) {
+            if (this.lastAttack + this.attackPeriod <= currTicks) {
+                this.lastAttack = currTicks;
+                this.trainingDataHolding -= this.trainingDataPerAttack;
+                var bullect = new Bullet_1.Bullet(this.game, this.playerId, this.position, this.attackTarget, 20);
+            }
+        }
     };
     return Soldier;
 }(_1.Unit));

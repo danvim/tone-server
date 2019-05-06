@@ -27,6 +27,7 @@ var Worker = /** @class */ (function (_super) {
     __extends(Worker, _super);
     function Worker(game, playerId, position, rotation) {
         var _this = _super.call(this, game, playerId, lib_1.EntityType.WORKER, position, rotation) || this;
+        _this.currTicks = 0;
         _this.mstate = WorkerState.IDLE;
         return _this;
     }
@@ -62,6 +63,7 @@ var Worker = /** @class */ (function (_super) {
         configurable: true
     });
     Worker.prototype.frame = function (prevTicks, currTicks) {
+        this.currTicks = currTicks;
         if (!this.job) {
             this.findJob();
         }
@@ -170,9 +172,17 @@ var Worker = /** @class */ (function (_super) {
             return false;
         }
         // console.log(generators.map((g: Building) => g.name));
+        // source: generator
         var weightingFun = function (source) {
-            return source.cartesianPos.euclideanDistance(_this.position) +
-                source.cartesianPos.euclideanDistance(target.cartesianPos) || Infinity;
+            var sourceDistance = source.cartesianPos.euclideanDistance(_this.position);
+            var targetDistance = source.cartesianPos.euclideanDistance(target.cartesianPos);
+            if (sourceDistance + targetDistance === 0) {
+                return Infinity;
+            }
+            var waitTime = Object.keys(source.waitingWorkers).length;
+            return waitTime;
+            // Math.max(sourceDistance / this.speed / 1000, waitTime) +
+            // targetDistance / this.speed / 1000
         };
         var sortedGenerators = generators.sort(function (a, b) {
             return weightingFun(a) - weightingFun(b);
@@ -219,7 +229,7 @@ var Worker = /** @class */ (function (_super) {
         }
         else if (this.state === WorkerState.GRABBING) {
             if (this.job) {
-                if (targetBuilding.tryGiveResource(this.job.resourceType, 1)) {
+                if (targetBuilding.tryGiveResource(this.job.resourceType, 1, this)) {
                     this.grab(1);
                 }
             }
@@ -286,6 +296,11 @@ var Worker = /** @class */ (function (_super) {
         if (this.job) {
             this.job.progressOnTheWay--;
             this.job.removeWorker(this);
+        }
+        if (this.state === WorkerState.GRABBING) {
+            if (this.target) {
+                var b = this.target;
+            }
         }
         _super.prototype.onDie.call(this);
     };

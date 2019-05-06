@@ -276,6 +276,18 @@ var Game = /** @class */ (function () {
         // const w = Object.values(this.myUnits(0))[0] as Worker;
         // const j = w.job;
         // console.log(w.name, j && j.name, w.position);
+        // const b = Object.values(this.myBuildings(0));
+        // console.log(
+        //   b
+        //     .filter(
+        //       (bb: Building) => bb.buildingType === BuildingType.STRUCT_GENERATOR,
+        //     )
+        //     .map((bb: Building) => ({
+        //       name: bb.name,
+        //       next: bb.nextReadyTime,
+        //       per: bb.period,
+        //     })),
+        // );
         this.prevTicks = currTicks;
     };
     Game.prototype.test = function () {

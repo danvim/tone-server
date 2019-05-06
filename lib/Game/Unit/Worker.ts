@@ -50,6 +50,7 @@ export class Worker extends Unit {
   }
   public job: WorkerJob | undefined;
   private mstate: WorkerState;
+  private currTicks: number = 0;
   constructor(
     game: Game,
     playerId: number,
@@ -61,6 +62,7 @@ export class Worker extends Unit {
   }
 
   public frame(prevTicks: number, currTicks: number) {
+    this.currTicks = currTicks;
     if (!this.job) {
       this.findJob();
     } else if (!this.target) {
@@ -184,9 +186,22 @@ export class Worker extends Unit {
       return false;
     }
     // console.log(generators.map((g: Building) => g.name));
-    const weightingFun = (source: Building) =>
-      source.cartesianPos.euclideanDistance(this.position) +
-        source.cartesianPos.euclideanDistance(target.cartesianPos) || Infinity;
+    // source: generator
+    const weightingFun = (source: Building) => {
+      const sourceDistance = source.cartesianPos.euclideanDistance(
+        this.position,
+      );
+      const targetDistance = source.cartesianPos.euclideanDistance(
+        target.cartesianPos,
+      );
+      if (sourceDistance + targetDistance === 0) {
+        return Infinity;
+      }
+      const waitTime = Object.keys(source.waitingWorkers).length;
+      return waitTime;
+      // Math.max(sourceDistance / this.speed / 1000, waitTime) +
+      // targetDistance / this.speed / 1000
+    };
     const sortedGenerators = generators.sort((a: Building, b: Building) => {
       return weightingFun(a) - weightingFun(b);
     });
@@ -235,7 +250,7 @@ export class Worker extends Unit {
       this.deliver(targetBuilding);
     } else if (this.state === WorkerState.GRABBING) {
       if (this.job) {
-        if (targetBuilding.tryGiveResource(this.job.resourceType, 1)) {
+        if (targetBuilding.tryGiveResource(this.job.resourceType, 1, this)) {
           this.grab(1);
         }
       } else {
@@ -302,6 +317,11 @@ export class Worker extends Unit {
     if (this.job) {
       this.job.progressOnTheWay--;
       this.job.removeWorker(this);
+    }
+    if (this.state === WorkerState.GRABBING) {
+      if (this.target) {
+        const b = this.target as Building;
+      }
     }
     super.onDie();
   }

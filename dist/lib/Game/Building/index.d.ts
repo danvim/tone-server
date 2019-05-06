@@ -11,6 +11,9 @@ export declare class Building extends Thing implements BuildingInterface {
     tilePosition: Axial;
     structProgress: number;
     structNeeded: number;
+    waitingWorkers: {
+        [id: string]: boolean;
+    };
     constructor(game: Game, playerId: number, buildingType: BuildingType, tilePosition: Axial);
     isFunctional(): boolean;
     frame(prevTicks: number, currTicks: number): void;
@@ -27,7 +30,7 @@ export declare class Building extends Thing implements BuildingInterface {
      * @param amount request amount
      * @return real amount given out
      */
-    tryGiveResource(type: ResourceType, amount: number): number;
+    tryGiveResource(type: ResourceType, amount: number, worker: Worker): number;
     /**
      * Call when done construction
      */

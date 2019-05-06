@@ -23,6 +23,7 @@ var TrainingDataGenerator = /** @class */ (function (_super) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.TRAINING_DATA_GENERATOR, tilePosition) || this;
         _this.amount = 0;
         _this.capacity = 1;
+        _this.currTicks = 0;
         _this.generate = function () {
             if (_this.amount < _this.capacity) {
                 _this.amount++;
@@ -31,21 +32,25 @@ var TrainingDataGenerator = /** @class */ (function (_super) {
         return _this;
     }
     TrainingDataGenerator.prototype.frame = function (prevTicks, currTicks) {
+        this.currTicks = currTicks;
         if (this.periodStrategy) {
             this.periodStrategy.frame(prevTicks, currTicks);
         }
     };
-    TrainingDataGenerator.prototype.tryGiveResource = function (type, amount) {
+    TrainingDataGenerator.prototype.tryGiveResource = function (type, amount, worker) {
         if (type === Helpers_1.ResourceType.TRAINING_DATA) {
             var a = Math.min(amount, this.amount);
             this.amount -= a;
+            delete this.waitingWorkers[worker.uuid];
             return a;
         }
+        this.waitingWorkers[worker.uuid] = true;
         return 0;
     };
     TrainingDataGenerator.prototype.doneConstruction = function () {
-        this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(1000, this.generate);
+        this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(TrainingDataGenerator.dataGenPeriod, this.generate);
     };
+    TrainingDataGenerator.dataGenPeriod = 3000;
     return TrainingDataGenerator;
 }(_1.Building));
 exports.TrainingDataGenerator = TrainingDataGenerator;

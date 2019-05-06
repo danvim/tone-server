@@ -27,6 +27,7 @@ var Building = /** @class */ (function (_super) {
         // for construction
         _this.structProgress = 0;
         _this.structNeeded = 0;
+        _this.waitingWorkers = {};
         _this.game.buildings[_this.uuid] = _this;
         _this.buildingType = buildingType;
         _this.tilePosition = tilePosition;
@@ -95,7 +96,7 @@ var Building = /** @class */ (function (_super) {
      * @param amount request amount
      * @return real amount given out
      */
-    Building.prototype.tryGiveResource = function (type, amount) {
+    Building.prototype.tryGiveResource = function (type, amount, worker) {
         return 0;
     };
     /**

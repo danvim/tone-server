@@ -11,14 +11,17 @@ import { Worker } from '../Unit/Worker';
 import { ResourceType } from '../../Helpers';
 
 export class TrainingDataGenerator extends Building {
+  public static dataGenPeriod = 3000;
   public periodStrategy?: PeriodStrategy;
   public amount: number = 0;
   public capacity: number = 1;
+  public currTicks: number = 0;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.TRAINING_DATA_GENERATOR, tilePosition);
   }
 
   public frame(prevTicks: number, currTicks: number) {
+    this.currTicks = currTicks;
     if (this.periodStrategy) {
       this.periodStrategy.frame(prevTicks, currTicks);
     }
@@ -30,16 +33,21 @@ export class TrainingDataGenerator extends Building {
     }
   }
 
-  public tryGiveResource(type: ResourceType, amount: number) {
+  public tryGiveResource(type: ResourceType, amount: number, worker: Worker) {
     if (type === ResourceType.TRAINING_DATA) {
       const a = Math.min(amount, this.amount);
       this.amount -= a;
+      delete this.waitingWorkers[worker.uuid];
       return a;
     }
+    this.waitingWorkers[worker.uuid] = true;
     return 0;
   }
 
   public doneConstruction() {
-    this.periodStrategy = new PeriodStrategy(1000, this.generate);
+    this.periodStrategy = new PeriodStrategy(
+      TrainingDataGenerator.dataGenPeriod,
+      this.generate,
+    );
   }
 }

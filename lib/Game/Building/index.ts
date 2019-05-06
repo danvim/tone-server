@@ -35,6 +35,8 @@ export class Building extends Thing implements BuildingInterface {
   public structProgress: number = 0;
   public structNeeded: number = 0;
 
+  public waitingWorkers: { [id: string]: boolean } = {};
+
   constructor(
     game: Game,
     playerId: number,
@@ -110,7 +112,7 @@ export class Building extends Thing implements BuildingInterface {
    * @param amount request amount
    * @return real amount given out
    */
-  public tryGiveResource(type: ResourceType, amount: number) {
+  public tryGiveResource(type: ResourceType, amount: number, worker: Worker) {
     return 0;
   }
 

@@ -23,6 +23,7 @@ var StructGenerator = /** @class */ (function (_super) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.STRUCT_GENERATOR, tilePosition) || this;
         _this.amount = 0;
         _this.capacity = 1;
+        _this.currTicks = 0;
         _this.generate = function () {
             if (_this.amount < _this.capacity) {
                 _this.amount++;
@@ -31,16 +32,19 @@ var StructGenerator = /** @class */ (function (_super) {
         return _this;
     }
     StructGenerator.prototype.frame = function (prevTicks, currTicks) {
+        this.currTicks = currTicks;
         if (this.periodStrategy) {
             this.periodStrategy.frame(prevTicks, currTicks);
         }
     };
-    StructGenerator.prototype.tryGiveResource = function (type, amount) {
+    StructGenerator.prototype.tryGiveResource = function (type, amount, worker) {
         if (type === Helpers_1.ResourceType.STRUCT) {
             var a = Math.min(amount, this.amount);
             this.amount -= a;
+            delete this.waitingWorkers[worker.uuid];
             return a;
         }
+        this.waitingWorkers[worker.uuid] = true;
         return 0;
     };
     StructGenerator.prototype.doneConstruction = function () {

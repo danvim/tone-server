@@ -14,6 +14,7 @@ export declare class Worker extends Unit {
     readonly name: string;
     job: WorkerJob | undefined;
     private mstate;
+    private currTicks;
     constructor(game: Game, playerId: number, position: Cartesian, rotation: XyzEuler);
     frame(prevTicks: number, currTicks: number): void;
     searchJob(): WorkerJob;

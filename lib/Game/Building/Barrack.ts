@@ -34,7 +34,7 @@ export class Barrack extends Building {
   public recruitmentJob?: WorkerJob;
 
   public trainingCount = 0; // number of soldiers now training
-  public trainingTime = 3000; // total ticks required to train a soldier
+  public trainingTime = 10000; // total ticks required to train a soldier
   public trainStartTime = 0; // the start tick of current training soldier
   public nowTraining = false; // now barrack is training
 

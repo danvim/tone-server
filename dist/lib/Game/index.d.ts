@@ -45,11 +45,11 @@ export declare class Game {
      * Make the id of players start from 0 without holes
      */
     reassignPlayerId(players: Player[]): void;
+    initBase(size: number): void;
     /**
      * assign clusters to players and spawn inital workers
      */
     initClusterTiles(initialWorkerCount?: number): void;
-    initBase(): void;
     evaluateTerritory(): void;
     myBuildings(playerId: number): {
         [uuid: string]: Building;

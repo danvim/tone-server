@@ -129,8 +129,8 @@ describe('barrack train the unit', function () {
         game.frame(88000, 88000);
         expect(barrack.nowTraining).toBe(true);
     });
-    it('after 3000 1 soldiers', function () {
-        game.frame(88000, 91000);
+    it('after ' + barrack.trainingTime + ' 1 soldiers', function () {
+        game.frame(88000, 88000 + barrack.trainingTime);
         expect(Object.values(game.myUnits(0)).filter(function (unit) { return unit.type === lib_1.EntityType.SOLDIER_0; }).length).toBe(1);
     });
 });

@@ -32,7 +32,7 @@ describe('original claim and not claimed', function () {
         expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(2, 0))).toBe(true);
     });
     it('spread enclosed', function () {
-        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(3, 3))).toBe(true);
+        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(2, 2))).toBe(true);
     });
     it('not reached', function () {
         expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(10, 0))).toBe(false);
@@ -55,7 +55,7 @@ describe('build criteria', function () {
     });
     it('can build normally', function () {
         var msg = lib_1.TryBuildMessage.create({
-            axialCoords: [new lib_1.Axial(2, 0)],
+            axialCoords: [new lib_1.Axial(0, 4)],
             buildingType: lib_1.BuildingType.STRUCT_GENERATOR,
         });
         expect(game.build(msg, conn1s)).toBe(true);
@@ -64,12 +64,12 @@ describe('build criteria', function () {
 var reclaimer;
 describe('claimer claim the new tile', function () {
     it('built', function () {
-        reclaimer = BuildingFactory_1.buildingFactory(game, 0, lib_1.BuildingType.RECLAIMATOR, new lib_1.Axial(8, 0));
-        reclaimer.onResouceDelivered(Helpers_1.ResourceType.STRUCT, 5);
+        reclaimer = BuildingFactory_1.buildingFactory(game, 0, lib_1.BuildingType.RECLAIMATOR, new lib_1.Axial(4, 0));
+        reclaimer.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.RECLAIMATOR].struct);
         expect(reclaimer.isFunctional()).toBe(true);
     });
     it('claimed', function () {
-        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(10, 0))).toBe(true);
+        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(8, 0))).toBe(true);
     });
 });
 describe('claimer destroyed lose territory', function () {
@@ -80,10 +80,10 @@ describe('claimer destroyed lose territory', function () {
     });
     it('remain territoy', function () {
         expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(0, 0))).toBe(true);
-        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(3, 3))).toBe(true);
+        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(2, 2))).toBe(true);
     });
     it('lose territory', function () {
-        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(10, 0))).toBe(false);
+        expect(game.isTileClaimedBy(player1.id, new lib_1.Axial(8, 0))).toBe(false);
     });
 });
 // it('dummie', () => {

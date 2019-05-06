@@ -24,10 +24,10 @@ var Base = /** @class */ (function (_super) {
     __extends(Base, _super);
     function Base(game, playerId, tilePosition) {
         var _this = _super.call(this, game, playerId, Game_1.BuildingType.BASE, tilePosition) || this;
-        _this.structStorage = 0;
+        _this.structStorage = 10;
         _this.trainingDataStorage = 0;
         _this.primeDataStorage = 0;
-        _this.territoryRadius = 8;
+        _this.territoryRadius = 5;
         _this.generateStruct = function () {
             _this.structStorage++;
         };
@@ -89,7 +89,7 @@ var Base = /** @class */ (function (_super) {
             primeData: this.primeDataStorage,
         });
     };
-    Base.structGenPeriod = 5000;
+    Base.structGenPeriod = 10000;
     return Base;
 }(_1.Building));
 exports.Base = Base;

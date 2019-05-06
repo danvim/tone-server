@@ -12,6 +12,7 @@ import {
   TrySetJobMessage,
   TrySetFightingStyleMessage,
   EntityType,
+  TILE_SIZE,
 } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
@@ -53,9 +54,11 @@ export class Game {
 
   // game start
   constructor(players: Player[], protocol: Protocol, unitTest?: boolean) {
+    const size = 30;
     this.players = [];
     this.protocol = protocol;
-    this.map = MapGen();
+    this.map = MapGen(size);
+    console.log('map gen done');
     this.buildings = {};
     this.entities = {};
     this.units = {};
@@ -69,8 +72,10 @@ export class Game {
     }
 
     this.reassignPlayerId(players);
+    this.initBase(size);
+    console.log('init base');
     this.initClusterTiles(unitTest ? 0 : 10);
-    this.initBase();
+    console.log('init cluster');
     this.evaluateTerritory();
     this.initProtocol(protocol);
 
@@ -81,6 +86,7 @@ export class Game {
       );
     }
     this.emit(PackageType.UPDATE_TILES, { tiles: this.map });
+    console.log('emit');
   }
 
   // connection functions
@@ -169,6 +175,19 @@ export class Game {
     });
   }
 
+  public initBase(size: number) {
+    const locations = [
+      new Axial(0, 0),
+      new Axial(size - 1, size - 1),
+      new Axial(size - 1, 0),
+      new Axial(0, size - 1),
+    ];
+    this.players.forEach((player: Player, k: number) => {
+      const base0 = new Base(this, player.id, locations[k]);
+      this.bases[player.id] = base0;
+    });
+  }
+
   /**
    * assign clusters to players and spawn inital workers
    */
@@ -185,19 +204,6 @@ export class Game {
       for (let i = 0; i < initialWorkerCount; i++) {
         sp.spawn();
       }
-    });
-  }
-
-  public initBase() {
-    const locations = [
-      new Axial(0, 0),
-      new Axial(10, 10),
-      new Axial(10, 0),
-      new Axial(0, 10),
-    ];
-    this.players.forEach((player: Player, k: number) => {
-      const base0 = new Base(this, player.id, locations[k]);
-      this.bases[player.id] = base0;
     });
   }
 

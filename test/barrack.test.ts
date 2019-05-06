@@ -180,8 +180,8 @@ describe('barrack train the unit', () => {
     game.frame(88000, 88000);
     expect(barrack.nowTraining).toBe(true);
   });
-  it('after 3000 1 soldiers', () => {
-    game.frame(88000, 91000);
+  it('after ' + barrack.trainingTime + ' 1 soldiers', () => {
+    game.frame(88000, 88000 + barrack.trainingTime);
     expect(
       Object.values(game.myUnits(0)).filter(
         (unit: Unit) => unit.type === EntityType.SOLDIER_0,

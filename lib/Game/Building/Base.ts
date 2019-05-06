@@ -7,12 +7,12 @@ import { ResourceType } from '../../Helpers';
 import { WorkerJob } from '../Unit/WorkerJob';
 import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
 export class Base extends Building implements BuildingInterface {
-  public static structGenPeriod = 5000;
+  public static structGenPeriod = 10000;
   public periodStrategy: PeriodStrategy;
-  public structStorage = 0;
+  public structStorage = 10;
   public trainingDataStorage = 0;
   public primeDataStorage = 0;
-  public territoryRadius: number = 8;
+  public territoryRadius: number = 5;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.BASE, tilePosition);
     this.periodStrategy = new PeriodStrategy(

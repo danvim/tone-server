@@ -46,9 +46,11 @@ var Game = /** @class */ (function () {
             }
             return false;
         };
+        var size = 30;
         this.players = [];
         this.protocol = protocol;
-        this.map = MapGen_1.MapGen();
+        this.map = MapGen_1.MapGen(size);
+        console.log('map gen done');
         this.buildings = {};
         this.entities = {};
         this.units = {};
@@ -60,14 +62,17 @@ var Game = /** @class */ (function () {
             TrainingDataGenerator_1.TrainingDataGenerator.dataGenPeriod = 1000;
         }
         this.reassignPlayerId(players);
+        this.initBase(size);
+        console.log('init base');
         this.initClusterTiles(unitTest ? 0 : 10);
-        this.initBase();
+        console.log('init cluster');
         this.evaluateTerritory();
         this.initProtocol(protocol);
         if (!unitTest) {
             this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 60);
         }
         this.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
+        console.log('emit');
     }
     // connection functions
     Game.prototype.emit = function (packageType, object) {
@@ -141,6 +146,19 @@ var Game = /** @class */ (function () {
             _this.players[player.id] = player;
         });
     };
+    Game.prototype.initBase = function (size) {
+        var _this = this;
+        var locations = [
+            new lib_1.Axial(0, 0),
+            new lib_1.Axial(size - 1, size - 1),
+            new lib_1.Axial(size - 1, 0),
+            new lib_1.Axial(0, size - 1),
+        ];
+        this.players.forEach(function (player, k) {
+            var base0 = new Base_1.Base(_this, player.id, locations[k]);
+            _this.bases[player.id] = base0;
+        });
+    };
     /**
      * assign clusters to players and spawn inital workers
      */
@@ -159,19 +177,6 @@ var Game = /** @class */ (function () {
             for (var i = 0; i < initialWorkerCount; i++) {
                 sp.spawn();
             }
-        });
-    };
-    Game.prototype.initBase = function () {
-        var _this = this;
-        var locations = [
-            new lib_1.Axial(0, 0),
-            new lib_1.Axial(10, 10),
-            new lib_1.Axial(10, 0),
-            new lib_1.Axial(0, 10),
-        ];
-        this.players.forEach(function (player, k) {
-            var base0 = new Base_1.Base(_this, player.id, locations[k]);
-            _this.bases[player.id] = base0;
         });
     };
     Game.prototype.evaluateTerritory = function () {

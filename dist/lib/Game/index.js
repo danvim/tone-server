@@ -250,6 +250,7 @@ var Game = /** @class */ (function () {
             building.frame(prevTicks, currTicks);
         });
         Object.keys(this.entities)
+            // to let worker holding higher priority job execute first
             .sort(function (a, b) {
             if (_this.entities[a].type === lib_1.EntityType.WORKER &&
                 _this.entities[b].type === lib_1.EntityType.WORKER) {
@@ -274,12 +275,14 @@ var Game = /** @class */ (function () {
                 return 0;
             }
         })
+            // freame each workers
             .forEach(function (key) {
             var entity = _this.entities[key];
             entity.frame(prevTicks, currTicks);
             if (entity.sentPosition.euclideanDistance(entity.position) > 0) {
                 var _a = entity.position.asArray, x = _a[0], z = _a[1];
                 var _b = entity.velocity.asArray, vx = _b[0], vz = _b[1];
+                console.log('called');
                 _this.emit(lib_1.PackageType.MOVE_ENTITY, {
                     uid: entity.uuid,
                     location: { x: x, y: 5, z: z },

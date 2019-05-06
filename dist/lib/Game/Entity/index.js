@@ -34,7 +34,7 @@ var Entity = /** @class */ (function (_super) {
             entityType: _this.type,
             playerId: _this.playerId,
         });
-        _this.sentPosition = _this.position;
+        _this.sentPosition = _this.position.clone();
         _this.hp = _this.hp;
         return _this;
     }

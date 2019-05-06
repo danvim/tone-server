@@ -326,6 +326,7 @@ export class Game {
     });
 
     Object.keys(this.entities)
+      // to let worker holding higher priority job execute first
       .sort((a: string, b: string) => {
         if (
           this.entities[a].type === EntityType.WORKER &&
@@ -348,6 +349,7 @@ export class Game {
           return 0;
         }
       })
+      // freame each workers
       .forEach((key: string) => {
         const entity = this.entities[key];
         entity.frame(prevTicks, currTicks);

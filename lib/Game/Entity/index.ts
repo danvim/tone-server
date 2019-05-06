@@ -46,7 +46,7 @@ export class Entity extends Thing implements EntityInterface {
       entityType: this.type,
       playerId: this.playerId,
     });
-    this.sentPosition = this.position;
+    this.sentPosition = this.position.clone();
     this.hp = this.hp;
   }
 

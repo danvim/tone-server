@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Game_1 = require("tone-core/dist/lib/Game");
+var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
 var Helpers_1 = require("../../Helpers");
@@ -27,6 +28,7 @@ var StructGenerator = /** @class */ (function (_super) {
         _this.generate = function () {
             if (_this.amount < _this.capacity) {
                 _this.amount++;
+                _this.emitStorage();
             }
         };
         _this.period = StructGenerator.structGenPeriod;
@@ -45,6 +47,7 @@ var StructGenerator = /** @class */ (function (_super) {
         if (type === Helpers_1.ResourceType.STRUCT) {
             var a = Math.min(amount, this.amount);
             if (a > 0) {
+                this.emitStorage();
                 delete this.waitingWorkers[worker.uuid];
             }
             else {
@@ -57,6 +60,14 @@ var StructGenerator = /** @class */ (function (_super) {
     };
     StructGenerator.prototype.doneConstruction = function () {
         this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(StructGenerator.structGenPeriod, this.generate);
+    };
+    StructGenerator.prototype.emitStorage = function () {
+        this.player.emit(lib_1.PackageType.UPDATE_RESOURCE_STORAGE, {
+            uid: this.uuid,
+            struct: this.amount,
+            trainingData: 0,
+            primeData: 0,
+        });
     };
     StructGenerator.structGenPeriod = 3000;
     return StructGenerator;

@@ -5,7 +5,7 @@ import {
   EntityType,
   FightingStyle,
 } from 'tone-core/dist/lib/Game';
-import { Axial, XyzEuler } from 'tone-core/dist/lib';
+import { Axial, XyzEuler, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
@@ -120,6 +120,7 @@ export class Barrack extends Building {
     } else {
       if (type === ResourceType.TRAINING_DATA) {
         this.trainingDataStorage += amount;
+        this.emitStorage();
         return amount;
       } else if (type === ResourceType.WORKER) {
         if (this.soldiers.length + this.trainingCount < this.soldierQuota) {
@@ -139,6 +140,9 @@ export class Barrack extends Building {
       if (resourceType === ResourceType.TRAINING_DATA) {
         const a = Math.min(amount, this.trainingDataStorage);
         this.trainingDataStorage -= a;
+        if (a > 0) {
+          this.emitStorage();
+        }
         return a;
       }
     }
@@ -154,5 +158,14 @@ export class Barrack extends Building {
       JobNature.RECRUITMENT,
     );
     return this.recruitmentJob;
+  }
+
+  public emitStorage() {
+    this.player.emit(PackageType.UPDATE_RESOURCE_STORAGE, {
+      uid: this.uuid,
+      struct: 0,
+      trainingData: this.trainingDataStorage,
+      primeData: 0,
+    });
   }
 }

@@ -3,7 +3,7 @@ import {
   BuildingType,
   TILE_SIZE,
 } from 'tone-core/dist/lib/Game';
-import { Axial, XyzEuler } from 'tone-core/dist/lib';
+import { Axial, XyzEuler, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
@@ -31,6 +31,7 @@ export class TrainingDataGenerator extends Building {
   public generate = () => {
     if (this.amount < this.capacity) {
       this.amount++;
+      this.emitStorage();
     }
   }
 
@@ -42,6 +43,7 @@ export class TrainingDataGenerator extends Building {
       const a = Math.min(amount, this.amount);
       if (a > 0) {
         delete this.waitingWorkers[worker.uuid];
+        this.emitStorage();
       } else {
         this.waitingWorkers[worker.uuid] = true;
       }
@@ -56,5 +58,14 @@ export class TrainingDataGenerator extends Building {
       TrainingDataGenerator.dataGenPeriod,
       this.generate,
     );
+  }
+
+  public emitStorage() {
+    this.player.emit(PackageType.UPDATE_RESOURCE_STORAGE, {
+      uid: this.uuid,
+      struct: 0,
+      trainingData: this.amount,
+      primeData: 0,
+    });
   }
 }

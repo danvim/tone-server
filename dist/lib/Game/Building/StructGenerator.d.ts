@@ -15,4 +15,5 @@ export declare class StructGenerator extends Building {
     generate: () => void;
     tryGiveResource(type: ResourceType, amount: number, worker: Worker): number;
     doneConstruction(): void;
+    emitStorage(): void;
 }

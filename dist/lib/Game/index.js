@@ -282,7 +282,6 @@ var Game = /** @class */ (function () {
             if (entity.sentPosition.euclideanDistance(entity.position) > 0) {
                 var _a = entity.position.asArray, x = _a[0], z = _a[1];
                 var _b = entity.velocity.asArray, vx = _b[0], vz = _b[1];
-                console.log('called');
                 _this.emit(lib_1.PackageType.MOVE_ENTITY, {
                     uid: entity.uuid,
                     location: { x: x, y: 5, z: z },

@@ -14,6 +14,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Game_1 = require("tone-core/dist/lib/Game");
+var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
 var Helpers_1 = require("../../Helpers");
@@ -27,6 +28,7 @@ var TrainingDataGenerator = /** @class */ (function (_super) {
         _this.generate = function () {
             if (_this.amount < _this.capacity) {
                 _this.amount++;
+                _this.emitStorage();
             }
         };
         _this.period = TrainingDataGenerator.dataGenPeriod;
@@ -46,6 +48,7 @@ var TrainingDataGenerator = /** @class */ (function (_super) {
             var a = Math.min(amount, this.amount);
             if (a > 0) {
                 delete this.waitingWorkers[worker.uuid];
+                this.emitStorage();
             }
             else {
                 this.waitingWorkers[worker.uuid] = true;
@@ -57,6 +60,14 @@ var TrainingDataGenerator = /** @class */ (function (_super) {
     };
     TrainingDataGenerator.prototype.doneConstruction = function () {
         this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(TrainingDataGenerator.dataGenPeriod, this.generate);
+    };
+    TrainingDataGenerator.prototype.emitStorage = function () {
+        this.player.emit(lib_1.PackageType.UPDATE_RESOURCE_STORAGE, {
+            uid: this.uuid,
+            struct: 0,
+            trainingData: this.amount,
+            primeData: 0,
+        });
     };
     TrainingDataGenerator.dataGenPeriod = 3000;
     return TrainingDataGenerator;

@@ -1,5 +1,5 @@
 import { BuildingInterface, BuildingType } from 'tone-core/dist/lib/Game';
-import { Axial, XyzEuler } from 'tone-core/dist/lib';
+import { Axial, XyzEuler, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
@@ -66,6 +66,7 @@ export class Base extends Building implements BuildingInterface {
         // unknown resource type
         return 0;
     }
+    this.emitStorage();
     return amount;
   }
 
@@ -74,17 +75,30 @@ export class Base extends Building implements BuildingInterface {
       case ResourceType.STRUCT:
         amount = Math.min(this.structStorage, amount);
         this.structStorage -= amount;
-        return amount;
+        break;
       case ResourceType.TRAINING_DATA:
         amount = Math.min(this.trainingDataStorage, amount);
         this.trainingDataStorage -= amount;
-        return amount;
+        break;
       case ResourceType.PRIME_DATA:
         amount = Math.min(this.primeDataStorage, amount);
         this.primeDataStorage -= amount;
-        return amount;
+        break;
       default:
         return 0;
     }
+    if (amount > 0) {
+      this.emitStorage();
+    }
+    return amount;
+  }
+
+  public emitStorage() {
+    this.player.emit(PackageType.UPDATE_RESOURCE_STORAGE, {
+      uid: this.uuid,
+      struct: this.structStorage,
+      trainingData: this.trainingDataStorage,
+      primeData: this.primeDataStorage,
+    });
   }
 }

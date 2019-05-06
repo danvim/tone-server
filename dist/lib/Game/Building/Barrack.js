@@ -103,6 +103,7 @@ var Barrack = /** @class */ (function (_super) {
         else {
             if (type === Helpers_1.ResourceType.TRAINING_DATA) {
                 this.trainingDataStorage += amount;
+                this.emitStorage();
                 return amount;
             }
             else if (type === Helpers_1.ResourceType.WORKER) {
@@ -124,6 +125,9 @@ var Barrack = /** @class */ (function (_super) {
             if (resourceType === Helpers_1.ResourceType.TRAINING_DATA) {
                 var a = Math.min(amount, this.trainingDataStorage);
                 this.trainingDataStorage -= a;
+                if (a > 0) {
+                    this.emitStorage();
+                }
                 return a;
             }
         }
@@ -132,6 +136,14 @@ var Barrack = /** @class */ (function (_super) {
     Barrack.prototype.callForRecuitment = function () {
         this.recruitmentJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.WORKER, Job_1.JobPriority.EXCLUSIVE, Job_1.JobNature.RECRUITMENT);
         return this.recruitmentJob;
+    };
+    Barrack.prototype.emitStorage = function () {
+        this.player.emit(lib_1.PackageType.UPDATE_RESOURCE_STORAGE, {
+            uid: this.uuid,
+            struct: 0,
+            trainingData: this.trainingDataStorage,
+            primeData: 0,
+        });
     };
     return Barrack;
 }(_1.Building));

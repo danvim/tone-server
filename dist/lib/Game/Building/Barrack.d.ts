@@ -28,4 +28,5 @@ export declare class Barrack extends Building {
     onResouceDelivered(type: ResourceType, amount: number, worker?: Worker): number;
     tryGiveResource(resourceType: ResourceType, amount: number): number;
     callForRecuitment(): WorkerJob;
+    emitStorage(): void;
 }

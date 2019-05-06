@@ -16,4 +16,5 @@ export declare class Base extends Building implements BuildingInterface {
     generateStruct: () => void;
     onResouceDelivered(type: ResourceType, amount: number): number;
     tryGiveResource(type: ResourceType, amount: number): number;
+    emitStorage(): void;
 }

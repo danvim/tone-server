@@ -35,6 +35,7 @@ var Entity = /** @class */ (function (_super) {
             playerId: _this.playerId,
         });
         _this.sentPosition = _this.position;
+        _this.hp = _this.hp;
         return _this;
     }
     Object.defineProperty(Entity.prototype, "target", {

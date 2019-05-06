@@ -10,7 +10,7 @@ var Thing = /** @class */ (function () {
         this.game = game;
         this.playerId = playerId;
         this.uuid = v4_1.default();
-        this.hp = hp || 100;
+        this.mhp = hp || 100;
     }
     Object.defineProperty(Thing.prototype, "cartesianPos", {
         get: function () {

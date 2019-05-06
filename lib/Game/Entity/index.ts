@@ -47,6 +47,7 @@ export class Entity extends Thing implements EntityInterface {
       playerId: this.playerId,
     });
     this.sentPosition = this.position;
+    this.hp = this.hp;
   }
 
   public frame(prevTicks: number, currTicks: number) {

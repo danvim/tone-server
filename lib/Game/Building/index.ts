@@ -66,6 +66,7 @@ export class Building extends Thing implements BuildingInterface {
       axialCoords: [tilePosition],
       progress: this.structProgress,
     });
+    this.hp = this.hp;
   }
 
   public isFunctional() {

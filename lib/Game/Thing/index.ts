@@ -13,7 +13,7 @@ export class Thing implements ThingInterface {
     this.game = game;
     this.playerId = playerId;
     this.uuid = uuid();
-    this.hp = hp || 100;
+    this.mhp = hp || 100;
   }
 
   public get cartesianPos(): Cartesian {

@@ -43,6 +43,7 @@ var Building = /** @class */ (function (_super) {
             axialCoords: [tilePosition],
             progress: _this.structProgress,
         });
+        _this.hp = _this.hp;
         return _this;
     }
     Object.defineProperty(Building.prototype, "cartesianPos", {

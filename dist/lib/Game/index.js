@@ -124,8 +124,8 @@ var Game = /** @class */ (function () {
         var _this = this;
         var locations = [
             new lib_1.Axial(0, 0),
-            new lib_1.Axial(10, 0),
             new lib_1.Axial(10, 10),
+            new lib_1.Axial(10, 0),
             new lib_1.Axial(0, 10),
         ];
         this.players.forEach(function (player, k) {
@@ -262,7 +262,7 @@ var Game = /** @class */ (function () {
                 _this.emit(lib_1.PackageType.MOVE_ENTITY, {
                     uid: entity.uuid,
                     location: { x: x, y: 5, z: z },
-                    yaw: 0,
+                    yaw: entity.yaw,
                     pitch: 0,
                     velocity: { x: vx, y: 0, z: vz },
                 });

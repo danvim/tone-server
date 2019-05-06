@@ -38,9 +38,9 @@ var map = {
         type: lib_1.TileType.EMPTY,
         height: 1,
     },
-    '10,1': {
+    '10,11': {
         type: lib_1.TileType.INFORMATION_CLUSTER,
-        height: 0,
+        height: 1,
     },
 };
 function MapGen() {

@@ -23,6 +23,7 @@ export class Entity extends Thing implements EntityInterface {
   public velocity: Cartesian;
   public speed: number;
   public arriveRange: number = 0;
+  public yaw: number = 0;
   private mtarget?: Thing;
   // public unitStrategy?: UnitStrategy;
   constructor(
@@ -41,7 +42,7 @@ export class Entity extends Thing implements EntityInterface {
     this.speed = 30 / 500;
     this.game.emit(PackageType.SPAWN_ENTITY, {
       uid: this.uuid,
-      position: this.position,
+      position: { x: this.position.x, y: 0, z: this.position.y },
       entityType: this.type,
       playerId: this.playerId,
     });
@@ -74,7 +75,9 @@ export class Entity extends Thing implements EntityInterface {
         this.updateVelocity();
         if (distanceToTarget < this.velocity.norm() * (currTicks - prevTicks)) {
           // avoid overshooting to target position
-          this.position = this.target.cartesianPos.clone();
+          if (global.test) {
+            this.position = this.target.cartesianPos.clone();
+          }
           this.arrive(prevTicks, currTicks);
           this.velocity = new Cartesian(0, 0);
         } else {
@@ -82,6 +85,7 @@ export class Entity extends Thing implements EntityInterface {
         }
       }
     } else {
+      this.yaw += Math.random() - 0.5;
       this.travelByVelocity(prevTicks, currTicks);
     }
   }
@@ -93,10 +97,10 @@ export class Entity extends Thing implements EntityInterface {
 
   public updateVelocity() {
     if (this.target) {
-      let [x, z] = this.position.asArray;
+      const [x, z] = this.position.asArray;
       const position = new Cartesian(x, z);
-      [x, z] = this.target.cartesianPos.asArray;
-      this.velocity = new Cartesian(x, z);
+      const [x2, z2] = this.target.cartesianPos.asArray;
+      this.velocity = new Cartesian(x2, z2);
       this.velocity.add(position.scale(-1));
       const dist = this.velocity.euclideanDistance(new Cartesian(0, 0));
       if (dist === 0) {
@@ -104,6 +108,7 @@ export class Entity extends Thing implements EntityInterface {
       } else {
         this.velocity.scale(1 / dist);
         this.velocity.scale(this.speed);
+        this.yaw = Math.atan2(z2 - z, x2 - x) + Math.PI;
       }
     }
   }

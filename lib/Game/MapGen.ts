@@ -37,9 +37,9 @@ const map: TileMap = {
     type: TileType.EMPTY,
     height: 1,
   },
-  '10,1': {
+  '10,11': {
     type: TileType.INFORMATION_CLUSTER,
-    height: 0,
+    height: 1,
   },
 };
 

@@ -143,8 +143,8 @@ export class Game {
   public initBase() {
     const locations = [
       new Axial(0, 0),
-      new Axial(10, 0),
       new Axial(10, 10),
+      new Axial(10, 0),
       new Axial(0, 10),
     ];
     this.players.forEach((player: Player, k: number) => {
@@ -330,7 +330,7 @@ export class Game {
           this.emit(PackageType.MOVE_ENTITY, {
             uid: entity.uuid,
             location: { x, y: 5, z },
-            yaw: 0,
+            yaw: entity.yaw,
             pitch: 0,
             velocity: { x: vx, y: 0, z: vz },
           });

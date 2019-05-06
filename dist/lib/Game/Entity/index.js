@@ -21,6 +21,7 @@ var Entity = /** @class */ (function (_super) {
     function Entity(game, playerId, type, position, rotation) {
         var _this = _super.call(this, game, playerId, 100) || this;
         _this.arriveRange = 0;
+        _this.yaw = 0;
         _this.game.entities[_this.uuid] = _this;
         _this.type = type;
         _this.position = position;
@@ -29,7 +30,7 @@ var Entity = /** @class */ (function (_super) {
         _this.speed = 30 / 500;
         _this.game.emit(lib_1.PackageType.SPAWN_ENTITY, {
             uid: _this.uuid,
-            position: _this.position,
+            position: { x: _this.position.x, y: 0, z: _this.position.y },
             entityType: _this.type,
             playerId: _this.playerId,
         });
@@ -76,7 +77,9 @@ var Entity = /** @class */ (function (_super) {
                 this.updateVelocity();
                 if (distanceToTarget < this.velocity.norm() * (currTicks - prevTicks)) {
                     // avoid overshooting to target position
-                    this.position = this.target.cartesianPos.clone();
+                    if (global.test) {
+                        this.position = this.target.cartesianPos.clone();
+                    }
                     this.arrive(prevTicks, currTicks);
                     this.velocity = new lib_1.Cartesian(0, 0);
                 }
@@ -86,6 +89,7 @@ var Entity = /** @class */ (function (_super) {
             }
         }
         else {
+            this.yaw += Math.random() - 0.5;
             this.travelByVelocity(prevTicks, currTicks);
         }
     };
@@ -94,12 +98,11 @@ var Entity = /** @class */ (function (_super) {
         this.updateVelocity();
     };
     Entity.prototype.updateVelocity = function () {
-        var _a;
         if (this.target) {
-            var _b = this.position.asArray, x = _b[0], z = _b[1];
+            var _a = this.position.asArray, x = _a[0], z = _a[1];
             var position = new lib_1.Cartesian(x, z);
-            _a = this.target.cartesianPos.asArray, x = _a[0], z = _a[1];
-            this.velocity = new lib_1.Cartesian(x, z);
+            var _b = this.target.cartesianPos.asArray, x2 = _b[0], z2 = _b[1];
+            this.velocity = new lib_1.Cartesian(x2, z2);
             this.velocity.add(position.scale(-1));
             var dist = this.velocity.euclideanDistance(new lib_1.Cartesian(0, 0));
             if (dist === 0) {
@@ -108,6 +111,7 @@ var Entity = /** @class */ (function (_super) {
             else {
                 this.velocity.scale(1 / dist);
                 this.velocity.scale(this.speed);
+                this.yaw = Math.atan2(z2 - z, x2 - x) + Math.PI;
             }
         }
     };

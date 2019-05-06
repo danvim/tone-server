@@ -33,9 +33,9 @@ export class Soldier extends Unit {
   public trainingDataHolding = 0;
   public trainingDataCapacity = 1;
   public trainingDataPerAttack = 0.1; // each attack will consume this much of training data
-  public attackRange = 3; // eucledian dist
+  public attackRange = 3 * TILE_SIZE; // eucledian dist
   public grabRange = 0; // eucledian dist
-  public defenseRadius = 5;
+  public defenseRadius = 5 * TILE_SIZE;
   public attackPeriod = 1000;
   public lastAttack = 0;
 
@@ -111,6 +111,9 @@ export class Soldier extends Unit {
     }
     if (this.trainingDataHolding >= this.trainingDataPerAttack) {
       this.target = this.attackTarget;
+      if (!this.target) {
+        this.velocity = new Cartesian(0, 0);
+      }
     } else {
       this.target = this.barrack;
     }

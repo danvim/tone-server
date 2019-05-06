@@ -31,9 +31,9 @@ var Soldier = /** @class */ (function (_super) {
         _this.trainingDataHolding = 0;
         _this.trainingDataCapacity = 1;
         _this.trainingDataPerAttack = 0.1; // each attack will consume this much of training data
-        _this.attackRange = 3; // eucledian dist
+        _this.attackRange = 3 * lib_1.TILE_SIZE; // eucledian dist
         _this.grabRange = 0; // eucledian dist
-        _this.defenseRadius = 5;
+        _this.defenseRadius = 5 * lib_1.TILE_SIZE;
         _this.attackPeriod = 1000;
         _this.lastAttack = 0;
         _this.fightingStyle = lib_1.FightingStyle.AGGRESSIVE;
@@ -112,6 +112,9 @@ var Soldier = /** @class */ (function (_super) {
         }
         if (this.trainingDataHolding >= this.trainingDataPerAttack) {
             this.target = this.attackTarget;
+            if (!this.target) {
+                this.velocity = new lib_1.Cartesian(0, 0);
+            }
         }
         else {
             this.target = this.barrack;

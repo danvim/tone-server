@@ -9,8 +9,8 @@ var Thing = /** @class */ (function () {
     function Thing(game, playerId, hp) {
         this.game = game;
         this.playerId = playerId;
-        this.hp = hp || 100;
         this.uuid = v4_1.default();
+        this.hp = hp || 100;
     }
     Object.defineProperty(Thing.prototype, "cartesianPos", {
         get: function () {

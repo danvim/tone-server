@@ -12,8 +12,8 @@ export class Thing implements ThingInterface {
   constructor(game: Game, playerId: number, hp?: number) {
     this.game = game;
     this.playerId = playerId;
-    this.hp = hp || 100;
     this.uuid = uuid();
+    this.hp = hp || 100;
   }
 
   public get cartesianPos(): Cartesian {

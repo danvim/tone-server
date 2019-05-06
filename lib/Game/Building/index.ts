@@ -45,7 +45,7 @@ export class Building extends Thing implements BuildingInterface {
     buildingType: BuildingType,
     tilePosition: Axial,
   ) {
-    super(game, playerId, 1000);
+    super(game, playerId, BuildingProperty[buildingType].hp);
     this.game.buildings[this.uuid] = this;
     this.buildingType = buildingType;
     this.tilePosition = tilePosition;

@@ -165,7 +165,9 @@ var Soldier = /** @class */ (function (_super) {
      */
     Soldier.prototype.searchAttackTarget = function () {
         var _this = this;
-        var opponentThings = Object.values(this.game.opponentBuildings(this.playerId)).concat(Object.values(this.game.opponentUnits(this.playerId)));
+        var opponentThings = Object.values(this.game.opponentBuildings(this.playerId)).filter(function (building) {
+            return building.buildingType !== lib_1.BuildingType.SPAWN_POINT;
+        }).concat(Object.values(this.game.opponentUnits(this.playerId)));
         return opponentThings.reduce(function (prev, curr) {
             if (prev.hp <= 0) {
                 return curr;

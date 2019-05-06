@@ -241,7 +241,9 @@ var Worker = /** @class */ (function (_super) {
                     this.grab(1);
                 }
                 else {
-                    this.mayChangeJob();
+                    if (this.mayChangeJob()) {
+                        delete targetBuilding.waitingWorkers[this.uuid];
+                    }
                 }
             }
             else {

@@ -49,7 +49,6 @@ var Game = /** @class */ (function () {
         this.players = [];
         this.protocol = protocol;
         this.map = MapGen_1.MapGen();
-        this.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
         this.buildings = {};
         this.entities = {};
         this.units = {};
@@ -68,11 +67,14 @@ var Game = /** @class */ (function () {
         if (!unitTest) {
             this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 60);
         }
+        this.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
     }
     // connection functions
     Game.prototype.emit = function (packageType, object) {
         if (this.protocol) {
-            this.protocol.emit(packageType, object);
+            Object.values(this.players).forEach(function (player) {
+                player.emit(packageType, object);
+            });
         }
     };
     Game.prototype.mapConnToPlayer = function (conn) {
@@ -85,6 +87,44 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.rejoin = function (player) {
         player.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
+        Object.values(this.buildings).forEach(function (building) {
+            player.emit(lib_1.PackageType.BUILD, {
+                playerId: building.playerId,
+                uid: building.uuid,
+                buildingType: building.buildingType,
+                axialCoords: [building.tilePosition],
+                progress: building.structProgress,
+            });
+            if (player.id === building.playerId) {
+                switch (building.buildingType) {
+                    case lib_1.BuildingType.BASE:
+                        building.emitStorage();
+                        break;
+                    case lib_1.BuildingType.BARRACK:
+                        building.emitStorage();
+                        break;
+                    case lib_1.BuildingType.STRUCT_GENERATOR:
+                        building.emitStorage();
+                        break;
+                    case lib_1.BuildingType.TRAINING_DATA_GENERATOR:
+                        building.emitStorage();
+                        break;
+                }
+            }
+        });
+        Object.values(this.entities).forEach(function (entity) {
+            player.emit(lib_1.PackageType.SPAWN_ENTITY, {
+                uid: entity.uuid,
+                position: { x: entity.position.x, y: 0, z: entity.position.y },
+                entityType: entity.type,
+                playerId: entity.playerId,
+            });
+        });
+        Object.values(this.workerJobs).forEach(function (job) {
+            if (job.playerId === player.id) {
+                job.sendUpdateJob();
+            }
+        });
     };
     // game logic functions
     Game.prototype.terminate = function () {

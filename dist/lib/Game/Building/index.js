@@ -23,7 +23,7 @@ var Job_1 = require("tone-core/dist/lib/Game/Job");
 var Building = /** @class */ (function (_super) {
     __extends(Building, _super);
     function Building(game, playerId, buildingType, tilePosition) {
-        var _this = _super.call(this, game, playerId, 1000) || this;
+        var _this = _super.call(this, game, playerId, Game_1.BuildingProperty[buildingType].hp) || this;
         // for construction
         _this.structProgress = 0;
         _this.structNeeded = 0;

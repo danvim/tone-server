@@ -13,13 +13,14 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+var Game_1 = require("tone-core/dist/lib/Game");
 var lib_1 = require("tone-core/dist/lib");
 var Thing_1 = require("../Thing");
 var Entity = /** @class */ (function (_super) {
     __extends(Entity, _super);
     // public unitStrategy?: UnitStrategy;
     function Entity(game, playerId, type, position, rotation) {
-        var _this = _super.call(this, game, playerId, 100) || this;
+        var _this = _super.call(this, game, playerId, Game_1.EntityProperty[type].hp) || this;
         _this.arriveRange = 0;
         _this.yaw = 0;
         _this.game.entities[_this.uuid] = _this;
@@ -112,7 +113,7 @@ var Entity = /** @class */ (function (_super) {
             else {
                 this.velocity.scale(1 / dist);
                 this.velocity.scale(this.speed);
-                this.yaw = Math.atan2(z2 - z, x2 - x) + Math.PI;
+                this.yaw = Math.atan2(this.velocity.y, this.velocity.x) + Math.PI;
             }
         }
     };

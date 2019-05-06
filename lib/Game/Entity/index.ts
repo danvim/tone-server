@@ -1,4 +1,8 @@
-import { EntityInterface, EntityType } from 'tone-core/dist/lib/Game';
+import {
+  EntityInterface,
+  EntityType,
+  EntityProperty,
+} from 'tone-core/dist/lib/Game';
 import { Cartesian, XyzEuler, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
@@ -33,7 +37,7 @@ export class Entity extends Thing implements EntityInterface {
     position: Cartesian,
     rotation: XyzEuler,
   ) {
-    super(game, playerId, 100);
+    super(game, playerId, EntityProperty[type].hp);
     this.game.entities[this.uuid] = this;
     this.type = type;
     this.position = position;
@@ -109,7 +113,7 @@ export class Entity extends Thing implements EntityInterface {
       } else {
         this.velocity.scale(1 / dist);
         this.velocity.scale(this.speed);
-        this.yaw = Math.atan2(z2 - z, x2 - x) + Math.PI;
+        this.yaw = Math.atan2(this.velocity.y, this.velocity.x) + Math.PI;
       }
     }
   }

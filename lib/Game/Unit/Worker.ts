@@ -262,7 +262,9 @@ export class Worker extends Unit {
         if (targetBuilding.tryGiveResource(this.job.resourceType, 1, this)) {
           this.grab(1);
         } else {
-          this.mayChangeJob();
+          if(this.mayChangeJob()){
+            delete targetBuilding.waitingWorkers[this.uuid]
+          }
         }
       } else {
         this.findJob();

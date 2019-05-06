@@ -6,4 +6,4 @@ export declare enum ResourceType {
     WORKER = 3
 }
 export declare function SNAKE2Normal(SNAKE_CASE: string): string;
-export declare const MAX_UNIT_CNT = 50;
+export declare const MAX_UNIT_CNT = 25;

@@ -166,7 +166,11 @@ export class Soldier extends Unit {
    */
   public searchAttackTarget() {
     const opponentThings: Thing[] = [
-      ...Object.values(this.game.opponentBuildings(this.playerId)),
+      ...Object.values(this.game.opponentBuildings(this.playerId)).filter(
+        (building: Building) => {
+          return building.buildingType !== BuildingType.SPAWN_POINT;
+        },
+      ),
       ...Object.values(this.game.opponentUnits(this.playerId)),
     ];
     return opponentThings.reduce((prev: Thing, curr: Thing) => {

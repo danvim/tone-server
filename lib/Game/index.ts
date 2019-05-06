@@ -56,7 +56,6 @@ export class Game {
     this.players = [];
     this.protocol = protocol;
     this.map = MapGen();
-    this.emit(PackageType.UPDATE_TILES, { tiles: this.map });
     this.buildings = {};
     this.entities = {};
     this.units = {};
@@ -81,13 +80,16 @@ export class Game {
         60,
       );
     }
+    this.emit(PackageType.UPDATE_TILES, { tiles: this.map });
   }
 
   // connection functions
 
   public emit(packageType: PackageType, object: object) {
     if (this.protocol) {
-      this.protocol.emit(packageType, object);
+      Object.values(this.players).forEach((player: Player) => {
+        player.emit(packageType, object);
+      });
     }
   }
 
@@ -105,6 +107,49 @@ export class Game {
 
   public rejoin(player: Player) {
     player.emit(PackageType.UPDATE_TILES, { tiles: this.map });
+    Object.values(this.buildings).forEach((building: Building) => {
+      player.emit(PackageType.BUILD, {
+        playerId: building.playerId,
+        uid: building.uuid,
+        buildingType: building.buildingType,
+        axialCoords: [building.tilePosition],
+        progress: building.structProgress,
+      });
+      if (player.id === building.playerId) {
+        switch (building.buildingType) {
+          case BuildingType.BASE:
+            (building as Base).emitStorage();
+            break;
+
+          case BuildingType.BARRACK:
+            (building as Barrack).emitStorage();
+            break;
+
+          case BuildingType.STRUCT_GENERATOR:
+            (building as StructGenerator).emitStorage();
+            break;
+
+          case BuildingType.TRAINING_DATA_GENERATOR:
+            (building as TrainingDataGenerator).emitStorage();
+            break;
+        }
+      }
+    });
+
+    Object.values(this.entities).forEach((entity: Entity) => {
+      player.emit(PackageType.SPAWN_ENTITY, {
+        uid: entity.uuid,
+        position: { x: entity.position.x, y: 0, z: entity.position.y },
+        entityType: entity.type,
+        playerId: entity.playerId,
+      });
+    });
+
+    Object.values(this.workerJobs).forEach((job: WorkerJob) => {
+      if (job.playerId === player.id) {
+        job.sendUpdateJob();
+      }
+    });
   }
 
   // game logic functions

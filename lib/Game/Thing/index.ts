@@ -8,11 +8,11 @@ export class Thing implements ThingInterface {
   public game: Game;
   public uuid: string;
   public playerId: number;
-  private mhp: number;
+  private mhp!: number;
   constructor(game: Game, playerId: number, hp?: number) {
     this.game = game;
     this.playerId = playerId;
-    this.mhp = hp || 100;
+    this.hp = hp || 100;
     this.uuid = uuid();
   }
 

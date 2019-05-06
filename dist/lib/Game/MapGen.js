@@ -4,7 +4,7 @@ var lib_1 = require("tone-core/dist/lib");
 var map = {
     '-1,0': {
         type: lib_1.TileType.INFORMATION_CLUSTER,
-        height: 0,
+        height: 1,
     },
     '-1,1': {
         type: lib_1.TileType.EMPTY,

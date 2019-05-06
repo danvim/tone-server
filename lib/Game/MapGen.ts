@@ -3,7 +3,7 @@ import { TileMap, TileType } from 'tone-core/dist/lib';
 const map: TileMap = {
   '-1,0': {
     type: TileType.INFORMATION_CLUSTER,
-    height: 0,
+    height: 1,
   },
   '-1,1': {
     type: TileType.EMPTY,

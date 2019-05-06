@@ -64,6 +64,8 @@ const barrack: Barrack = buildingFactory(
 ) as Barrack;
 let worker: Worker;
 
+global.test = true;
+
 describe('barrack accept training data', () => {
   it('spawn training data', () => {
     trainingDataGen.onResouceDelivered(
@@ -74,6 +76,7 @@ describe('barrack accept training data', () => {
       ResourceType.STRUCT,
       BuildingProperty[BuildingType.BARRACK].struct,
     );
+    game.frame(0, 0);
     game.frame(0, 1000);
     expect(trainingDataGen.amount).toBe(1);
   });
@@ -93,7 +96,7 @@ describe('barrack accept training data', () => {
     );
     game.frame(1000, 1000);
     if (worker.job && j) {
-      expect(worker.job.id).toBe(j.id);
+      expect(worker.job.name).toBe(j.name);
     } else {
       expect(worker.job).toBeTruthy();
       expect(j).toBeTruthy();

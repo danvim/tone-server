@@ -197,10 +197,16 @@ export class Worker extends Unit {
       if (sourceDistance + targetDistance === 0) {
         return Infinity;
       }
-      const waitTime = Object.keys(source.waitingWorkers).length;
-      return waitTime;
-      // Math.max(sourceDistance / this.speed / 1000, waitTime) +
-      // targetDistance / this.speed / 1000
+      if (source.period === Infinity) {
+        return Infinity;
+      }
+      const waitTime =
+        Object.keys(source.waitingWorkers).length * source.period;
+      // return waitTime;
+      return (
+        Math.max(sourceDistance / this.speed / 1000, waitTime) +
+        targetDistance / this.speed / 1000
+      );
     };
     const sortedGenerators = generators.sort((a: Building, b: Building) => {
       return weightingFun(a) - weightingFun(b);
@@ -252,6 +258,8 @@ export class Worker extends Unit {
       if (this.job) {
         if (targetBuilding.tryGiveResource(this.job.resourceType, 1, this)) {
           this.grab(1);
+        } else {
+          this.mayChangeJob();
         }
       } else {
         this.findJob();

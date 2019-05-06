@@ -34,6 +34,7 @@ var Base = /** @class */ (function (_super) {
         var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
         var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
         var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
+        _this.period = Base.structGenPeriod;
         return _this;
     }
     Base.prototype.frame = function (prevTicks, currTicks) {

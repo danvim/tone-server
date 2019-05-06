@@ -27,6 +27,7 @@ import { Reclaimer } from './Building/Reclaimer';
 import { WorkerJob } from './Unit/WorkerJob';
 import { Worker } from './Unit/Worker';
 import { StructGenerator } from './Building/StructGenerator';
+import { TrainingDataGenerator } from './Building/TrainingDataGenerator';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -63,6 +64,7 @@ export class Game {
       SpawnPoint.spawnPeriod = 2000;
       Base.structGenPeriod = 2000;
       StructGenerator.structGenPeriod = 1000;
+      TrainingDataGenerator.dataGenPeriod = 1000;
     }
 
     this.reassignPlayerId(players);

@@ -28,6 +28,7 @@ var Building = /** @class */ (function (_super) {
         _this.structProgress = 0;
         _this.structNeeded = 0;
         _this.waitingWorkers = {};
+        _this.period = Infinity;
         _this.game.buildings[_this.uuid] = _this;
         _this.buildingType = buildingType;
         _this.tilePosition = tilePosition;

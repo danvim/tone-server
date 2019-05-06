@@ -5,6 +5,7 @@ declare global {
       Blob: any;
       FileReader: any;
       postMessage: (k: any[]) => any;
+      test: boolean;
     }
   }
 }
@@ -15,6 +16,7 @@ global.Blob = require('blob-polyfill').Blob;
 // tslint:disable-next-line:no-var-requires
 global.FileReader = require('filereader');
 global.postMessage = (...arg) => global.console.log(arg);
+global.test = false;
 
 import express from 'express';
 import { peerPort } from './ServerConfigs';

@@ -179,10 +179,13 @@ var Worker = /** @class */ (function (_super) {
             if (sourceDistance + targetDistance === 0) {
                 return Infinity;
             }
-            var waitTime = Object.keys(source.waitingWorkers).length;
-            return waitTime;
-            // Math.max(sourceDistance / this.speed / 1000, waitTime) +
-            // targetDistance / this.speed / 1000
+            if (source.period === Infinity) {
+                return Infinity;
+            }
+            var waitTime = Object.keys(source.waitingWorkers).length * source.period;
+            // return waitTime;
+            return (Math.max(sourceDistance / _this.speed / 1000, waitTime) +
+                targetDistance / _this.speed / 1000);
         };
         var sortedGenerators = generators.sort(function (a, b) {
             return weightingFun(a) - weightingFun(b);
@@ -231,6 +234,9 @@ var Worker = /** @class */ (function (_super) {
             if (this.job) {
                 if (targetBuilding.tryGiveResource(this.job.resourceType, 1, this)) {
                     this.grab(1);
+                }
+                else {
+                    this.mayChangeJob();
                 }
             }
             else {

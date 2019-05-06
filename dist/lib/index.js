@@ -15,6 +15,7 @@ global.postMessage = function () {
     }
     return global.console.log(arg);
 };
+global.test = false;
 var express_1 = __importDefault(require("express"));
 var ServerConfigs_1 = require("./ServerConfigs");
 var lib_1 = require("tone-core/dist/lib");

@@ -5,6 +5,7 @@ declare global {
             Blob: any;
             FileReader: any;
             postMessage: (k: any[]) => any;
+            test: boolean;
         }
     }
 }

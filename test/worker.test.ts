@@ -95,10 +95,6 @@ describe('grab struct from base and deliver to construction site', () => {
     it('the velocity', () => {
       expect(worker.velocity).toStrictEqual(new Cartesian(worker.speed, 0));
     });
-    it('update entity protocol', () => {
-      expect(entityTest[0].location.x).toBe(entityTest[1].x);
-      expect(entityTest[0].location.z).toBe(entityTest[1].y);
-    });
   });
   describe('2100', () => {
     it('the velocity', () => {
@@ -206,6 +202,10 @@ describe('grab struct from base and deliver to construction site', () => {
         expect(worker.target).toBeTruthy();
       }
     });
+  });
+  it('update entity protocol', () => {
+    expect(entityTest[0].location.x).toBe(entityTest[1].x);
+    expect(entityTest[0].location.z).toBe(entityTest[1].y);
   });
 });
 // it('dummie', () => {

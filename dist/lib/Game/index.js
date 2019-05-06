@@ -8,6 +8,7 @@ var SpawnPoint_1 = require("./Building/SpawnPoint");
 var Base_1 = require("./Building/Base");
 var BuildingFactory_1 = require("./Building/BuildingFactory");
 var StructGenerator_1 = require("./Building/StructGenerator");
+var TrainingDataGenerator_1 = require("./Building/TrainingDataGenerator");
 // import { protocol } from '../Connection';
 var Game = /** @class */ (function () {
     // game start
@@ -57,6 +58,7 @@ var Game = /** @class */ (function () {
             SpawnPoint_1.SpawnPoint.spawnPeriod = 2000;
             Base_1.Base.structGenPeriod = 2000;
             StructGenerator_1.StructGenerator.structGenPeriod = 1000;
+            TrainingDataGenerator_1.TrainingDataGenerator.dataGenPeriod = 1000;
         }
         this.reassignPlayerId(players);
         this.initClusterTiles(unitTest ? 0 : 10);

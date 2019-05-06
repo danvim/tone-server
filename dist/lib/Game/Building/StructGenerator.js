@@ -29,6 +29,7 @@ var StructGenerator = /** @class */ (function (_super) {
                 _this.amount++;
             }
         };
+        _this.period = StructGenerator.structGenPeriod;
         return _this;
     }
     StructGenerator.prototype.frame = function (prevTicks, currTicks) {
@@ -38,13 +39,20 @@ var StructGenerator = /** @class */ (function (_super) {
         }
     };
     StructGenerator.prototype.tryGiveResource = function (type, amount, worker) {
+        if (amount <= 0) {
+            return 0;
+        }
         if (type === Helpers_1.ResourceType.STRUCT) {
             var a = Math.min(amount, this.amount);
+            if (a > 0) {
+                delete this.waitingWorkers[worker.uuid];
+            }
+            else {
+                this.waitingWorkers[worker.uuid] = true;
+            }
             this.amount -= a;
-            delete this.waitingWorkers[worker.uuid];
             return a;
         }
-        this.waitingWorkers[worker.uuid] = true;
         return 0;
     };
     StructGenerator.prototype.doneConstruction = function () {

@@ -32,10 +32,12 @@ game.terminate();
 var trainingDataGen = BuildingFactory_1.buildingFactory(game, 0, lib_1.BuildingType.TRAINING_DATA_GENERATOR, new lib_1.Axial(0, 2));
 var barrack = BuildingFactory_1.buildingFactory(game, 0, lib_1.BuildingType.BARRACK, new lib_1.Axial(0, 3));
 var worker;
+global.test = true;
 describe('barrack accept training data', function () {
     it('spawn training data', function () {
         trainingDataGen.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.TRAINING_DATA_GENERATOR].struct);
         barrack.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.BARRACK].struct);
+        game.frame(0, 0);
         game.frame(0, 1000);
         expect(trainingDataGen.amount).toBe(1);
     });
@@ -49,7 +51,7 @@ describe('barrack accept training data', function () {
         worker = new Worker_1.Worker(game, 0, new lib_1.Axial(0, 2).toCartesian(lib_1.TILE_SIZE), new lib_1.XyzEuler(1, 0, 0));
         game.frame(1000, 1000);
         if (worker.job && j) {
-            expect(worker.job.id).toBe(j.id);
+            expect(worker.job.name).toBe(j.name);
         }
         else {
             expect(worker.job).toBeTruthy();

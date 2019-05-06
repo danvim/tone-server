@@ -14,6 +14,7 @@ export declare class Building extends Thing implements BuildingInterface {
     waitingWorkers: {
         [id: string]: boolean;
     };
+    period: number;
     constructor(game: Game, playerId: number, buildingType: BuildingType, tilePosition: Axial);
     isFunctional(): boolean;
     frame(prevTicks: number, currTicks: number): void;

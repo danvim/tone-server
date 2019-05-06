@@ -40,6 +40,7 @@ export class Base extends Building implements BuildingInterface {
       JobPriority.LOW,
       JobNature.STORAGE,
     );
+    this.period = Base.structGenPeriod;
   }
 
   public frame(prevTicks: number, currTicks: number) {

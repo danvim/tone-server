@@ -37,6 +37,8 @@ export class Building extends Thing implements BuildingInterface {
 
   public waitingWorkers: { [id: string]: boolean } = {};
 
+  public period: number = Infinity;
+
   constructor(
     game: Game,
     playerId: number,

@@ -18,6 +18,7 @@ export class TrainingDataGenerator extends Building {
   public currTicks: number = 0;
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.TRAINING_DATA_GENERATOR, tilePosition);
+    this.period = TrainingDataGenerator.dataGenPeriod;
   }
 
   public frame(prevTicks: number, currTicks: number) {
@@ -34,13 +35,19 @@ export class TrainingDataGenerator extends Building {
   }
 
   public tryGiveResource(type: ResourceType, amount: number, worker: Worker) {
+    if (amount <= 0) {
+      return 0;
+    }
     if (type === ResourceType.TRAINING_DATA) {
       const a = Math.min(amount, this.amount);
+      if (a > 0) {
+        delete this.waitingWorkers[worker.uuid];
+      } else {
+        this.waitingWorkers[worker.uuid] = true;
+      }
       this.amount -= a;
-      delete this.waitingWorkers[worker.uuid];
       return a;
     }
-    this.waitingWorkers[worker.uuid] = true;
     return 0;
   }
 

@@ -9,6 +9,7 @@ import {
   Axial,
   TileMap,
   TryBuildMessage,
+  TrySetJobMessage,
 } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
@@ -93,6 +94,7 @@ export class Game {
 
   public initProtocol(protocol: Protocol) {
     protocol.on(PackageType.TRY_BUILD, this.build);
+    protocol.on(PackageType.TRY_SET_JOB, this.setJob);
   }
 
   public rejoin(player: Player) {
@@ -263,6 +265,17 @@ export class Game {
     return false;
   }
 
+  public setJob(object: Message<TrySetJobMessage>, conn: Conn) {
+    const { jobId, priority } = Object(object);
+    const job = this.workerJobs[jobId];
+    const player = this.mapConnToPlayer(conn);
+    if (job && player) {
+      if (job.playerId === player.id) {
+        job.priority = priority;
+      }
+    }
+  }
+
   public claimTile(playerId: number, axialLocation: Axial, radius: number) {
     axialLocation.range(radius).forEach((axial: Axial) => {
       this.playerClaimTile[playerId][axial.asString] = true;
@@ -285,15 +298,25 @@ export class Game {
     Object.keys(this.entities).forEach((key: string) => {
       const entity = this.entities[key];
       entity.frame(prevTicks, currTicks);
-      const [x, z] = entity.position.asArray;
-      const [vx, vz] = entity.velocity.asArray;
-      this.emit(PackageType.MOVE_ENTITY, {
-        uid: entity.uuid,
-        location: { x, y: 5, z },
-        yaw: 0,
-        pitch: 0,
-        velocity: { x: vx, y: 0, z: vz },
-      });
+      if (entity.sentPosition.euclideanDistance(entity.position) > 0) {
+        const [x, z] = entity.position.asArray;
+        const [vx, vz] = entity.velocity.asArray;
+        this.emit(PackageType.MOVE_ENTITY, {
+          uid: entity.uuid,
+          location: { x, y: 5, z },
+          yaw: 0,
+          pitch: 0,
+          velocity: { x: vx, y: 0, z: vz },
+        });
+        entity.sentPosition = entity.position.clone();
+      }
+    });
+
+    Object.keys(this.workerJobs).forEach((key: string) => {
+      const job = this.workerJobs[key];
+      if (job.dirty) {
+        job.sendUpdateJob();
+      }
     });
 
     // const w = Object.values(this.myUnits(0))[0] as Worker;

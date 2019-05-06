@@ -13,6 +13,7 @@ export declare class WorkerJob {
     priority: JobPriority;
     resourceType: ResourceType;
     jobNature: JobNature;
+    dirty: boolean;
     constructor(playerId: number, target: Building, resourceType: ResourceType, priority: JobPriority, jobNature: JobNature);
     readonly progressNeed: number;
     readonly needWorker: boolean;
@@ -24,4 +25,5 @@ export declare class WorkerJob {
     strictlyPriorThan(job: WorkerJob): boolean;
     freeAllWorkers(): void;
     removeJob(): void;
+    sendUpdateJob(): void;
 }

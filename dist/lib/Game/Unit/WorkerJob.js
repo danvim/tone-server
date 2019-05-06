@@ -5,12 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var Helpers_1 = require("../../Helpers");
 var v4_1 = __importDefault(require("uuid/v4"));
+var lib_1 = require("tone-core/dist/lib");
 var Worker_1 = require("./Worker");
 var Job_1 = require("tone-core/dist/lib/Game/Job");
 var WorkerJob = /** @class */ (function () {
     function WorkerJob(playerId, target, resourceType, priority, jobNature) {
         this.workers = [];
         this.progressOnTheWay = 0;
+        this.dirty = false;
         this.id = v4_1.default();
         this.target = target;
         this.resourceType = resourceType;
@@ -82,15 +84,18 @@ var WorkerJob = /** @class */ (function () {
     });
     WorkerJob.prototype.addWorker = function (worker) {
         this.workers.push(worker);
+        this.dirty = true;
     };
     WorkerJob.prototype.removeWorker = function (rworker) {
         this.workers = this.workers.filter(function (worker) { return worker.uuid !== rworker.uuid; });
         if (this.jobNature === Job_1.JobNature.STORAGE) {
+            this.dirty = true;
             return;
         }
         if (this.workers.length === 0) {
             this.removeJob();
         }
+        this.dirty = true;
     };
     WorkerJob.prototype.strictlyPriorThan = function (job) {
         return this.priority > job.priority;
@@ -106,11 +111,23 @@ var WorkerJob = /** @class */ (function () {
                 worker.findJob();
             }
         });
+        this.dirty = true;
     };
     WorkerJob.prototype.removeJob = function () {
         this.freeAllWorkers();
         delete this.game.workerJobs[this.id];
         this.priority = Job_1.JobPriority.SUSPENDED;
+        this.sendUpdateJob();
+    };
+    WorkerJob.prototype.sendUpdateJob = function () {
+        this.player.emit(lib_1.PackageType.UPDATE_JOB, {
+            jobId: this.id,
+            buildingId: this.target.uuid,
+            workerIds: this.workers.map(function (w) { return w.uuid; }),
+            priority: this.priority,
+            nature: this.jobNature,
+        });
+        this.dirty = false;
     };
     return WorkerJob;
 }());

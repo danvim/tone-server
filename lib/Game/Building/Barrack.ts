@@ -74,6 +74,7 @@ export class Barrack extends Building {
       JobPriority.LOW,
       JobNature.STORAGE,
     );
+    this.callForRecuitment();
   }
 
   public onDie() {

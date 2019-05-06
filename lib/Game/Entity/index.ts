@@ -18,6 +18,7 @@ export class Entity extends Thing implements EntityInterface {
   }
   public type: EntityType;
   public position: Cartesian;
+  public sentPosition: Cartesian;
   public rotation: XyzEuler;
   public velocity: Cartesian;
   public speed: number;
@@ -44,6 +45,7 @@ export class Entity extends Thing implements EntityInterface {
       entityType: this.type,
       playerId: this.playerId,
     });
+    this.sentPosition = this.position;
   }
 
   public frame(prevTicks: number, currTicks: number) {

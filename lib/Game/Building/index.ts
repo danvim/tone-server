@@ -59,7 +59,7 @@ export class Building extends Thing implements BuildingInterface {
       playerId,
       uid: this.uuid,
       buildingType,
-      axialCoords: tilePosition,
+      axialCoords: [tilePosition],
       progress: this.structProgress,
     });
   }
@@ -93,7 +93,7 @@ export class Building extends Thing implements BuildingInterface {
         playerId: this.playerId,
         uid: this.uuid,
         buildingType: this.buildingType,
-        axialCoords: this.tilePosition,
+        axialCoords: [this.tilePosition],
         progress: this.structProgress,
       });
       if (this.isFunctional()) {

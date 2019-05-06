@@ -68,6 +68,7 @@ var Barrack = /** @class */ (function (_super) {
     };
     Barrack.prototype.doneConstruction = function () {
         this.storageJob = new WorkerJob_1.WorkerJob(this.playerId, this, Helpers_1.ResourceType.TRAINING_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
+        this.callForRecuitment();
     };
     Barrack.prototype.onDie = function () {
         var _this = this;

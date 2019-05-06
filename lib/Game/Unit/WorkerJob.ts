@@ -3,7 +3,7 @@ import { ResourceType } from '../../Helpers';
 import { Player } from '../Player';
 import { Game } from '..';
 import uuid from 'uuid/v4';
-import { BuildingType } from 'tone-core/dist/lib';
+import { BuildingType, PackageType } from 'tone-core/dist/lib';
 import { Worker, WorkerState } from './Worker';
 import { Barrack } from '../Building/Barrack';
 import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
@@ -17,6 +17,7 @@ export class WorkerJob {
   public priority: JobPriority;
   public resourceType: ResourceType;
   public jobNature: JobNature;
+  public dirty = false;
   constructor(
     playerId: number,
     target: Building,
@@ -87,6 +88,7 @@ export class WorkerJob {
 
   public addWorker(worker: Worker) {
     this.workers.push(worker);
+    this.dirty = true;
   }
 
   public removeWorker(rworker: Worker) {
@@ -94,11 +96,13 @@ export class WorkerJob {
       (worker: Worker) => worker.uuid !== rworker.uuid,
     );
     if (this.jobNature === JobNature.STORAGE) {
+      this.dirty = true;
       return;
     }
     if (this.workers.length === 0) {
       this.removeJob();
     }
+    this.dirty = true;
   }
 
   public strictlyPriorThan(job: WorkerJob) {
@@ -114,11 +118,24 @@ export class WorkerJob {
         worker.findJob();
       }
     });
+    this.dirty = true;
   }
 
   public removeJob() {
     this.freeAllWorkers();
     delete this.game.workerJobs[this.id];
     this.priority = JobPriority.SUSPENDED;
+    this.sendUpdateJob();
+  }
+
+  public sendUpdateJob() {
+    this.player.emit(PackageType.UPDATE_JOB, {
+      jobId: this.id,
+      buildingId: this.target.uuid,
+      workerIds: this.workers.map((w: Worker) => w.uuid),
+      priority: this.priority,
+      nature: this.jobNature,
+    });
+    this.dirty = false;
   }
 }

@@ -38,7 +38,7 @@ var Building = /** @class */ (function (_super) {
             playerId: playerId,
             uid: _this.uuid,
             buildingType: buildingType,
-            axialCoords: tilePosition,
+            axialCoords: [tilePosition],
             progress: _this.structProgress,
         });
         return _this;
@@ -79,7 +79,7 @@ var Building = /** @class */ (function (_super) {
                 playerId: this.playerId,
                 uid: this.uuid,
                 buildingType: this.buildingType,
-                axialCoords: this.tilePosition,
+                axialCoords: [this.tilePosition],
                 progress: this.structProgress,
             });
             if (this.isFunctional()) {

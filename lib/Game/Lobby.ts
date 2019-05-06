@@ -101,6 +101,7 @@ export class Lobby {
       }
     }
 
+    // console.log(joiningPlayer);
     if (joiningPlayer !== undefined) {
       // Send other player info to joining player.
       this.players.forEach((player: Player) => {

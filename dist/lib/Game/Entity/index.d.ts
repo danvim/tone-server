@@ -7,6 +7,7 @@ export declare class Entity extends Thing implements EntityInterface {
     readonly cartesianPos: Cartesian;
     type: EntityType;
     position: Cartesian;
+    sentPosition: Cartesian;
     rotation: XyzEuler;
     velocity: Cartesian;
     speed: number;

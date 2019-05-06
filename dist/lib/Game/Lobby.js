@@ -90,6 +90,7 @@ var Lobby = /** @class */ (function () {
                 return;
             }
         }
+        // console.log(joiningPlayer);
         if (joiningPlayer !== undefined) {
             // Send other player info to joining player.
             this.players.forEach(function (player) {

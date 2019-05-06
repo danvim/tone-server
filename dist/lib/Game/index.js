@@ -78,6 +78,7 @@ var Game = /** @class */ (function () {
     };
     Game.prototype.initProtocol = function (protocol) {
         protocol.on(lib_1.PackageType.TRY_BUILD, this.build);
+        protocol.on(lib_1.PackageType.TRY_SET_JOB, this.setJob);
     };
     Game.prototype.rejoin = function (player) {
         player.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
@@ -197,6 +198,16 @@ var Game = /** @class */ (function () {
         }
         return units;
     };
+    Game.prototype.setJob = function (object, conn) {
+        var _a = Object(object), jobId = _a.jobId, priority = _a.priority;
+        var job = this.workerJobs[jobId];
+        var player = this.mapConnToPlayer(conn);
+        if (job && player) {
+            if (job.playerId === player.id) {
+                job.priority = priority;
+            }
+        }
+    };
     Game.prototype.claimTile = function (playerId, axialLocation, radius) {
         var _this = this;
         axialLocation.range(radius).forEach(function (axial) {
@@ -218,15 +229,24 @@ var Game = /** @class */ (function () {
         Object.keys(this.entities).forEach(function (key) {
             var entity = _this.entities[key];
             entity.frame(prevTicks, currTicks);
-            var _a = entity.position.asArray, x = _a[0], z = _a[1];
-            var _b = entity.velocity.asArray, vx = _b[0], vz = _b[1];
-            _this.emit(lib_1.PackageType.MOVE_ENTITY, {
-                uid: entity.uuid,
-                location: { x: x, y: 5, z: z },
-                yaw: 0,
-                pitch: 0,
-                velocity: { x: vx, y: 0, z: vz },
-            });
+            if (entity.sentPosition.euclideanDistance(entity.position) > 0) {
+                var _a = entity.position.asArray, x = _a[0], z = _a[1];
+                var _b = entity.velocity.asArray, vx = _b[0], vz = _b[1];
+                _this.emit(lib_1.PackageType.MOVE_ENTITY, {
+                    uid: entity.uuid,
+                    location: { x: x, y: 5, z: z },
+                    yaw: 0,
+                    pitch: 0,
+                    velocity: { x: vx, y: 0, z: vz },
+                });
+                entity.sentPosition = entity.position.clone();
+            }
+        });
+        Object.keys(this.workerJobs).forEach(function (key) {
+            var job = _this.workerJobs[key];
+            if (job.dirty) {
+                job.sendUpdateJob();
+            }
         });
         // const w = Object.values(this.myUnits(0))[0] as Worker;
         // const j = w.job;

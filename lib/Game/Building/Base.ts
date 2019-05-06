@@ -1,9 +1,12 @@
-import { BuildingInterface, BuildingType } from 'tone-core/dist/lib/Game';
+import {
+  BuildingInterface,
+  BuildingType,
+  ResourceType,
+} from 'tone-core/dist/lib/Game';
 import { Axial, XyzEuler, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
-import { ResourceType } from '../../Helpers';
 import { WorkerJob } from '../Unit/WorkerJob';
 import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
 export class Base extends Building implements BuildingInterface {

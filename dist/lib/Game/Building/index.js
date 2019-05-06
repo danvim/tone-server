@@ -34,7 +34,7 @@ var Building = /** @class */ (function (_super) {
         _this.tilePosition = tilePosition;
         _this.structNeeded = Game_1.BuildingProperty[buildingType].struct;
         if (_this.structNeeded > 0) {
-            var j = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, Job_1.JobPriority.MEDIUM, Job_1.JobNature.CONSTRUCTION);
+            var j = new WorkerJob_1.WorkerJob(playerId, _this, Game_1.ResourceType.STRUCT, Job_1.JobPriority.MEDIUM, Job_1.JobNature.CONSTRUCTION);
         }
         _this.game.emit(lib_1.PackageType.BUILD, {
             playerId: playerId,
@@ -75,7 +75,7 @@ var Building = /** @class */ (function (_super) {
      * @return amount that this building really get
      */
     Building.prototype.onResouceDelivered = function (type, amount, worker) {
-        if (type === Helpers_1.ResourceType.STRUCT &&
+        if (type === Game_1.ResourceType.STRUCT &&
             this.structProgress < this.structNeeded) {
             this.structProgress += amount;
             this.game.emit(lib_1.PackageType.BUILD, {

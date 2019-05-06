@@ -1,9 +1,8 @@
 import { Building } from '../Building';
-import { ResourceType } from '../../Helpers';
 import { Player } from '../Player';
 import { Game } from '..';
 import uuid from 'uuid/v4';
-import { BuildingType, PackageType } from 'tone-core/dist/lib';
+import { BuildingType, PackageType, ResourceType } from 'tone-core/dist/lib';
 import { Worker, WorkerState } from './Worker';
 import { Barrack } from '../Building/Barrack';
 import { JobPriority, JobNature, JobQuota } from 'tone-core/dist/lib/Game/Job';
@@ -141,6 +140,7 @@ export class WorkerJob {
       workerIds: this.workers.map((w: Worker) => w.uuid),
       priority: this.priority,
       nature: this.jobNature,
+      resourceType: this.resourceType,
     });
     this.dirty = false;
   }

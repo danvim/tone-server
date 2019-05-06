@@ -8,12 +8,12 @@ import {
   PackageType,
   AnimType,
   FightingStyle,
+  ResourceType,
 } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Unit } from '.';
 import { Entity } from '../Entity';
 import { Building } from '../Building';
-import { ResourceType } from '../../Helpers';
 import { Thing } from '../Thing';
 import { WorkerJob } from './WorkerJob';
 import { Barrack } from '../Building/Barrack';

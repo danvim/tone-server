@@ -1,4 +1,5 @@
 import {
+  ResourceType,
   BuildingInterface,
   BuildingType,
   BuildingProperty,
@@ -7,7 +8,7 @@ import {
 import { Axial, Cartesian, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
-import { ResourceType, SNAKE2Normal } from '../../Helpers';
+import { SNAKE2Normal } from '../../Helpers';
 import { Base } from './Base';
 import { SpawnPoint } from './SpawnPoint';
 import { WorkerJob } from '../Unit/WorkerJob';

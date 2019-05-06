@@ -17,13 +17,6 @@ function now(unit) {
     }
 }
 exports.now = now;
-var ResourceType;
-(function (ResourceType) {
-    ResourceType[ResourceType["STRUCT"] = 0] = "STRUCT";
-    ResourceType[ResourceType["TRAINING_DATA"] = 1] = "TRAINING_DATA";
-    ResourceType[ResourceType["PRIME_DATA"] = 2] = "PRIME_DATA";
-    ResourceType[ResourceType["WORKER"] = 3] = "WORKER";
-})(ResourceType = exports.ResourceType || (exports.ResourceType = {}));
 function SNAKE2Normal(SNAKE_CASE) {
     return SNAKE_CASE.split('_')
         .map(function (_a) {

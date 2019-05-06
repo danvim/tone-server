@@ -1,9 +1,8 @@
 import { EntityType, FightingStyle } from 'tone-core/dist/lib/Game';
-import { Axial } from 'tone-core/dist/lib';
+import { Axial, ResourceType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { Worker } from '../Unit/Worker';
-import { ResourceType } from '../../Helpers';
 import { WorkerJob } from '../Unit/WorkerJob';
 import { Soldier } from '../Unit/Soldier';
 import { Thing } from '../Thing';

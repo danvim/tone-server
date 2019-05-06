@@ -5,7 +5,6 @@ var Player_1 = require("../lib/Game/Player");
 var lib_1 = require("tone-core/dist/lib");
 var test_1 = require("tone-core/dist/test");
 var BuildingFactory_1 = require("../lib/Game/Building/BuildingFactory");
-var Helpers_1 = require("../lib/Helpers");
 var conn1c = new test_1.StubConn();
 var conn1s = new test_1.StubConn();
 conn1c.connect(conn1s);
@@ -65,7 +64,7 @@ var reclaimer;
 describe('claimer claim the new tile', function () {
     it('built', function () {
         reclaimer = BuildingFactory_1.buildingFactory(game, 0, lib_1.BuildingType.RECLAIMATOR, new lib_1.Axial(4, 0));
-        reclaimer.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.RECLAIMATOR].struct);
+        reclaimer.onResouceDelivered(lib_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.RECLAIMATOR].struct);
         expect(reclaimer.isFunctional()).toBe(true);
     });
     it('claimed', function () {

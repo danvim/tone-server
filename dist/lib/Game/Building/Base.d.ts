@@ -1,9 +1,8 @@
-import { BuildingInterface } from 'tone-core/dist/lib/Game';
+import { BuildingInterface, ResourceType } from 'tone-core/dist/lib/Game';
 import { Axial } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
-import { ResourceType } from '../../Helpers';
 export declare class Base extends Building implements BuildingInterface {
     static structGenPeriod: number;
     periodStrategy: PeriodStrategy;

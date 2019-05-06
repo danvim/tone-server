@@ -322,7 +322,7 @@ export class Game {
     return false;
   }
 
-  public setJob(object: Message<TrySetJobMessage>, conn: Conn) {
+  public setJob = (object: Message<TrySetJobMessage>, conn: Conn) => {
     const { jobId, priority } = Object(object);
     const job = this.workerJobs[jobId];
     const player = this.mapConnToPlayer(conn);

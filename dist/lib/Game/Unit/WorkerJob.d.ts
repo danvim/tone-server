@@ -1,7 +1,7 @@
 import { Building } from '../Building';
-import { ResourceType } from '../../Helpers';
 import { Player } from '../Player';
 import { Game } from '..';
+import { ResourceType } from 'tone-core/dist/lib';
 import { Worker } from './Worker';
 import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
 export declare class WorkerJob {

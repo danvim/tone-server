@@ -17,7 +17,6 @@ var Game_1 = require("tone-core/dist/lib/Game");
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
-var Helpers_1 = require("../../Helpers");
 var WorkerJob_1 = require("../Unit/WorkerJob");
 var Job_1 = require("tone-core/dist/lib/Game/Job");
 var Base = /** @class */ (function (_super) {
@@ -32,9 +31,9 @@ var Base = /** @class */ (function (_super) {
             _this.structStorage++;
         };
         _this.periodStrategy = new PeroidStrategy_1.PeriodStrategy(Base.structGenPeriod, _this.generateStruct);
-        var s = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.STRUCT, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
-        var t = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.TRAINING_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
-        var p = new WorkerJob_1.WorkerJob(playerId, _this, Helpers_1.ResourceType.PRIME_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
+        var s = new WorkerJob_1.WorkerJob(playerId, _this, Game_1.ResourceType.STRUCT, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
+        var t = new WorkerJob_1.WorkerJob(playerId, _this, Game_1.ResourceType.TRAINING_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
+        var p = new WorkerJob_1.WorkerJob(playerId, _this, Game_1.ResourceType.PRIME_DATA, Job_1.JobPriority.LOW, Job_1.JobNature.STORAGE);
         _this.period = Base.structGenPeriod;
         return _this;
     }
@@ -43,13 +42,13 @@ var Base = /** @class */ (function (_super) {
     };
     Base.prototype.onResouceDelivered = function (type, amount) {
         switch (type) {
-            case Helpers_1.ResourceType.STRUCT:
+            case Game_1.ResourceType.STRUCT:
                 this.structStorage += amount;
                 break;
-            case Helpers_1.ResourceType.TRAINING_DATA:
+            case Game_1.ResourceType.TRAINING_DATA:
                 this.trainingDataStorage += amount;
                 break;
-            case Helpers_1.ResourceType.PRIME_DATA:
+            case Game_1.ResourceType.PRIME_DATA:
                 this.primeDataStorage += amount;
                 break;
             default:
@@ -61,15 +60,15 @@ var Base = /** @class */ (function (_super) {
     };
     Base.prototype.tryGiveResource = function (type, amount) {
         switch (type) {
-            case Helpers_1.ResourceType.STRUCT:
+            case Game_1.ResourceType.STRUCT:
                 amount = Math.min(this.structStorage, amount);
                 this.structStorage -= amount;
                 break;
-            case Helpers_1.ResourceType.TRAINING_DATA:
+            case Game_1.ResourceType.TRAINING_DATA:
                 amount = Math.min(this.trainingDataStorage, amount);
                 this.trainingDataStorage -= amount;
                 break;
-            case Helpers_1.ResourceType.PRIME_DATA:
+            case Game_1.ResourceType.PRIME_DATA:
                 amount = Math.min(this.primeDataStorage, amount);
                 this.primeDataStorage -= amount;
                 break;

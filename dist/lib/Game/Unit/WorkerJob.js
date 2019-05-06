@@ -3,7 +3,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var Helpers_1 = require("../../Helpers");
 var v4_1 = __importDefault(require("uuid/v4"));
 var lib_1 = require("tone-core/dist/lib");
 var Worker_1 = require("./Worker");
@@ -23,7 +22,7 @@ var WorkerJob = /** @class */ (function () {
     }
     Object.defineProperty(WorkerJob.prototype, "progressNeed", {
         get: function () {
-            if (this.resourceType === Helpers_1.ResourceType.STRUCT &&
+            if (this.resourceType === lib_1.ResourceType.STRUCT &&
                 this.target.structProgress < this.target.structNeeded) {
                 return (this.target.structNeeded -
                     this.progressOnTheWay -
@@ -132,6 +131,7 @@ var WorkerJob = /** @class */ (function () {
             workerIds: this.workers.map(function (w) { return w.uuid; }),
             priority: this.priority,
             nature: this.jobNature,
+            resourceType: this.resourceType,
         });
         this.dirty = false;
     };

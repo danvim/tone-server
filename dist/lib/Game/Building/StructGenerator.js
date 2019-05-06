@@ -17,7 +17,6 @@ var Game_1 = require("tone-core/dist/lib/Game");
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
 var PeroidStrategy_1 = require("./PeroidStrategy");
-var Helpers_1 = require("../../Helpers");
 var StructGenerator = /** @class */ (function (_super) {
     __extends(StructGenerator, _super);
     function StructGenerator(game, playerId, tilePosition) {
@@ -44,7 +43,7 @@ var StructGenerator = /** @class */ (function (_super) {
         if (amount <= 0) {
             return 0;
         }
-        if (type === Helpers_1.ResourceType.STRUCT) {
+        if (type === Game_1.ResourceType.STRUCT) {
             var a = Math.min(amount, this.amount);
             if (a > 0) {
                 this.emitStorage();

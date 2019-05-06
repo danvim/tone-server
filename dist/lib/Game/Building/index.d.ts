@@ -1,8 +1,7 @@
-import { BuildingInterface, BuildingType } from 'tone-core/dist/lib/Game';
+import { ResourceType, BuildingInterface, BuildingType } from 'tone-core/dist/lib/Game';
 import { Axial, Cartesian } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Thing } from '../Thing';
-import { ResourceType } from '../../Helpers';
 import { Worker } from '../Unit/Worker';
 export declare class Building extends Thing implements BuildingInterface {
     readonly cartesianPos: Cartesian;

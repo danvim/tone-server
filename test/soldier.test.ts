@@ -13,12 +13,12 @@ import {
   BuildingProperty,
   XyzEuler,
   EntityType,
+  ResourceType,
 } from 'tone-core/dist/lib';
 import { Worker, WorkerState } from '../lib/Game/Unit/Worker';
 import { StubConn } from 'tone-core/dist/test';
 import { Message } from 'protobufjs';
 import { buildingFactory } from '../lib/Game/Building/BuildingFactory';
-import { ResourceType } from '../lib/Helpers';
 import { TrainingDataGenerator } from '../lib/Game/Building/TrainingDataGenerator';
 import { Barrack } from '../lib/Game/Building/Barrack';
 import { WorkerJob } from '../lib/Game/Unit/WorkerJob';

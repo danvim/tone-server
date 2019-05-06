@@ -1,8 +1,7 @@
-import { Cartesian, XyzEuler } from 'tone-core/dist/lib';
+import { Cartesian, XyzEuler, ResourceType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Unit } from '.';
 import { Building } from '../Building';
-import { ResourceType } from '../../Helpers';
 import { WorkerJob } from './WorkerJob';
 export declare enum WorkerState {
     IDLE = 0,

@@ -6,7 +6,6 @@ var lib_1 = require("tone-core/dist/lib");
 var Worker_1 = require("../lib/Game/Unit/Worker");
 var test_1 = require("tone-core/dist/test");
 var BuildingFactory_1 = require("../lib/Game/Building/BuildingFactory");
-var Helpers_1 = require("../lib/Helpers");
 var Job_1 = require("tone-core/dist/lib/Game/Job");
 var conn1c = new test_1.StubConn();
 var conn1s = new test_1.StubConn();
@@ -35,8 +34,8 @@ var worker;
 global.test = true;
 describe('barrack accept training data', function () {
     it('spawn training data', function () {
-        trainingDataGen.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.TRAINING_DATA_GENERATOR].struct);
-        barrack.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.BARRACK].struct);
+        trainingDataGen.onResouceDelivered(lib_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.TRAINING_DATA_GENERATOR].struct);
+        barrack.onResouceDelivered(lib_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.BARRACK].struct);
         game.frame(0, 0);
         game.frame(0, 1000);
         expect(trainingDataGen.amount).toBe(1);

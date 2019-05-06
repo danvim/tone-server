@@ -46,6 +46,16 @@ var Game = /** @class */ (function () {
             }
             return false;
         };
+        this.setJob = function (object, conn) {
+            var _a = Object(object), jobId = _a.jobId, priority = _a.priority;
+            var job = _this.workerJobs[jobId];
+            var player = _this.mapConnToPlayer(conn);
+            if (job && player) {
+                if (job.playerId === player.id) {
+                    job.priority = priority;
+                }
+            }
+        };
         var size = 30;
         this.players = [];
         this.protocol = protocol;
@@ -245,16 +255,6 @@ var Game = /** @class */ (function () {
             }
         }
         return units;
-    };
-    Game.prototype.setJob = function (object, conn) {
-        var _a = Object(object), jobId = _a.jobId, priority = _a.priority;
-        var job = this.workerJobs[jobId];
-        var player = this.mapConnToPlayer(conn);
-        if (job && player) {
-            if (job.playerId === player.id) {
-                job.priority = priority;
-            }
-        }
     };
     Game.prototype.setFightingStyle = function (object, conn) {
         var _a = Object(object), barrackUid = _a.barrackUid, fightingStyle = _a.fightingStyle, targetUid = _a.targetUid;

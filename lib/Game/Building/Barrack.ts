@@ -5,12 +5,11 @@ import {
   EntityType,
   FightingStyle,
 } from 'tone-core/dist/lib/Game';
-import { Axial, XyzEuler, PackageType } from 'tone-core/dist/lib';
+import { Axial, XyzEuler, PackageType, ResourceType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { Worker, WorkerState } from '../Unit/Worker';
-import { ResourceType } from '../../Helpers';
 import { WorkerJob } from '../Unit/WorkerJob';
 import { Soldier } from '../Unit/Soldier';
 import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';

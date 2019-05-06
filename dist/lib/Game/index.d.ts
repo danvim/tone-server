@@ -70,7 +70,7 @@ export declare class Game {
         [uuid: string]: Unit;
     };
     build: (object: Message<TryBuildMessage>, conn: Conn) => boolean;
-    setJob(object: Message<TrySetJobMessage>, conn: Conn): void;
+    setJob: (object: Message<TrySetJobMessage>, conn: Conn) => void;
     setFightingStyle(object: Message<TrySetFightingStyleMessage>, conn: Conn): void;
     claimTile(playerId: number, axialLocation: Axial, radius: number): void;
     isTileClaimedBy(playerId: number, axialLocation: Axial): boolean;

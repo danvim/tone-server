@@ -4,7 +4,6 @@ var Game_1 = require("../lib/Game");
 var Player_1 = require("../lib/Game/Player");
 var lib_1 = require("tone-core/dist/lib");
 var test_1 = require("tone-core/dist/test");
-var Helpers_1 = require("../lib/Helpers");
 var Barrack_1 = require("../lib/Game/Building/Barrack");
 var Soldier_1 = require("../lib/Game/Unit/Soldier");
 var conn1c = new test_1.StubConn();
@@ -29,7 +28,7 @@ player2.username = 'Player2';
 var game = new Game_1.Game([player1, player2], protocol1s, true);
 game.terminate();
 var barrack = new Barrack_1.Barrack(game, 0, new lib_1.Axial(0, 2));
-barrack.onResouceDelivered(Helpers_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.BARRACK].struct);
+barrack.onResouceDelivered(lib_1.ResourceType.STRUCT, lib_1.BuildingProperty[lib_1.BuildingType.BARRACK].struct);
 var soldier = new Soldier_1.Soldier(game, 0, lib_1.EntityType.SOLDIER_0, barrack.cartesianPos, barrack);
 describe('soilder find enemy', function () {
     it('soldier want to grab training data', function () {

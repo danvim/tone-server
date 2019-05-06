@@ -19,13 +19,6 @@ export function now(unit: string): number {
   }
 }
 
-export enum ResourceType {
-  STRUCT,
-  TRAINING_DATA,
-  PRIME_DATA,
-  WORKER,
-}
-
 export function SNAKE2Normal(SNAKE_CASE: string) {
   return SNAKE_CASE.split('_')
     .map(([h, ...t]: any) => [h, ...t.toLocaleLowerCase()].join(''))

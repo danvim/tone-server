@@ -11,12 +11,12 @@ import {
   AnimType,
   TryBuildMessage,
   BuildingProperty,
+  ResourceType,
 } from 'tone-core/dist/lib';
 import { Worker, WorkerState } from '../lib/Game/Unit/Worker';
 import { StubConn } from 'tone-core/dist/test';
 import { Message } from 'protobufjs';
 import { buildingFactory } from '../lib/Game/Building/BuildingFactory';
-import { ResourceType } from '../lib/Helpers';
 
 const conn1c = new StubConn();
 const conn1s = new StubConn();

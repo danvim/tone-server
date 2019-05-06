@@ -15,7 +15,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
-var Helpers_1 = require("../../Helpers");
 var Bullet_1 = require("../Entity/Bullet");
 var SoldierState;
 (function (SoldierState) {
@@ -184,7 +183,7 @@ var Soldier = /** @class */ (function (_super) {
     };
     Soldier.prototype.arrive = function (prevTicks, currTicks) {
         if (this.target === this.barrack) {
-            var amount = this.barrack.tryGiveResource(Helpers_1.ResourceType.TRAINING_DATA, this.trainingDataCapacity - this.trainingDataHolding);
+            var amount = this.barrack.tryGiveResource(lib_1.ResourceType.TRAINING_DATA, this.trainingDataCapacity - this.trainingDataHolding);
             if (amount) {
                 this.trainingDataHolding += amount;
                 if (this.trainingDataHolding === this.trainingDataCapacity) {

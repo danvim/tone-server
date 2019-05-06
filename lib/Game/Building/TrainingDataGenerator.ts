@@ -2,13 +2,13 @@ import {
   BuildingInterface,
   BuildingType,
   TILE_SIZE,
+  ResourceType,
 } from 'tone-core/dist/lib/Game';
 import { Axial, XyzEuler, PackageType } from 'tone-core/dist/lib';
 import { Game } from '..';
 import { Building } from '.';
 import { PeriodStrategy } from './PeroidStrategy';
 import { Worker } from '../Unit/Worker';
-import { ResourceType } from '../../Helpers';
 
 export class TrainingDataGenerator extends Building {
   public static dataGenPeriod = 3000;

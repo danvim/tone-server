@@ -15,7 +15,6 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var lib_1 = require("tone-core/dist/lib");
 var _1 = require(".");
-var Helpers_1 = require("../../Helpers");
 var Job_1 = require("tone-core/dist/lib/Game/Job");
 var WorkerState;
 (function (WorkerState) {
@@ -105,8 +104,8 @@ var Worker = /** @class */ (function (_super) {
                 j.priority !== Job_1.JobPriority.SUSPENDED &&
                 j.priority !== Job_1.JobPriority.PAUSED &&
                 (j.jobNature !== Job_1.JobNature.STORAGE ||
-                    ((j.resourceType === Helpers_1.ResourceType.STRUCT && haveStruGen) ||
-                        (j.resourceType === Helpers_1.ResourceType.TRAINING_DATA && haveDataGen))));
+                    ((j.resourceType === lib_1.ResourceType.STRUCT && haveStruGen) ||
+                        (j.resourceType === lib_1.ResourceType.TRAINING_DATA && haveDataGen))));
         });
         var job;
         job = jobs.reduce(function (prev, curr) {
@@ -158,13 +157,13 @@ var Worker = /** @class */ (function (_super) {
     Worker.prototype.searchGeneratorToGrab = function (target, resourceType) {
         var _this = this;
         var generatorTypes = [lib_1.BuildingType.BASE];
-        if (resourceType === Helpers_1.ResourceType.STRUCT) {
+        if (resourceType === lib_1.ResourceType.STRUCT) {
             generatorTypes.push(lib_1.BuildingType.STRUCT_GENERATOR);
         }
-        else if (resourceType === Helpers_1.ResourceType.TRAINING_DATA) {
+        else if (resourceType === lib_1.ResourceType.TRAINING_DATA) {
             generatorTypes.push(lib_1.BuildingType.TRAINING_DATA_GENERATOR);
         }
-        else if (resourceType === Helpers_1.ResourceType.PRIME_DATA) {
+        else if (resourceType === lib_1.ResourceType.PRIME_DATA) {
             generatorTypes.push(lib_1.BuildingType.PRIME_DATA_GENERATOR);
         }
         var generators = Object.values(this.game.buildings).filter(function (building) {

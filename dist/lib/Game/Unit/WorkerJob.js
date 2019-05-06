@@ -42,6 +42,12 @@ var WorkerJob = /** @class */ (function () {
     });
     Object.defineProperty(WorkerJob.prototype, "needWorker", {
         get: function () {
+            // if (this.workers.length >= JobQuota[this.jobNature]) {
+            //   console.log(this.workers.length, JobQuota, this.jobNature);
+            //   return false;
+            // } else {
+            //   console.log(this.workers.length, JobQuota, this.jobNature);
+            // }
             if (this.jobNature === Job_1.JobNature.STORAGE) {
                 return true;
             }

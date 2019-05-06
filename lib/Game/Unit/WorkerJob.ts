@@ -6,7 +6,7 @@ import uuid from 'uuid/v4';
 import { BuildingType, PackageType } from 'tone-core/dist/lib';
 import { Worker, WorkerState } from './Worker';
 import { Barrack } from '../Building/Barrack';
-import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
+import { JobPriority, JobNature, JobQuota } from 'tone-core/dist/lib/Game/Job';
 
 export class WorkerJob {
   public id: string;
@@ -53,6 +53,12 @@ export class WorkerJob {
   }
 
   public get needWorker(): boolean {
+    // if (this.workers.length >= JobQuota[this.jobNature]) {
+    //   console.log(this.workers.length, JobQuota, this.jobNature);
+    //   return false;
+    // } else {
+    //   console.log(this.workers.length, JobQuota, this.jobNature);
+    // }
     if (this.jobNature === JobNature.STORAGE) {
       return true;
     }

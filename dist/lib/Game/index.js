@@ -226,7 +226,32 @@ var Game = /** @class */ (function () {
             var building = _this.buildings[key];
             building.frame(prevTicks, currTicks);
         });
-        Object.keys(this.entities).forEach(function (key) {
+        Object.keys(this.entities)
+            .sort(function (a, b) {
+            if (_this.entities[a].type === lib_1.EntityType.WORKER &&
+                _this.entities[b].type === lib_1.EntityType.WORKER) {
+                var aw = _this.entities[a];
+                var bw = _this.entities[b];
+                if (aw.job && bw.job) {
+                    if (aw.job.priority < bw.job.priority) {
+                        return 1;
+                    }
+                    else if (aw.job.priority > bw.job.priority) {
+                        return -1;
+                    }
+                    else {
+                        return 0;
+                    }
+                }
+                else {
+                    return 0;
+                }
+            }
+            else {
+                return 0;
+            }
+        })
+            .forEach(function (key) {
             var entity = _this.entities[key];
             entity.frame(prevTicks, currTicks);
             if (entity.sentPosition.euclideanDistance(entity.position) > 0) {

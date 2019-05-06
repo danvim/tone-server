@@ -10,6 +10,7 @@ import {
   TileMap,
   TryBuildMessage,
   TrySetJobMessage,
+  EntityType,
 } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
@@ -295,22 +296,45 @@ export class Game {
       building.frame(prevTicks, currTicks);
     });
 
-    Object.keys(this.entities).forEach((key: string) => {
-      const entity = this.entities[key];
-      entity.frame(prevTicks, currTicks);
-      if (entity.sentPosition.euclideanDistance(entity.position) > 0) {
-        const [x, z] = entity.position.asArray;
-        const [vx, vz] = entity.velocity.asArray;
-        this.emit(PackageType.MOVE_ENTITY, {
-          uid: entity.uuid,
-          location: { x, y: 5, z },
-          yaw: 0,
-          pitch: 0,
-          velocity: { x: vx, y: 0, z: vz },
-        });
-        entity.sentPosition = entity.position.clone();
-      }
-    });
+    Object.keys(this.entities)
+      .sort((a: string, b: string) => {
+        if (
+          this.entities[a].type === EntityType.WORKER &&
+          this.entities[b].type === EntityType.WORKER
+        ) {
+          const aw = this.entities[a] as Worker;
+          const bw = this.entities[b] as Worker;
+          if (aw.job && bw.job) {
+            if (aw.job.priority < bw.job.priority) {
+              return 1;
+            } else if (aw.job.priority > bw.job.priority) {
+              return -1;
+            } else {
+              return 0;
+            }
+          } else {
+            return 0;
+          }
+        } else {
+          return 0;
+        }
+      })
+      .forEach((key: string) => {
+        const entity = this.entities[key];
+        entity.frame(prevTicks, currTicks);
+        if (entity.sentPosition.euclideanDistance(entity.position) > 0) {
+          const [x, z] = entity.position.asArray;
+          const [vx, vz] = entity.velocity.asArray;
+          this.emit(PackageType.MOVE_ENTITY, {
+            uid: entity.uuid,
+            location: { x, y: 5, z },
+            yaw: 0,
+            pitch: 0,
+            velocity: { x: vx, y: 0, z: vz },
+          });
+          entity.sentPosition = entity.position.clone();
+        }
+      });
 
     Object.keys(this.workerJobs).forEach((key: string) => {
       const job = this.workerJobs[key];

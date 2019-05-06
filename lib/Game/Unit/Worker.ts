@@ -117,6 +117,13 @@ export class Worker extends Unit {
       if (prev.priority < curr.priority) {
         return curr;
       }
+      if (prev.workers.length > curr.workers.length) {
+        return curr;
+      }
+      if (prev.workers.length < curr.workers.length) {
+        return prev;
+      }
+
       const prevTotalDist = prev.target.cartesianPos.euclideanDistance(
         this.position,
       );

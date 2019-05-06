@@ -115,6 +115,12 @@ var Worker = /** @class */ (function (_super) {
             if (prev.priority < curr.priority) {
                 return curr;
             }
+            if (prev.workers.length > curr.workers.length) {
+                return curr;
+            }
+            if (prev.workers.length < curr.workers.length) {
+                return prev;
+            }
             var prevTotalDist = prev.target.cartesianPos.euclideanDistance(_this.position);
             var currTotalDist = curr.target.cartesianPos.euclideanDistance(_this.position);
             if (prevTotalDist > currTotalDist) {

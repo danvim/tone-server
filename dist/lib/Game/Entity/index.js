@@ -113,7 +113,7 @@ var Entity = /** @class */ (function (_super) {
             else {
                 this.velocity.scale(1 / dist);
                 this.velocity.scale(this.speed);
-                this.yaw = Math.atan2(this.velocity.y, this.velocity.x) + Math.PI;
+                this.yaw = Math.atan2(-this.velocity.y, this.velocity.x) - Math.PI / 2;
             }
         }
     };

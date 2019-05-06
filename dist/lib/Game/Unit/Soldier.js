@@ -73,14 +73,23 @@ var Soldier = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Soldier.prototype.setFightingStyle = function (fightingStyle, defenseTarget) {
+    Soldier.prototype.setFightingStyle = function (fightingStyle, target) {
         if (fightingStyle === lib_1.FightingStyle.PASSIVE) {
-            if (defenseTarget) {
-                this.defenseTarget = defenseTarget;
+            if (target) {
+                this.defenseTarget = target;
             }
             else {
                 this.defenseTarget = this;
             }
+        }
+        else if (fightingStyle === lib_1.FightingStyle.AGGRESSIVE) {
+            if (this.target === this.attackTarget) {
+                this.target = target;
+            }
+            this.attackTarget = target;
+        }
+        else if (fightingStyle === lib_1.FightingStyle.EVASIVE) {
+            this.target = target;
         }
         this.fightingStyle = fightingStyle;
     };
@@ -151,6 +160,9 @@ var Soldier = /** @class */ (function (_super) {
         }
         _super.prototype.frame.call(this, prevTicks, currTicks);
     };
+    /**
+     * give the closest enemy
+     */
     Soldier.prototype.searchAttackTarget = function () {
         var _this = this;
         var opponentThings = Object.values(this.game.opponentBuildings(this.playerId)).concat(Object.values(this.game.opponentUnits(this.playerId)));

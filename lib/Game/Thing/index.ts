@@ -32,7 +32,7 @@ export class Thing implements ThingInterface {
     this.mhp = Math.max(0, hp);
     this.game.emit(PackageType.UPDATE_HEALTH, {
       uid: this.uuid,
-      up: Math.max(0, hp),
+      hp: Math.max(0, hp),
     });
     if (this.mhp <= 0) {
       this.onDie();

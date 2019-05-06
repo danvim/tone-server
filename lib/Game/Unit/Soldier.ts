@@ -73,13 +73,20 @@ export class Soldier extends Unit {
     this.barrack = barrack;
   }
 
-  public setFightingStyle(fightingStyle: FightingStyle, defenseTarget?: Thing) {
+  public setFightingStyle(fightingStyle: FightingStyle, target?: Thing) {
     if (fightingStyle === FightingStyle.PASSIVE) {
-      if (defenseTarget) {
-        this.defenseTarget = defenseTarget;
+      if (target) {
+        this.defenseTarget = target;
       } else {
         this.defenseTarget = this;
       }
+    } else if (fightingStyle === FightingStyle.AGGRESSIVE) {
+      if (this.target === this.attackTarget) {
+        this.target = target;
+      }
+      this.attackTarget = target;
+    } else if (fightingStyle === FightingStyle.EVASIVE) {
+      this.target = target;
     }
     this.fightingStyle = fightingStyle;
   }
@@ -154,6 +161,9 @@ export class Soldier extends Unit {
     super.frame(prevTicks, currTicks);
   }
 
+  /**
+   * give the closest enemy
+   */
   public searchAttackTarget() {
     const opponentThings: Thing[] = [
       ...Object.values(this.game.opponentBuildings(this.playerId)),

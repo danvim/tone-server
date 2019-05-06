@@ -89,10 +89,13 @@ export class Worker extends Unit {
     // this.game.test();
     const myBuildings = Object.values(this.game.myBuildings(this.playerId));
     const haveStruGen = !!myBuildings.find(
-      (b: Building) => b.buildingType === BuildingType.STRUCT_GENERATOR,
+      (b: Building) =>
+        b.buildingType === BuildingType.STRUCT_GENERATOR && b.isFunctional(),
     );
     const haveDataGen = !!myBuildings.find(
-      (b: Building) => b.buildingType === BuildingType.TRAINING_DATA_GENERATOR,
+      (b: Building) =>
+        b.buildingType === BuildingType.TRAINING_DATA_GENERATOR &&
+        b.isFunctional(),
     );
     const jobs = Object.values(this.game.workerJobs).filter((j: WorkerJob) => {
       return (

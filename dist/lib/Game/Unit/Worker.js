@@ -92,8 +92,13 @@ var Worker = /** @class */ (function (_super) {
         var _this = this;
         // this.game.test();
         var myBuildings = Object.values(this.game.myBuildings(this.playerId));
-        var haveStruGen = !!myBuildings.find(function (b) { return b.buildingType === lib_1.BuildingType.STRUCT_GENERATOR; });
-        var haveDataGen = !!myBuildings.find(function (b) { return b.buildingType === lib_1.BuildingType.TRAINING_DATA_GENERATOR; });
+        var haveStruGen = !!myBuildings.find(function (b) {
+            return b.buildingType === lib_1.BuildingType.STRUCT_GENERATOR && b.isFunctional();
+        });
+        var haveDataGen = !!myBuildings.find(function (b) {
+            return b.buildingType === lib_1.BuildingType.TRAINING_DATA_GENERATOR &&
+                b.isFunctional();
+        });
         var jobs = Object.values(this.game.workerJobs).filter(function (j) {
             return (j.playerId === _this.playerId &&
                 j.needWorker &&

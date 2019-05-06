@@ -2,7 +2,7 @@
 /// <reference types="node" />
 import { Player } from './Player';
 import Conn = PeerJs.DataConnection;
-import { Protocol, PackageType, Axial, TileMap, TryBuildMessage, TrySetJobMessage } from 'tone-core/dist/lib';
+import { Protocol, PackageType, Axial, TileMap, TryBuildMessage, TrySetJobMessage, TrySetFightingStyleMessage } from 'tone-core/dist/lib';
 import { Building } from './Building';
 import { Entity } from './Entity';
 import { Unit } from './Unit';
@@ -71,6 +71,7 @@ export declare class Game {
     };
     build: (object: Message<TryBuildMessage>, conn: Conn) => boolean;
     setJob(object: Message<TrySetJobMessage>, conn: Conn): void;
+    setFightingStyle(object: Message<TrySetFightingStyleMessage>, conn: Conn): void;
     claimTile(playerId: number, axialLocation: Axial, radius: number): void;
     isTileClaimedBy(playerId: number, axialLocation: Axial): boolean;
     frame(prevTicks: number, currTicks: number): void;

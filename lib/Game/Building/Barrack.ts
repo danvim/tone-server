@@ -14,8 +14,18 @@ import { ResourceType } from '../../Helpers';
 import { WorkerJob } from '../Unit/WorkerJob';
 import { Soldier } from '../Unit/Soldier';
 import { JobPriority, JobNature } from 'tone-core/dist/lib/Game/Job';
+import { Thing } from '../Thing';
 
 export class Barrack extends Building {
+  public get fightingStyle() {
+    return this.mFightingStyle;
+  }
+  public set fightingStyle(fs: FightingStyle) {
+    this.mFightingStyle = fs;
+    this.soldiers.forEach((s: Soldier) => {
+      s.fightingStyle = fs;
+    });
+  }
   public trainingDataStorage: number = 0;
   public storageJob?: WorkerJob;
   public soldierVariant: EntityType = EntityType.SOLDIER_0;
@@ -29,18 +39,16 @@ export class Barrack extends Building {
   public nowTraining = false; // now barrack is training
 
   private mFightingStyle = FightingStyle.AGGRESSIVE;
-  public get fightingStyle() {
-    return this.mFightingStyle;
-  }
-  public set fightingStyle(fs: FightingStyle) {
-    this.mFightingStyle = fs;
-    this.soldiers.forEach((s: Soldier) => {
-      s.fightingStyle = fs;
-    });
-  }
 
   constructor(game: Game, playerId: number, tilePosition: Axial) {
     super(game, playerId, BuildingType.BARRACK, tilePosition);
+  }
+
+  public setFightingStyle(fs: FightingStyle, target: Thing) {
+    this.mFightingStyle = fs;
+    this.soldiers.forEach((s: Soldier) => {
+      s.setFightingStyle(fs, target);
+    });
   }
 
   public frame(prevTicks: number, currTicks: number) {

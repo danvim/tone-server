@@ -81,6 +81,7 @@ var Game = /** @class */ (function () {
     Game.prototype.initProtocol = function (protocol) {
         protocol.on(lib_1.PackageType.TRY_BUILD, this.build);
         protocol.on(lib_1.PackageType.TRY_SET_JOB, this.setJob);
+        protocol.on(lib_1.PackageType.TRY_SET_FIGHTING_STYLE, this.setFightingStyle);
     };
     Game.prototype.rejoin = function (player) {
         player.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
@@ -207,6 +208,26 @@ var Game = /** @class */ (function () {
         if (job && player) {
             if (job.playerId === player.id) {
                 job.priority = priority;
+            }
+        }
+    };
+    Game.prototype.setFightingStyle = function (object, conn) {
+        var _a = Object(object), barrackUid = _a.barrackUid, fightingStyle = _a.fightingStyle, targetUid = _a.targetUid;
+        var player = this.mapConnToPlayer(conn);
+        if (this.buildings[barrackUid] && player) {
+            var building = this.buildings[barrackUid];
+            if (player.id === building.playerId &&
+                building.buildingType === lib_1.BuildingType.BARRACK) {
+                var barrack = building;
+                if (targetUid in this.buildings) {
+                    barrack.setFightingStyle(fightingStyle, this.buildings[targetUid]);
+                }
+                else if (targetUid in this.entities) {
+                    barrack.setFightingStyle(fightingStyle, this.entities[targetUid]);
+                }
+                else {
+                    barrack.fightingStyle = fightingStyle;
+                }
             }
         }
     };

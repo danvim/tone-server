@@ -6,7 +6,9 @@ import { Worker } from '../Unit/Worker';
 import { ResourceType } from '../../Helpers';
 import { WorkerJob } from '../Unit/WorkerJob';
 import { Soldier } from '../Unit/Soldier';
+import { Thing } from '../Thing';
 export declare class Barrack extends Building {
+    fightingStyle: FightingStyle;
     trainingDataStorage: number;
     storageJob?: WorkerJob;
     soldierVariant: EntityType;
@@ -18,8 +20,8 @@ export declare class Barrack extends Building {
     trainStartTime: number;
     nowTraining: boolean;
     private mFightingStyle;
-    fightingStyle: FightingStyle;
     constructor(game: Game, playerId: number, tilePosition: Axial);
+    setFightingStyle(fs: FightingStyle, target: Thing): void;
     frame(prevTicks: number, currTicks: number): void;
     doneConstruction(): void;
     onDie(): void;

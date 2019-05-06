@@ -49,6 +49,12 @@ var Barrack = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Barrack.prototype.setFightingStyle = function (fs, target) {
+        this.mFightingStyle = fs;
+        this.soldiers.forEach(function (s) {
+            s.setFightingStyle(fs, target);
+        });
+    };
     Barrack.prototype.frame = function (prevTicks, currTicks) {
         if (this.nowTraining) {
             if (currTicks >= this.trainStartTime + this.trainingTime) {

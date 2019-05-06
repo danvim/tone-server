@@ -24,10 +24,13 @@ export declare class Soldier extends Unit {
     arriveRange: number;
     readonly soldierState: SoldierState;
     constructor(game: Game, playerId: number, type: EntityType, position: Cartesian, barrack: Barrack);
-    setFightingStyle(fightingStyle: FightingStyle, defenseTarget?: Thing): void;
+    setFightingStyle(fightingStyle: FightingStyle, target?: Thing): void;
     frame(prevTicks: number, currTicks: number): void;
     aggressiveBehavior(prevTicks: number, currTicks: number): void;
     passiveBehavior(prevTicks: number, currTicks: number): void;
+    /**
+     * give the closest enemy
+     */
     searchAttackTarget(): Thing;
     arrive(prevTicks: number, currTicks: number): void;
     attack(prevTicks: number, currTicks: number): void;

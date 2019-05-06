@@ -10,6 +10,7 @@ import {
   TileMap,
   TryBuildMessage,
   TrySetJobMessage,
+  TrySetFightingStyleMessage,
   EntityType,
 } from 'tone-core/dist/lib';
 import { Building } from './Building';
@@ -28,6 +29,7 @@ import { WorkerJob } from './Unit/WorkerJob';
 import { Worker } from './Unit/Worker';
 import { StructGenerator } from './Building/StructGenerator';
 import { TrainingDataGenerator } from './Building/TrainingDataGenerator';
+import { Barrack } from './Building/Barrack';
 // import { protocol } from '../Connection';
 
 export class Game {
@@ -98,6 +100,7 @@ export class Game {
   public initProtocol(protocol: Protocol) {
     protocol.on(PackageType.TRY_BUILD, this.build);
     protocol.on(PackageType.TRY_SET_JOB, this.setJob);
+    protocol.on(PackageType.TRY_SET_FIGHTING_STYLE, this.setFightingStyle);
   }
 
   public rejoin(player: Player) {
@@ -275,6 +278,30 @@ export class Game {
     if (job && player) {
       if (job.playerId === player.id) {
         job.priority = priority;
+      }
+    }
+  }
+
+  public setFightingStyle(
+    object: Message<TrySetFightingStyleMessage>,
+    conn: Conn,
+  ) {
+    const { barrackUid, fightingStyle, targetUid } = Object(object);
+    const player = this.mapConnToPlayer(conn);
+    if (this.buildings[barrackUid] && player) {
+      const building = this.buildings[barrackUid];
+      if (
+        player.id === building.playerId &&
+        building.buildingType === BuildingType.BARRACK
+      ) {
+        const barrack = building as Barrack;
+        if (targetUid in this.buildings) {
+          barrack.setFightingStyle(fightingStyle, this.buildings[targetUid]);
+        } else if (targetUid in this.entities) {
+          barrack.setFightingStyle(fightingStyle, this.entities[targetUid]);
+        } else {
+          barrack.fightingStyle = fightingStyle;
+        }
       }
     }
   }

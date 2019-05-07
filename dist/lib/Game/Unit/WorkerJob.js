@@ -97,8 +97,13 @@ var WorkerJob = /** @class */ (function () {
             this.dirty = true;
             return;
         }
-        if (this.workers.length === 0) {
-            this.removeJob();
+        if (this.workers.length === 0 && this.needWorker === false) {
+            if (this.progressOnTheWay > 0) {
+                this.progressOnTheWay = 0;
+            }
+            else {
+                this.removeJob();
+            }
         }
         this.dirty = true;
     };

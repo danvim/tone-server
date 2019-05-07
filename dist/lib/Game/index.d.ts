@@ -71,7 +71,7 @@ export declare class Game {
     };
     build: (object: Message<TryBuildMessage>, conn: Conn) => boolean;
     setJob: (object: Message<TrySetJobMessage>, conn: Conn) => void;
-    setFightingStyle(object: Message<TrySetFightingStyleMessage>, conn: Conn): void;
+    setFightingStyle: (object: Message<TrySetFightingStyleMessage>, conn: Conn) => void;
     claimTile(playerId: number, axialLocation: Axial, radius: number): void;
     isTileClaimedBy(playerId: number, axialLocation: Axial): boolean;
     frame(prevTicks: number, currTicks: number): void;

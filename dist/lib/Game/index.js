@@ -53,10 +53,31 @@ var Game = /** @class */ (function () {
             if (job && player) {
                 if (job.playerId === player.id) {
                     job.priority = priority;
+                    job.sendUpdateJob();
                 }
             }
         };
-        var size = 30;
+        this.setFightingStyle = function (object, conn) {
+            var _a = Object(object), barrackUid = _a.barrackUid, fightingStyle = _a.fightingStyle, targetUid = _a.targetUid;
+            var player = _this.mapConnToPlayer(conn);
+            if (_this.buildings[barrackUid] && player) {
+                var building = _this.buildings[barrackUid];
+                if (player.id === building.playerId &&
+                    building.buildingType === lib_1.BuildingType.BARRACK) {
+                    var barrack = building;
+                    if (targetUid in _this.buildings) {
+                        barrack.setFightingStyle(fightingStyle, _this.buildings[targetUid]);
+                    }
+                    else if (targetUid in _this.entities) {
+                        barrack.setFightingStyle(fightingStyle, _this.entities[targetUid]);
+                    }
+                    else {
+                        barrack.fightingStyle = fightingStyle;
+                    }
+                }
+            }
+        };
+        var size = 20;
         this.players = [];
         this.protocol = protocol;
         this.map = MapGen_1.MapGen(size);
@@ -255,26 +276,6 @@ var Game = /** @class */ (function () {
             }
         }
         return units;
-    };
-    Game.prototype.setFightingStyle = function (object, conn) {
-        var _a = Object(object), barrackUid = _a.barrackUid, fightingStyle = _a.fightingStyle, targetUid = _a.targetUid;
-        var player = this.mapConnToPlayer(conn);
-        if (this.buildings[barrackUid] && player) {
-            var building = this.buildings[barrackUid];
-            if (player.id === building.playerId &&
-                building.buildingType === lib_1.BuildingType.BARRACK) {
-                var barrack = building;
-                if (targetUid in this.buildings) {
-                    barrack.setFightingStyle(fightingStyle, this.buildings[targetUid]);
-                }
-                else if (targetUid in this.entities) {
-                    barrack.setFightingStyle(fightingStyle, this.entities[targetUid]);
-                }
-                else {
-                    barrack.fightingStyle = fightingStyle;
-                }
-            }
-        }
     };
     Game.prototype.claimTile = function (playerId, axialLocation, radius) {
         var _this = this;

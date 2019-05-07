@@ -54,7 +54,7 @@ export class Game {
 
   // game start
   constructor(players: Player[], protocol: Protocol, unitTest?: boolean) {
-    const size = 30;
+    const size = 20;
     this.players = [];
     this.protocol = protocol;
     this.map = MapGen(size);
@@ -329,14 +329,15 @@ export class Game {
     if (job && player) {
       if (job.playerId === player.id) {
         job.priority = priority;
+        job.sendUpdateJob();
       }
     }
   }
 
-  public setFightingStyle(
+  public setFightingStyle = (
     object: Message<TrySetFightingStyleMessage>,
     conn: Conn,
-  ) {
+  ) => {
     const { barrackUid, fightingStyle, targetUid } = Object(object);
     const player = this.mapConnToPlayer(conn);
     if (this.buildings[barrackUid] && player) {

@@ -304,7 +304,13 @@ export class Worker extends Unit {
   public mayChangeJob() {
     const newJob = this.searchJob();
     if (this.job && newJob) {
-      if (newJob.strictlyPriorThan(this.job)) {
+      if (
+        newJob.strictlyPriorThan(this.job) ||
+        newJob.workers.length < this.job.workers.length
+      ) {
+        if (this.state === WorkerState.GRABBING) {
+          this.job.progressOnTheWay--;
+        }
         this.job.removeWorker(this);
         this.findJob(newJob);
         return true;

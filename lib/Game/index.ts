@@ -410,7 +410,7 @@ export class Game {
           const [vx, vz] = entity.velocity.asArray;
           this.emit(PackageType.MOVE_ENTITY, {
             uid: entity.uuid,
-            location: { x, y: 5, z },
+            location: { x, y: 0, z },
             yaw: entity.yaw,
             pitch: 0,
             velocity: { x: vx, y: 0, z: vz },

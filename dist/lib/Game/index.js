@@ -330,7 +330,7 @@ var Game = /** @class */ (function () {
                 var _b = entity.velocity.asArray, vx = _b[0], vz = _b[1];
                 _this.emit(lib_1.PackageType.MOVE_ENTITY, {
                     uid: entity.uuid,
-                    location: { x: x, y: 5, z: z },
+                    location: { x: x, y: 0, z: z },
                     yaw: entity.yaw,
                     pitch: 0,
                     velocity: { x: vx, y: 0, z: vz },

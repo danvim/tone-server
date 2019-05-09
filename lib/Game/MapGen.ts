@@ -55,7 +55,7 @@ export function HexGen(size: number) {
   }
 
   for (const pt of points) {
-    const height = Math.floor(Math.random() * 4);
+    const height = Math.floor(Math.random() * 10) - 5;
     tm[pt.asString] = {
       type: TileType.EMPTY,
       height,
@@ -67,10 +67,10 @@ export function HexGen(size: number) {
       .filter((ppt: Axial) => ppt.asString in tm)
       .map((ppt: Axial) => tm[ppt.asString].height)
       .sort();
-    const height = heights[Math.floor(heights.length / 2)];
-    tm[pt.asString].height = height;
+    const height = Math.max(heights[Math.floor(heights.length / 2)], 0);
+    tm[pt.asString].height = Math.round(height / 5 * 2);
     if (height === 0) {
-      tm[pt.asString].type = TileType.VOID;
+      delete tm[pt.asString];
     }
   });
   tm[new Axial(-1, 0).asString] = {

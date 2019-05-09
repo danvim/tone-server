@@ -53,7 +53,7 @@ function HexGen(size) {
     }
     for (var _i = 0, points_1 = points; _i < points_1.length; _i++) {
         var pt = points_1[_i];
-        var height = Math.floor(Math.random() * 4);
+        var height = Math.floor(Math.random() * 10) - 5;
         tm[pt.asString] = {
             type: lib_1.TileType.EMPTY,
             height: height,
@@ -65,10 +65,10 @@ function HexGen(size) {
             .filter(function (ppt) { return ppt.asString in tm; })
             .map(function (ppt) { return tm[ppt.asString].height; })
             .sort();
-        var height = heights[Math.floor(heights.length / 2)];
-        tm[pt.asString].height = height;
+        var height = Math.max(heights[Math.floor(heights.length / 2)], 0);
+        tm[pt.asString].height = Math.round(height / 5 * 2);
         if (height === 0) {
-            tm[pt.asString].type = lib_1.TileType.VOID;
+            delete tm[pt.asString];
         }
     });
     tm[new lib_1.Axial(-1, 0).asString] = {

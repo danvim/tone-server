@@ -23,6 +23,7 @@ var SoldierState;
     SoldierState[SoldierState["ATTACKING"] = 2] = "ATTACKING";
     SoldierState[SoldierState["TRAVELLING"] = 3] = "TRAVELLING";
 })(SoldierState = exports.SoldierState || (exports.SoldierState = {}));
+exports.SEARCH_DISTANCE = lib_1.TILE_SIZE * 3;
 var Soldier = /** @class */ (function (_super) {
     __extends(Soldier, _super);
     function Soldier(game, playerId, type, position, barrack) {
@@ -32,7 +33,7 @@ var Soldier = /** @class */ (function (_super) {
         _this.trainingDataPerAttack = 0.1; // each attack will consume this much of training data
         _this.attackRange = 3 * lib_1.TILE_SIZE; // eucledian dist
         _this.grabRange = 0; // eucledian dist
-        _this.defenseRadius = 5 * lib_1.TILE_SIZE;
+        _this.defenseRadius = 3 * lib_1.TILE_SIZE;
         _this.attackPeriod = 1000;
         _this.lastAttack = 0;
         _this.fightingStyle = lib_1.FightingStyle.AGGRESSIVE;
@@ -141,8 +142,9 @@ var Soldier = /** @class */ (function (_super) {
                     this.attackTarget.cartesianPos.euclideanDistance(this.position) >
                         this.defenseRadius) {
                     var target = this.searchAttackTarget();
-                    if (target.cartesianPos.euclideanDistance(this.position) <=
-                        this.defenseRadius) {
+                    if (target !== undefined &&
+                        target.cartesianPos.euclideanDistance(this.position) <=
+                            this.defenseRadius) {
                         this.attackTarget = target;
                     }
                 }
@@ -167,19 +169,16 @@ var Soldier = /** @class */ (function (_super) {
         var opponentThings = Object.values(this.game.opponentBuildings(this.playerId)).filter(function (building) {
             return building.buildingType !== lib_1.BuildingType.SPAWN_POINT;
         }).concat(Object.values(this.game.opponentUnits(this.playerId)));
-        return opponentThings.reduce(function (prev, curr) {
-            if (prev.hp <= 0) {
-                return curr;
-            }
-            if (curr.hp <= 0) {
-                return prev;
-            }
+        var closeLivingThings = opponentThings.filter(function (thing) {
+            return _this.position.euclideanDistance(thing.cartesianPos) < exports.SEARCH_DISTANCE && thing.hp > 0;
+        });
+        return closeLivingThings.length > 0 ? closeLivingThings.reduce(function (prev, curr) {
             if (_this.position.euclideanDistance(prev.cartesianPos) >
                 _this.position.euclideanDistance(curr.cartesianPos)) {
                 return curr;
             }
             return prev;
-        }, opponentThings[0]);
+        }, opponentThings[0]) : undefined;
     };
     Soldier.prototype.arrive = function (prevTicks, currTicks) {
         if (this.target === this.barrack) {

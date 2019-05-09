@@ -1,4 +1,4 @@
-import { UnitInterface } from 'tone-core/dist/lib/Game/Unit';
+import {UnitInterface} from 'tone-core/dist/lib/Game/Unit';
 import {
   Cartesian,
   XyzEuler,
@@ -10,14 +10,14 @@ import {
   FightingStyle,
   ResourceType,
 } from 'tone-core/dist/lib';
-import { Game } from '..';
-import { Unit } from '.';
-import { Entity } from '../Entity';
-import { Building } from '../Building';
-import { Thing } from '../Thing';
-import { WorkerJob } from './WorkerJob';
-import { Barrack } from '../Building/Barrack';
-import { Bullet } from '../Entity/Bullet';
+import {Game} from '..';
+import {Unit} from '.';
+import {Entity} from '../Entity';
+import {Building} from '../Building';
+import {Thing} from '../Thing';
+import {WorkerJob} from './WorkerJob';
+import {Barrack} from '../Building/Barrack';
+import {Bullet} from '../Entity/Bullet';
 
 export enum SoldierState {
   IDLE,
@@ -25,6 +25,8 @@ export enum SoldierState {
   ATTACKING,
   TRAVELLING,
 }
+
+export const SEARCH_DISTANCE = TILE_SIZE * 3;
 
 export class Soldier extends Unit {
   public barrack: Barrack;
@@ -35,13 +37,14 @@ export class Soldier extends Unit {
   public trainingDataPerAttack = 0.1; // each attack will consume this much of training data
   public attackRange = 3 * TILE_SIZE; // eucledian dist
   public grabRange = 0; // eucledian dist
-  public defenseRadius = 5 * TILE_SIZE;
+  public defenseRadius = 3 * TILE_SIZE;
   public attackPeriod = 1000;
   public lastAttack = 0;
 
   public set arriveRange(range: number) {
     this.grabRange = range;
   }
+
   public get arriveRange() {
     switch (this.soldierState) {
       case SoldierState.ATTACKING:
@@ -50,6 +53,7 @@ export class Soldier extends Unit {
         return this.grabRange;
     }
   }
+
   public get soldierState() {
     if (!this.target) {
       return SoldierState.IDLE;
@@ -61,6 +65,7 @@ export class Soldier extends Unit {
       return SoldierState.TRAVELLING;
     }
   }
+
   constructor(
     game: Game,
     playerId: number,
@@ -139,10 +144,11 @@ export class Soldier extends Unit {
           !this.attackTarget ||
           this.attackTarget.hp <= 0 ||
           this.attackTarget.cartesianPos.euclideanDistance(this.position) >
-            this.defenseRadius
+          this.defenseRadius
         ) {
           const target = this.searchAttackTarget();
           if (
+            target !== undefined &&
             target.cartesianPos.euclideanDistance(this.position) <=
             this.defenseRadius
           ) {
@@ -164,7 +170,7 @@ export class Soldier extends Unit {
   /**
    * give the closest enemy
    */
-  public searchAttackTarget() {
+  public searchAttackTarget(): Thing | undefined {
     const opponentThings: Thing[] = [
       ...Object.values(this.game.opponentBuildings(this.playerId)).filter(
         (building: Building) => {
@@ -173,13 +179,12 @@ export class Soldier extends Unit {
       ),
       ...Object.values(this.game.opponentUnits(this.playerId)),
     ];
-    return opponentThings.reduce((prev: Thing, curr: Thing) => {
-      if (prev.hp <= 0) {
-        return curr;
-      }
-      if (curr.hp <= 0) {
-        return prev;
-      }
+
+    const closeLivingThings = opponentThings.filter((thing: Thing) => {
+      return this.position.euclideanDistance(thing.cartesianPos) < SEARCH_DISTANCE && thing.hp > 0;
+    });
+
+    return closeLivingThings.length > 0 ? closeLivingThings.reduce((prev: Thing, curr: Thing) => {
       if (
         this.position.euclideanDistance(prev.cartesianPos) >
         this.position.euclideanDistance(curr.cartesianPos)
@@ -187,7 +192,7 @@ export class Soldier extends Unit {
         return curr;
       }
       return prev;
-    }, opponentThings[0]);
+    }, opponentThings[0]) : undefined;
   }
 
   public arrive(prevTicks: number, currTicks: number) {

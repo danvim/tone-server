@@ -9,6 +9,7 @@ export declare enum SoldierState {
     ATTACKING = 2,
     TRAVELLING = 3
 }
+export declare const SEARCH_DISTANCE: number;
 export declare class Soldier extends Unit {
     barrack: Barrack;
     attackTarget?: Thing;
@@ -31,7 +32,7 @@ export declare class Soldier extends Unit {
     /**
      * give the closest enemy
      */
-    searchAttackTarget(): Thing;
+    searchAttackTarget(): Thing | undefined;
     arrive(prevTicks: number, currTicks: number): void;
     attack(prevTicks: number, currTicks: number): void;
 }

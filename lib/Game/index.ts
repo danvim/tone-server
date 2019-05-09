@@ -58,7 +58,7 @@ export class Game {
     this.players = [];
     this.protocol = protocol;
     this.map = MapGen(size);
-    console.log('map gen done');
+    global.console.log('map gen done');
     this.buildings = {};
     this.entities = {};
     this.units = {};
@@ -73,9 +73,9 @@ export class Game {
 
     this.reassignPlayerId(players);
     this.initBase(size);
-    console.log('init base');
+    global.console.log('init base');
     this.initClusterTiles(unitTest ? 0 : 10);
-    console.log('init cluster');
+    global.console.log('init cluster');
     this.evaluateTerritory();
     this.initProtocol(protocol);
 
@@ -86,7 +86,7 @@ export class Game {
       );
     }
     this.emit(PackageType.UPDATE_TILES, { tiles: this.map });
-    console.log('emit');
+    global.console.log('emit');
   }
 
   // connection functions

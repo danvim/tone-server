@@ -81,7 +81,7 @@ var Game = /** @class */ (function () {
         this.players = [];
         this.protocol = protocol;
         this.map = MapGen_1.MapGen(size);
-        console.log('map gen done');
+        global.console.log('map gen done');
         this.buildings = {};
         this.entities = {};
         this.units = {};
@@ -94,16 +94,16 @@ var Game = /** @class */ (function () {
         }
         this.reassignPlayerId(players);
         this.initBase(size);
-        console.log('init base');
+        global.console.log('init base');
         this.initClusterTiles(unitTest ? 0 : 10);
-        console.log('init cluster');
+        global.console.log('init cluster');
         this.evaluateTerritory();
         this.initProtocol(protocol);
         if (!unitTest) {
             this.frameTimer = timers_1.setInterval(function () { return _this.frame(_this.prevTicks, Helpers_1.now('ms')); }, 60);
         }
         this.emit(lib_1.PackageType.UPDATE_TILES, { tiles: this.map });
-        console.log('emit');
+        global.console.log('emit');
     }
     // connection functions
     Game.prototype.emit = function (packageType, object) {

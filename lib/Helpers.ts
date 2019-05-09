@@ -25,4 +25,4 @@ export function SNAKE2Normal(SNAKE_CASE: string) {
     .join(' ');
 }
 
-export const MAX_UNIT_CNT = 25;
+export const MAX_UNIT_CNT = 15;
